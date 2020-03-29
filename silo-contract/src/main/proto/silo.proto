@@ -14,7 +14,7 @@ message CamJoinRequest {
 }
 
 message CamJoinResponse {
-    //nothing to commit
+    string result = 1;
 }
 
 // CAM INFO
