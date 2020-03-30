@@ -5,7 +5,6 @@ import io.grpc.ManagedChannelBuilder;
 import pt.tecnico.sauron.silo.grpc.SiloGrpc;
 import pt.tecnico.sauron.silo.grpc.SiloOuterClass;
 
-
 public class SiloFrontend {
 
     private  SiloGrpc.SiloBlockingStub stub;
@@ -43,11 +42,20 @@ public class SiloFrontend {
     }
 
     /**
-     * Arguments: to be defined
+     * Arguments: name (String)
+     *
+     * Asks the server for the coordinates of a camera that has the given name
+     *
+     * Returns the coordinates in a float array size 2
      */
-    public void createObservation(){}
 
+    public float[] cameraInfo(String camName){
 
-
+        //CamInfoResponse is a pair of floats
+        SiloOuterClass.CamInfoResponse response = stub.camInfo(SiloOuterClass.CamInfoRequest.newBuilder().setLocal(camName).build());
+        float []coords = new float[2];
+        coords[0] = response.getLatitude(); coords[1] = response.getLongitude();
+        return coords;
+    }
 
 }
