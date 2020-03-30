@@ -39,15 +39,14 @@ enum ObjectType {
 // Track
 message TrackRequest {
     ObjectType type = 1;
-    string carId = 2;
-    int64 personId = 3;
+    string id = 2;
 }
 
 //Track Response
 message ObservationResponse {
     ObjectType type = 1;
     string carId = 2;
-    int64 personId = 3;
+    string personId = 3;
     google.protobuf.Timestamp timestamp = 4;
 }
 
@@ -63,7 +62,7 @@ message TrackMatchRequest {
 message TraceRequest {
     ObjectType type = 1;
     string carId = 2;
-    int64 personId = 3;
+    string personId = 3;
 }
 
 //Trace and trackMatch Response
