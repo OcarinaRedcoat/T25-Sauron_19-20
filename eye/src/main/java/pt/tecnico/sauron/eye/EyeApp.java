@@ -28,5 +28,4 @@ public class EyeApp {
 		library.createCamera(args[2], latitude, longitude); // args[2] -> name
 
 	}
-	
 }
