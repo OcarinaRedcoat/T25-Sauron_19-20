@@ -12,5 +12,4 @@ public class EyeApp {
 			System.out.printf("arg[%d] = %s%n", i, args[i]);
 		}
 	}
-	
 }
