@@ -30,12 +30,22 @@ public class SiloFrontend {
         channel.shutdownNow();
     }
 
-
+    /**
+     * Arguments: name (String), and 2 locations X and Y (floats)
+     *
+     * Converts the location X and Y to latitude and longitude and create a camera in Silo-server
+     * This method is to be called only in eye
+     *
+     */
     public void createCamera(String name, float locationX, float locationY){
-
-        String result = stub.camJoin(SiloOuterClass.CamJoinRequest.newBuilder().setLocal(name).setLatitude(locationX).setLongitude(locationY)).build();
-
+        //TODO check for errors
+        String result = stub.camJoin(SiloOuterClass.CamJoinRequest.newBuilder().setLocal(name).setLatitude(locationX).setLongitude(locationY).build()).getResult();
     }
+
+    /**
+     * Arguments: to be defined
+     */
+    public void createObservation(){}
 
 
 
