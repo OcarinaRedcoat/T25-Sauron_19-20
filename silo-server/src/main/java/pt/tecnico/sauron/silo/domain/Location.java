@@ -1,4 +1,4 @@
-package domain;
+package pt.tecnico.sauron.silo.domain;
 
 public class Location {
 
@@ -12,11 +12,11 @@ public class Location {
         this.longitude = y;
     }
 
-    public float getLatitude() {
+    public float getLatitudeFromDomain() {
         return latitude;
     }
 
-    public float getLongitude() {
+    public float getLongitudeFromDomain() {
         return longitude;
     }
 }
