@@ -17,11 +17,11 @@ This change is important for code dependency management, to make sure that your 
 
 *(fill-in table below with team members; and then delete this line)*  
 
-| Number | Name              | User                             | Email                               |
-| -------|-------------------|----------------------------------| ------------------------------------|
-| 84756  | Pedro Teixeira    | <https://github.com/NikonPT>     | <mailto:pedro.r.teixeria@tecnico.ulisboa.pt>   |
-| 22222  | Bernardo Faria    | <https://github.com/BobUser>     | <mailto:bob@tecnico.ulisboa.pt>     |
-| 33333  | Ricardo Caetano   | <https://github.com/CharlieUser> | <mailto:charlie@tecnico.ulisboa.pt> |
+| Number | Name              | User                              | Email                               |
+| -------|-------------------|-----------------------------------| ------------------------------------|
+| 84756  | Pedro Teixeira    | <https://github.com/NikonPT>      | <mailto:pedro.r.teixeria@tecnico.ulisboa.pt>   |
+| 87636  | Bernardo Faria    | <https://github.com/BernardoFaria>| <mailto:bernardo.faria@tecnico.ulisboa.pt>     |
+| 33333  | Ricardo Caetano   | <https://github.com/CharlieUser>  | <mailto:charlie@tecnico.ulisboa.pt> |
 
 ### Task leaders
 
