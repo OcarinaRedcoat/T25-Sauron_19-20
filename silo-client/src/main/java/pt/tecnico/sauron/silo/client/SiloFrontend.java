@@ -31,10 +31,8 @@ public class SiloFrontend {
 
     /**
      * Arguments: name (String), and 2 locations X and Y (floats)
-     *
      * Converts the location X and Y to latitude and longitude and create a camera in Silo-server
      * This method is to be called only in eye
-     *
      */
     public void camJoin(String name, float locationX, float locationY){
         //TODO check for errors
@@ -43,9 +41,7 @@ public class SiloFrontend {
 
     /**
      * Arguments: name (String)
-     *
      * Asks the server for the coordinates of a camera that has the given name
-     *
      * Returns the coordinates in a float array size 2
      */
 
@@ -57,5 +53,43 @@ public class SiloFrontend {
         coords[0] = response.getLatitude(); coords[1] = response.getLongitude();
         return coords;
     }
+    /**
+     * Arguments:
+     * Receives the name of the camera, a set of observations, and the corresponding data.
+     * The name must correspond to a previously registered camera.
+     * The server records the observations with their date and time, at the time of receipt;
+     */
+    public void report(String type){}
+
+    /**
+     * Arguments: name (String) id (String)
+     * Receives the type of object to find and the identifier of the object sought.
+     * Returns the most recent observation of the searched object;
+     */
+    public void track(String type, String id){
+        SiloOuterClass.ObjectType requestType;
+        if (type.equals("person")){
+            requestType = SiloOuterClass.ObjectType.PERSON;
+        } else {
+            requestType = SiloOuterClass.ObjectType.CAR;
+        }
+        SiloOuterClass.ObservationResponse response = stub.track(SiloOuterClass.TrackRequest.newBuilder().setType(requestType).setId(id).build());
+        //TODO devolver a observação
+    }
+
+    /**
+     * Arguments:
+     * Allows you to locate an observed object with part of its identifier.
+     * Receives the type of object to find and part of the identifier of the searched object.
+     * Returns the most recent observation for each object found, with no specific ordering;
+     */
+    public void trackMatch(){}
+
+    /**
+     * Arguments:
+     * Receives the object type and the exact object identifier.
+     * Returns a list of observations of the object, ordered from the most recent observation to the oldest.
+     */
+    public void trace(){}
 
 }

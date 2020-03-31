@@ -71,6 +71,7 @@ service Silo{
 
     rpc CamJoin(CamJoinRequest) returns (CamJoinResponse);
     rpc CamInfo(CamInfoRequest) returns (CamInfoResponse);
+    rpc Report(ReportRequest) returns (ReportResponse);
     rpc Track(TTTRequest) returns (ObservationResponse);
     rpc TrackMatch(TTTRequest) returns (ObservationListResponse);
     rpc Trace(TTTRequest) returns (ObservationListResponse);
