@@ -4,7 +4,10 @@ import pt.tecnico.sauron.silo.domain.Camera;
 import pt.tecnico.sauron.silo.domain.Observation;
 import pt.tecnico.sauron.silo.exception.BadEntryException;
 
+import java.time.Instant;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -59,9 +62,45 @@ public class SiloServerOps {
 
     }
 
-    public void track(){}
+    public String track(String type, String id){
+        Observation obs = obsMap.get(id);
+        return obs.toStringRecent(type);
+    }
 
-    public void trackMatch(){}
+    public List<String> trackMatch(String type, String partId){
+        List<String> lst = new ArrayList<>();
+        if (partId.startsWith("*")){
+            for (Observation o: obsMap.values()) {
+                if (o.getId().endsWith(partId.substring(1)) && o.equalType(type)){
+                    lst.add(o.toStringRecent(type));
+                }
+            }
+        } else if (partId.endsWith("*")) {
+            String part = partId.substring(0, partId.length() - 1);
+
+            for (Observation o : obsMap.values()) {
+                if (o.getId().startsWith(part) && o.equalType(type)) {
+                    lst.add(o.toStringRecent(type));
+                }
+            }
+        }
+        else {
+            String[] parts = partId.split("\\*");
+            String part1 = parts[0];
+            String part2 = parts[1];
+
+
+            for (Observation o : obsMap.values()) {
+                if (o.getId().startsWith(part1) && o.getId().endsWith(part2) && o.equalType(type)) {
+                    lst.add(o.toStringRecent(type));
+                }
+            }
+
+
+        }
+
+        return lst;
+    }
 
     public void trace(){}
 
