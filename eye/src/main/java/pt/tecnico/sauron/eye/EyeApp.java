@@ -17,7 +17,11 @@ public class EyeApp {
 			System.out.printf("arg[%d] = %s%n", i, args[i]);
 		}
 
-		library = new SiloFrontend(args);
+		String[] hpToLib = new String[2]; //host and port to Library (SiloFrontend library)
+		hpToLib[0] = args[1];
+		hpToLib[1] = args[2];
+
+		library = new SiloFrontend(hpToLib);
 
 		name = args[2]; // camera name
 
