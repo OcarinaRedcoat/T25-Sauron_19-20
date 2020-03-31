@@ -36,7 +36,7 @@ public class SiloFrontend {
      * This method is to be called only in eye
      *
      */
-    public void createCamera(String name, float locationX, float locationY){
+    public void camJoin(String name, float locationX, float locationY){
         //TODO check for errors
         String result = stub.camJoin(SiloOuterClass.CamJoinRequest.newBuilder().setLocal(name).setLatitude(locationX).setLongitude(locationY).build()).getResult();
     }
@@ -49,7 +49,7 @@ public class SiloFrontend {
      * Returns the coordinates in a float array size 2
      */
 
-    public float[] cameraInfo(String camName){
+    public float[] camInfo(String camName){
 
         //CamInfoResponse is a pair of floats
         SiloOuterClass.CamInfoResponse response = stub.camInfo(SiloOuterClass.CamInfoRequest.newBuilder().setLocal(camName).build());
