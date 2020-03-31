@@ -29,7 +29,6 @@ public class EyeApp {
 		while (true){
 			//loop de à espera de entradas
 			//
-			// quando recebe argumentos faz verificacao e manda excecoes s enecessario
 			// fazer verificacao de comentario, e sleep, exp # e zzz
 			// caso contratio chama a library.report(type , id , this.name ) -> nome da camara
 		}
