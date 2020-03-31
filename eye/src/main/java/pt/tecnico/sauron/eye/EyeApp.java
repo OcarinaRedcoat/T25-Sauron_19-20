@@ -25,7 +25,7 @@ public class EyeApp {
 		float latitude = Float.parseFloat(args[3]);
 		float longitude = Float.parseFloat(args[4]);
 
-		library.createCamera(args[2], latitude, longitude); // args[2] -> name
+		library.camJoin(args[2], latitude, longitude); // args[2] -> name
 
 	}
 }

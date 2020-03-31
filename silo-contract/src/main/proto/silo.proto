@@ -6,7 +6,7 @@ package pt.tecnico.sauron.silo.grpc;
 import "google/protobuf/timestamp.proto";
 
 
-// CAM JOIN
+// CamJoin Request
 message CamJoinRequest {
     string local = 1;
     float latitude = 2;
@@ -17,7 +17,7 @@ message CamJoinResponse {
     string result = 1;
 }
 
-// CAM INFO
+//CamInfo Request
 message CamInfoRequest {
     string local = 1;
 }
@@ -28,79 +28,51 @@ message CamInfoResponse {
 }
 
 
+//Report Request
+message ReportRequest {
+    ObjectType type = 1;
+    string id = 2;
+}
+
+message ReportResponse {
+    bool error = 1;
+}
+
+
 enum ObjectType {
     PERSON = 0;
     CAR = 1;
 }
 
 
+//Track Response
+message ObservationResponse {
+    ObjectType type = 1;
+    string id = 2;
+    string camName = 3;
+    google.protobuf.Timestamp timestamp = 4;
+}
 
 
-// Track
-message TrackRequest {
+//Trace and trackMatch Response
+message ObservationListResponse {
+    repeated ObservationResponse Observationlist = 1;
+}
+
+// Track and Trace and TrackMatch
+message TTTRequest {
     ObjectType type = 1;
     string id = 2;
 }
 
-//Track Response
-message ObservationResponse {
-    ObjectType type = 1;
-    string carId = 2;
-    string personId = 3;
-    google.protobuf.Timestamp timestamp = 4;
-}
 
-//TrackMatch
-message TrackMatchRequest {
-    ObjectType type = 1;
-    // half info aka 7* or AA* or mix of both
-    string carId = 2;
-    int64 personId = 3;
-}
-
-//Trace
-message TraceRequest {
-    ObjectType type = 1;
-    string carId = 2;
-    string personId = 3;
-}
-
-//Trace and trackMatch Response
-message ObservationsResponse {
-    map<int32, ObservationResponse> list = 1;
-}
 
 service Silo{
 
     rpc CamJoin(CamJoinRequest) returns (CamJoinResponse);
     rpc CamInfo(CamInfoRequest) returns (CamInfoResponse);
-    rpc Track(TrackRequest) returns (ObservationResponse);
-    rpc TrackMatch(TrackMatchRequest) returns (ObservationsResponse);
-    rpc Trace(TraceRequest) returns (ObservationsResponse);
+    rpc Report(ReportRequest) returns (ReportResponse);
+    rpc Track(TTTRequest) returns (ObservationResponse);
+    rpc TrackMatch(TTTRequest) returns (ObservationListResponse);
+    rpc Trace(TTTRequest) returns (ObservationListResponse);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

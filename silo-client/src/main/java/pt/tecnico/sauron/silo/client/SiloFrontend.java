@@ -34,7 +34,7 @@ public class SiloFrontend {
      * Converts the location X and Y to latitude and longitude and create a camera in Silo-server
      * This method is to be called only in eye
      */
-    public void createCamera(String name, float locationX, float locationY){
+    public void camJoin(String name, float locationX, float locationY){
         //TODO check for errors
         String result = stub.camJoin(SiloOuterClass.CamJoinRequest.newBuilder().setLocal(name).setLatitude(locationX).setLongitude(locationY).build()).getResult();
     }
@@ -45,7 +45,7 @@ public class SiloFrontend {
      * Returns the coordinates in a float array size 2
      */
 
-    public float[] cameraInfo(String camName){
+    public float[] camInfo(String camName){
 
         //CamInfoResponse is a pair of floats
         SiloOuterClass.CamInfoResponse response = stub.camInfo(SiloOuterClass.CamInfoRequest.newBuilder().setLocal(camName).build());
@@ -66,16 +66,23 @@ public class SiloFrontend {
      * Receives the type of object to find and the identifier of the object sought.
      * Returns the most recent observation of the searched object;
      */
-    public void track(String type, String id){
+    public String track(String type, String id){
         SiloOuterClass.ObjectType requestType;
         if (type.equals("person")){
             requestType = SiloOuterClass.ObjectType.PERSON;
         } else {
             requestType = SiloOuterClass.ObjectType.CAR;
         }
-        SiloOuterClass.ObservationResponse response = stub.track(SiloOuterClass.TrackRequest.newBuilder().setType(requestType).setId(id).build());
-        //TODO devolver a observação ObjectType, id, timestamp, nomeCam
-        // cameraInfo(nomeCam)
+        SiloOuterClass.ObservationResponse response = stub.track(SiloOuterClass.TTTRequest.newBuilder().setType(requestType).setId(id).build());
+
+        String camLocal = response.getCamName();
+
+        float []coords = new float[2];
+
+        coords = camInfo(camLocal);
+
+        return type + ',' + response.getId() + ',' + response.getTimestamp().toString() + ',' + camLocal + ',' + coords[0] + ',' + coords[1];
+
     }
 
     /**
@@ -84,13 +91,48 @@ public class SiloFrontend {
      * Receives the type of object to find and part of the identifier of the searched object.
      * Returns the most recent observation for each object found, with no specific ordering;
      */
-    public void trackMatch(){}
+    public String trackMatch(String type, String id){
+        SiloOuterClass.ObjectType requestType;
+        if (type.equals("person")){
+            requestType = SiloOuterClass.ObjectType.PERSON;
+        } else {
+            requestType = SiloOuterClass.ObjectType.CAR;
+        }
+        //FIXME
+        SiloOuterClass.ObservationListResponse response = stub.trackMatch(SiloOuterClass.TTTRequest.newBuilder().setType(requestType).setId(id).build());
+
+//        String camLocal = response.getCamName();
+
+//        float []coords = new float[2];
+
+//        coords = camInfo(camLocal);
+
+//        return type + ',' + response.getId() + ',' + response.getTimestamp().toString() + ',' + camLocal + ',' + coords[0] + ',' + coords[1];
+        return  "";
+    }
 
     /**
      * Arguments:
      * Receives the object type and the exact object identifier.
      * Returns a list of observations of the object, ordered from the most recent observation to the oldest.
      */
-    public void trace(){}
+    public String trace(String type, String id){
+        SiloOuterClass.ObjectType requestType;
+        if (type.equals("person")){
+            requestType = SiloOuterClass.ObjectType.PERSON;
+        } else {
+            requestType = SiloOuterClass.ObjectType.CAR;
+        }
+        //FIXME
+        SiloOuterClass.ObservationResponse response = stub.track(SiloOuterClass.TTTRequest.newBuilder().setType(requestType).setId(id).build());
 
+//        String camLocal = response.getCamName();
+
+//        float []coords = new float[2];
+
+//        coords = camInfo(camLocal);
+
+//        return type + ',' + response.getId() + ',' + response.getTimestamp().toString() + ',' + camLocal + ',' + coords[0] + ',' + coords[1];
+        return "";
+    }
 }
