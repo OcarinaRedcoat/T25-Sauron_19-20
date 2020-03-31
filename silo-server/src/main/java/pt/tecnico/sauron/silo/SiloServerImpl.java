@@ -1,8 +1,8 @@
 package pt.tecnico.sauron.silo;
 
-import pt.tecnico.sauron.silo.domain.Location;
-
 import io.grpc.stub.StreamObserver;
+import pt.tecnico.sauron.silo.domain.Camera;
+import pt.tecnico.sauron.silo.domain.Observation;
 import pt.tecnico.sauron.silo.grpc.*;
 
 
@@ -34,10 +34,10 @@ public class SiloServerImpl extends SiloGrpc.SiloImplBase{
 
         String localName = request.getLocal();
 
-        Location cam_location = Ops.camInfo(localName);
+        Camera cam_location = Ops.camInfo(localName);
 
-        float locationX = cam_location.getLatitudeFromDomain();
-        float locationY = cam_location.getLongitudeFromDomain();
+        float locationX = cam_location.getLatitude();
+        float locationY = cam_location.getLongitude();
 
 
         SiloOuterClass.CamInfoResponse response = SiloOuterClass.CamInfoResponse.newBuilder().setLatitude(locationX).setLongitude(locationY).build();
@@ -47,6 +47,25 @@ public class SiloServerImpl extends SiloGrpc.SiloImplBase{
         // Notify the client that the operation has been completed.
         responseObserver.onCompleted();
     }
+
+    @Override
+    public void report(SiloOuterClass.ReportRequest request, StreamObserver<SiloOuterClass.ReportResponse> responseObserver) {
+        // StreamObserver is used to represent the gRPC stream between the server and
+        // client in order to send the appropriate responses (or errors, if any occur).
+
+        String camName = request.getCamName();
+        String id = request.getId();
+        if (request.getType().equals(SiloOuterClass.ObjectType.PERSON)){
+            Ops.report(camName, id, "person");
+        } else if (request.getType().equals(SiloOuterClass.ObjectType.CAR)) {
+            Ops.report(camName, id, "car");
+        } else {
+            // excepcao
+        }
+
+    }
+
+
 
 
 }

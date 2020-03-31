@@ -1,6 +1,7 @@
 package pt.tecnico.sauron.silo;
 
-import pt.tecnico.sauron.silo.domain.Location;
+import pt.tecnico.sauron.silo.domain.Camera;
+import pt.tecnico.sauron.silo.domain.Observation;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -9,7 +10,8 @@ import java.util.Map;
 
 public class SiloServerOps {
 
-    private Map<String, Location> camsList = new HashMap<>();
+    private Map<String, Camera> camsMap = new HashMap<>();
+    private Map<String, Observation> obsMap = new HashMap<>();
 
     public SiloServerOps() {}
 
@@ -20,26 +22,30 @@ public class SiloServerOps {
 
     public String camJoin(String name, float locationX, float locationY) {
 
-        Location cam_location = new Location(locationX, locationY);
-        camsList.put(name, cam_location);
+        Camera newCamera = new Camera(name, locationX, locationY);
+        camsMap.put(name, newCamera);
 
         return "CAM_NAME:" + name + "CAM_LOCATION" + locationX + ":" + locationY;
     }
 
 
+    public Camera camInfo(String name) {
 
+        Camera cam = camsMap.get(name);
+        return cam;
 
-
-    public Location camInfo(String name) {
-
-        for (Map.Entry<String, Location> entry : camsList.entrySet()) {
-//            name is not an object
-            if (entry.getKey().equals(name)) {
-                return entry.getValue();
-            }
-        }
-        System.out.println("No such camera exists");
-        return null;
     }
 
+    public void report(String camName, String id, String type){
+
+        Camera cam = camsMap.get(camName);
+        if (obsMap.get(id) == null){
+            Observation obs = new Observation(type, id, cam);
+            obsMap.put(id, obs);
+        } else {
+            Observation obs = obsMap.get(id);
+            obs.addCamera(cam);
+        }
+
+    }
 }
