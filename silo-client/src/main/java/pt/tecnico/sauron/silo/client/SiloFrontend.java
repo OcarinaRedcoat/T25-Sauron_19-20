@@ -5,7 +5,6 @@ import io.grpc.ManagedChannelBuilder;
 import pt.tecnico.sauron.silo.grpc.SiloGrpc;
 import pt.tecnico.sauron.silo.grpc.SiloOuterClass;
 
-
 public class SiloFrontend {
 
     private  SiloGrpc.SiloBlockingStub stub;
@@ -30,14 +29,33 @@ public class SiloFrontend {
         channel.shutdownNow();
     }
 
-
+    /**
+     * Arguments: name (String), and 2 locations X and Y (floats)
+     *
+     * Converts the location X and Y to latitude and longitude and create a camera in Silo-server
+     * This method is to be called only in eye
+     *
+     */
     public void createCamera(String name, float locationX, float locationY){
-
-        String result = stub.camJoin(SiloOuterClass.CamJoinRequest.newBuilder().setLocal(name).setLatitude(locationX).setLongitude(locationY)).build();
-
+        //TODO check for errors
+        String result = stub.camJoin(SiloOuterClass.CamJoinRequest.newBuilder().setLocal(name).setLatitude(locationX).setLongitude(locationY).build()).getResult();
     }
 
+    /**
+     * Arguments: name (String)
+     *
+     * Asks the server for the coordinates of a camera that has the given name
+     *
+     * Returns the coordinates in a float array size 2
+     */
 
+    public float[] cameraInfo(String camName){
 
+        //CamInfoResponse is a pair of floats
+        SiloOuterClass.CamInfoResponse response = stub.camInfo(SiloOuterClass.CamInfoRequest.newBuilder().setLocal(camName).build());
+        float []coords = new float[2];
+        coords[0] = response.getLatitude(); coords[1] = response.getLongitude();
+        return coords;
+    }
 
 }
