@@ -59,8 +59,16 @@ public class SiloFrontend {
      * The name must correspond to a previously registered camera.
      * The server records the observations with their date and time, at the time of receipt;
      */
-    public void report(String type, String id, String camName){
+    public boolean report(String type, String id, String camName){
+        SiloOuterClass.ObjectType requestType;
+        if (type.equals("person")){
+            requestType = SiloOuterClass.ObjectType.PERSON;
+        } else {
+            requestType = SiloOuterClass.ObjectType.CAR;
+        }
+        SiloOuterClass.ReportResponse response = stub.report(SiloOuterClass.ReportRequest.newBuilder().setType(requestType).setId(id).setCamName(camName).build());
 
+        return response.getError();
     }
 
     /**
