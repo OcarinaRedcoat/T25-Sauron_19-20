@@ -21,19 +21,18 @@ public class SiloServerOps {
 
 
     public String camJoin(String name, float locationX, float locationY) {
-
-        Camera newCamera = new Camera(name, locationX, locationY);
-        camsMap.put(name, newCamera);
-
+        Camera newCamera;
+        if (camsMap.get(name) == null) {
+            newCamera = new Camera(name, locationX, locationY);
+            camsMap.put(name, newCamera);
+        }
         return "CAM_NAME:" + name + "CAM_LOCATION" + locationX + ":" + locationY;
     }
 
 
     public Camera camInfo(String name) {
-
-        Camera cam = camsMap.get(name);
-        return cam;
-
+        // FIXME neste momento retorna o nome e coords da camara
+        return camsMap.get(name);
     }
 
     public void report(String camName, String id, String type){

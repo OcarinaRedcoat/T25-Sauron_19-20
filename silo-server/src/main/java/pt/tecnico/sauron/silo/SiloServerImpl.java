@@ -18,7 +18,7 @@ public class SiloServerImpl extends SiloGrpc.SiloImplBase{
         String localName = request.getLocal();
         float locationX = request.getLatitude();
         float locationY = request.getLongitude();
-
+        // add camera to server ops
         SiloOuterClass.CamJoinResponse response = SiloOuterClass.CamJoinResponse.newBuilder().setResult(Ops.camJoin(localName, locationX, locationY)).build();
 
         // Send a single response through the stream.
@@ -55,17 +55,30 @@ public class SiloServerImpl extends SiloGrpc.SiloImplBase{
 
         String camName = request.getCamName();
         String id = request.getId();
+
+        // verificacao de argumentos aqui
+
         if (request.getType().equals(SiloOuterClass.ObjectType.PERSON)){
             Ops.report(camName, id, "person");
+
+            SiloOuterClass.ReportResponse response = SiloOuterClass.ReportResponse.newBuilder().setError(true).build();
+            responseObserver.onNext(response);
+            responseObserver.onCompleted();
+
         } else if (request.getType().equals(SiloOuterClass.ObjectType.CAR)) {
             Ops.report(camName, id, "car");
+            SiloOuterClass.ReportResponse response = SiloOuterClass.ReportResponse.newBuilder().setError(true).build();
+            responseObserver.onNext(response);
+            responseObserver.onCompleted();
+
         } else {
+            SiloOuterClass.ReportResponse response = SiloOuterClass.ReportResponse.newBuilder().setError(false).build();
+            responseObserver.onNext(response);
+            responseObserver.onCompleted();
+
             // excepcao
         }
 
+
     }
-
-
-
-
 }
