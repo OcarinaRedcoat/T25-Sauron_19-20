@@ -103,9 +103,9 @@ public class SiloServerImpl extends SiloGrpc.SiloImplBase{
 
             String type = getTTTType(request);
             List<String> strResponse = Ops.trackMatch(type, request.getId());
+            String ObsList = Ops.splitTrackResponse(strResponse);
 
-            //SiloOuterClass.ReportResponse response = SiloOuterClass.ObservationListResponse.newBuilder().setObservationlist(strResponse).build();
-            SiloOuterClass.ObservationListResponse response = SiloOuterClass.ObservationListResponse.newBuilder().setObservationlist()
+            SiloOuterClass.ObservationListResponse response = SiloOuterClass.ObservationListResponse.newBuilder().setObservationlist(ObsList).build();
             responseObserver.onNext(response);
             responseObserver.onCompleted();
 

@@ -68,6 +68,7 @@ public class SiloServerOps {
     }
 
     public List<String> trackMatch(String type, String partId) throws BadEntryException {
+
         List<String> lst = new ArrayList<>();
         if (partId.startsWith("*")){
             for (Observation o: obsMap.values()) {
@@ -113,6 +114,17 @@ public class SiloServerOps {
             throw new BadEntryException("Lst empty");
         }
         return lst;
+    }
+
+    public String splitTrackResponse(List<String> Observations) {
+
+        String result = "";
+
+        for (String o: Observations) {
+            result = result + o + "\n";
+        }
+
+        return result;
     }
 
 }
