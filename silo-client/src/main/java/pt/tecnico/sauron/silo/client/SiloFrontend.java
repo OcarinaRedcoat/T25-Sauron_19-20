@@ -13,8 +13,8 @@ public class SiloFrontend {
 
     public SiloFrontend(String []args){
 
-        final String host = args[0];
-        final int port = Integer.parseInt(args[1]);
+        final String host = args[1];
+        final int port = Integer.parseInt(args[2]);
         final String target = host + ":" + port;
 
         // Channel is the abstraction to connect to a service endpoint.
