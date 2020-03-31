@@ -32,6 +32,7 @@ message CamInfoResponse {
 message ReportRequest {
     ObjectType type = 1;
     string id = 2;
+    string camName = 3;
 }
 
 message ReportResponse {
