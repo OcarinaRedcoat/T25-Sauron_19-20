@@ -67,7 +67,7 @@ public class SiloServerOps {
         return obs.toStringRecent(type);
     }
 
-    public List<String> trackMatch(String type, String partId){
+    public List<String> trackMatch(String type, String partId) throws BadEntryException {
         List<String> lst = new ArrayList<>();
         if (partId.startsWith("*")){
             for (Observation o: obsMap.values()) {
@@ -98,10 +98,21 @@ public class SiloServerOps {
 
 
         }
-
+        if (lst.isEmpty()){
+            throw new BadEntryException("No lst, so somthing wrong is not right");
+        }
         return lst;
     }
 
-    public void trace(){}
+    public List<String> trace(String type, String id) throws BadEntryException {
+        Observation obs = obsMap.get(id);
+        List<String> lst = obs.toStringAll(type);
+        if (!obs.equalType(type)){
+            throw new BadEntryException("Wrong Type");
+        } else if (lst.isEmpty()){
+            throw new BadEntryException("Lst empty");
+        }
+        return lst;
+    }
 
 }

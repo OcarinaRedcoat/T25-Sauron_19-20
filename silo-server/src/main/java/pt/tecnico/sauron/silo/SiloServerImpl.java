@@ -6,6 +6,8 @@ import pt.tecnico.sauron.silo.domain.Observation;
 import pt.tecnico.sauron.silo.exception.BadEntryException;
 import pt.tecnico.sauron.silo.grpc.*;
 
+import java.util.List;
+
 
 public class SiloServerImpl extends SiloGrpc.SiloImplBase{
 
@@ -91,16 +93,43 @@ public class SiloServerImpl extends SiloGrpc.SiloImplBase{
 
     public void track(SiloOuterClass.TTTRequest request, StreamObserver<SiloOuterClass.ObservationResponse> responseObserver){
 
+
     }
 
-    public void trackMatch(SiloOuterClass.TTTRequest request, StreamObserver<SiloOuterClass.ObservationListResponse> responseObserver){
+    public void trackMatch(SiloOuterClass.TTTRequest request, StreamObserver<SiloOuterClass.ObservationListResponse> responseObserver) throws BadEntryException {
 
+
+        try{
+
+            String type = getTTTType(request);
+            List<String> strResponse = Ops.trackMatch(type, request.getId());
+
+            //SiloOuterClass.ReportResponse response = SiloOuterClass.ObservationListResponse.newBuilder().setObservationlist(strResponse).build();
+            SiloOuterClass.ObservationListResponse response = SiloOuterClass.ObservationListResponse.newBuilder().setObservationlist()
+            responseObserver.onNext(response);
+            responseObserver.onCompleted();
+
+
+
+        } catch (BadEntryException e){
+            throw e;
+        }
     }
 
     public void trace(SiloOuterClass.TTTRequest request, StreamObserver<SiloOuterClass.ObservationListResponse> responseObserver){
 
     }
 
+
+    public String getTTTType(SiloOuterClass.TTTRequest request) throws BadEntryException {
+        if (request.getType().equals(SiloOuterClass.ObjectType.PERSON)){
+            return "person";
+        } else if (request.getType().equals(SiloOuterClass.ObjectType.CAR)){
+            return "car";
+        } else {
+            throw new BadEntryException("Wrong Type");
+        }
+    }
 
 }
 

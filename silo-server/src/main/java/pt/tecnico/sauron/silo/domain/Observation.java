@@ -61,4 +61,13 @@ public class Observation {
         return false;
     }
 
+    public List<String> toStringAll(String type){
+        List<String> lst = new ArrayList<>();
+        for (int i = 0; i < getCamLst().size(); i++){
+            Camera cam = this.getCamLst().get(i);
+            String str = type + "," + this.getId() + "," + timeLst.get(i).toString() + "," + "," + cam.getName() + "," + cam.getLatitude() + "," + cam.getLongitude();
+        }
+        return lst;
+    }
+
 }
