@@ -59,7 +59,7 @@ public class SiloFrontend {
      * The name must correspond to a previously registered camera.
      * The server records the observations with their date and time, at the time of receipt;
      */
-    public void report(String type){}
+    public void report(String type, String id){}
 
     /**
      * Arguments: name (String) id (String)
@@ -74,7 +74,8 @@ public class SiloFrontend {
             requestType = SiloOuterClass.ObjectType.CAR;
         }
         SiloOuterClass.ObservationResponse response = stub.track(SiloOuterClass.TrackRequest.newBuilder().setType(requestType).setId(id).build());
-        //TODO devolver a observação
+        //TODO devolver a observação ObjectType, id, timestamp, nomeCam
+        // cameraInfo(nomeCam)
     }
 
     /**
