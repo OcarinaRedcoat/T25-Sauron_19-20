@@ -54,12 +54,14 @@ public class SiloFrontend {
         return coords;
     }
     /**
-     * Arguments:
+     * Arguments: type (String) id (String) camName (camName)
      * Receives the name of the camera, a set of observations, and the corresponding data.
      * The name must correspond to a previously registered camera.
      * The server records the observations with their date and time, at the time of receipt;
      */
-    public void report(String type, String id){}
+    public void report(String type, String id, String camName){
+
+    }
 
     /**
      * Arguments: name (String) id (String)
