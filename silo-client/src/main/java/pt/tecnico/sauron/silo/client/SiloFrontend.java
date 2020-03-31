@@ -5,6 +5,8 @@ import io.grpc.ManagedChannelBuilder;
 import pt.tecnico.sauron.silo.grpc.SiloGrpc;
 import pt.tecnico.sauron.silo.grpc.SiloOuterClass;
 
+import java.util.List;
+
 public class SiloFrontend {
 
     private  SiloGrpc.SiloBlockingStub stub;
@@ -102,7 +104,11 @@ public class SiloFrontend {
      * Returns the most recent observation for each object found, with no specific ordering;
      */
     public String trackMatch(String type, String id){
+
         SiloOuterClass.ObjectType requestType;
+        String observations = "";
+        float[] coords;
+
         if (type.equals("person")){
             requestType = SiloOuterClass.ObjectType.PERSON;
         } else {
@@ -111,14 +117,14 @@ public class SiloFrontend {
         //FIXME
         SiloOuterClass.ObservationListResponse response = stub.trackMatch(SiloOuterClass.TTTRequest.newBuilder().setType(requestType).setId(id).build());
 
-//        String camLocal = response.getCamName();
+        for(SiloOuterClass.ObservationResponse obList : response.getObservationlistList()) {
+            String camLocal = obList.getCamName();
+            coords = camInfo(camLocal);
+            observations += type + ',' + obList.getId() + ',' + obList.getTimestamp().toString() + ',' + camLocal + ',' + coords[0] + ',' + coords[1] + "\n";
 
-//        float []coords = new float[2];
+        }
+        return observations;
 
-//        coords = camInfo(camLocal);
-
-//        return type + ',' + response.getId() + ',' + response.getTimestamp().toString() + ',' + camLocal + ',' + coords[0] + ',' + coords[1];
-        return  "";
     }
 
     /**
