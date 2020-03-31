@@ -68,7 +68,7 @@ public class SiloFrontend {
         }
         SiloOuterClass.ReportResponse response = stub.report(SiloOuterClass.ReportRequest.newBuilder().setType(requestType).setId(id).setCamName(camName).build());
 
-        return response.getError();
+        return response.getError(); //Se retornar false deu erro, se retornar true deu certo
     }
 
     /**
