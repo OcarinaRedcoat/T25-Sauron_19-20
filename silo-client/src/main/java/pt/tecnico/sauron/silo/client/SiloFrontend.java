@@ -65,8 +65,10 @@ public class SiloFrontend {
         SiloOuterClass.ObjectType requestType;
         if (type.equals("person")){
             requestType = SiloOuterClass.ObjectType.PERSON;
-        } else {
+        } else if (type.equals("car")){
             requestType = SiloOuterClass.ObjectType.CAR;
+        } else {
+            requestType = SiloOuterClass.ObjectType.OTHER;
         }
         SiloOuterClass.ReportResponse response = stub.report(SiloOuterClass.ReportRequest.newBuilder().setType(requestType).setId(id).setCamName(camName).build());
 
@@ -82,8 +84,10 @@ public class SiloFrontend {
         SiloOuterClass.ObjectType requestType;
         if (type.equals("person")){
             requestType = SiloOuterClass.ObjectType.PERSON;
-        } else {
+        } else if (type.equals("car")) {
             requestType = SiloOuterClass.ObjectType.CAR;
+        } else {
+            requestType = SiloOuterClass.ObjectType.OTHER;
         }
         SiloOuterClass.ObservationResponse response = stub.track(SiloOuterClass.TTTRequest.newBuilder().setType(requestType).setId(id).build());
 
@@ -104,6 +108,7 @@ public class SiloFrontend {
      * Returns the most recent observation for each object found, with no specific ordering;
      */
     public String trackMatch(String type, String id){
+        //FIXME deviamos iterar sobre uma lista de IDs que tenham dado match e imprimir a 1ª observacao de cada
 
         SiloOuterClass.ObjectType requestType;
         String observations = "";
@@ -111,19 +116,15 @@ public class SiloFrontend {
 
         if (type.equals("person")){
             requestType = SiloOuterClass.ObjectType.PERSON;
-        } else {
+        } else if (type.equals("car")) {
             requestType = SiloOuterClass.ObjectType.CAR;
+        } else {
+            requestType = SiloOuterClass.ObjectType.OTHER;
         }
-        //FIXME
+
         SiloOuterClass.ObservationListResponse response = stub.trackMatch(SiloOuterClass.TTTRequest.newBuilder().setType(requestType).setId(id).build());
 
-        for(SiloOuterClass.ObservationResponse obList : response.getObservationlistList()) {
-            String camLocal = obList.getCamName();
-            coords = camInfo(camLocal);
-            observations += type + ',' + obList.getId() + ',' + obList.getTimestamp().toString() + ',' + camLocal + ',' + coords[0] + ',' + coords[1] + "\n";
-
-        }
-        return observations;
+        return getString(type, observations, response);
 
     }
 
@@ -133,22 +134,32 @@ public class SiloFrontend {
      * Returns a list of observations of the object, ordered from the most recent observation to the oldest.
      */
     public String trace(String type, String id){
+
         SiloOuterClass.ObjectType requestType;
+        String observations = "";
+        float[] coords;
+
         if (type.equals("person")){
             requestType = SiloOuterClass.ObjectType.PERSON;
-        } else {
+        } else if (type.equals("car")){
             requestType = SiloOuterClass.ObjectType.CAR;
+        } else {
+            requestType = SiloOuterClass.ObjectType.OTHER;
         }
-        //FIXME
-        SiloOuterClass.ObservationResponse response = stub.track(SiloOuterClass.TTTRequest.newBuilder().setType(requestType).setId(id).build());
 
-//        String camLocal = response.getCamName();
+        SiloOuterClass.ObservationListResponse response = stub.trace(SiloOuterClass.TTTRequest.newBuilder().setType(requestType).setId(id).build());
 
-//        float []coords = new float[2];
+        return getString(type, observations, response);
+    }
 
-//        coords = camInfo(camLocal);
+    private String getString(String type, String observations, SiloOuterClass.ObservationListResponse response) {
+        float[] coords;
+        for(SiloOuterClass.ObservationResponse obList : response.getObservationlistList()) {
+            String camLocal = obList.getCamName();
+            coords = camInfo(camLocal);
+            observations += type + ',' + obList.getId() + ',' + obList.getTimestamp().toString() + ',' + camLocal + ',' + coords[0] + ',' + coords[1] + "\n";
 
-//        return type + ',' + response.getId() + ',' + response.getTimestamp().toString() + ',' + camLocal + ',' + coords[0] + ',' + coords[1];
-        return "";
+        }
+        return observations;
     }
 }

@@ -3,7 +3,10 @@ package pt.tecnico.sauron.silo;
 import io.grpc.stub.StreamObserver;
 import pt.tecnico.sauron.silo.domain.Camera;
 import pt.tecnico.sauron.silo.domain.Observation;
+import pt.tecnico.sauron.silo.exception.BadEntryException;
 import pt.tecnico.sauron.silo.grpc.*;
+
+import java.util.List;
 
 
 public class SiloServerImpl extends SiloGrpc.SiloImplBase{
@@ -11,14 +14,19 @@ public class SiloServerImpl extends SiloGrpc.SiloImplBase{
     private SiloServerOps Ops = new SiloServerOps();
 
     @Override
-    public void camJoin(SiloOuterClass.CamJoinRequest request, StreamObserver<SiloOuterClass.CamJoinResponse> responseObserver) {
+    public void camJoin(SiloOuterClass.CamJoinRequest request, StreamObserver<SiloOuterClass.CamJoinResponse> responseObserver) throws BadEntryException {
         // StreamObserver is used to represent the gRPC stream between the server and
         // client in order to send the appropriate responses (or errors, if any occur).
 
         String localName = request.getLocal();
         float locationX = request.getLatitude();
         float locationY = request.getLongitude();
-        // add camera to server ops
+
+        try{
+            Ops.camJoin(localName, locationX, locationY);
+        } catch (BadEntryException e){
+            throw e;
+        }
         SiloOuterClass.CamJoinResponse response = SiloOuterClass.CamJoinResponse.newBuilder().setResult(Ops.camJoin(localName, locationX, locationY)).build();
 
         // Send a single response through the stream.
@@ -49,7 +57,7 @@ public class SiloServerImpl extends SiloGrpc.SiloImplBase{
     }
 
     @Override
-    public void report(SiloOuterClass.ReportRequest request, StreamObserver<SiloOuterClass.ReportResponse> responseObserver) {
+    public void report(SiloOuterClass.ReportRequest request, StreamObserver<SiloOuterClass.ReportResponse> responseObserver) throws BadEntryException {
         // StreamObserver is used to represent the gRPC stream between the server and
         // client in order to send the appropriate responses (or errors, if any occur).
 
@@ -57,28 +65,71 @@ public class SiloServerImpl extends SiloGrpc.SiloImplBase{
         String id = request.getId();
 
         // verificacao de argumentos aqui
+        try{
+            if (request.getType().equals(SiloOuterClass.ObjectType.PERSON)){
+                Ops.report(camName, id, "person");
 
-        if (request.getType().equals(SiloOuterClass.ObjectType.PERSON)){
-            Ops.report(camName, id, "person");
+                SiloOuterClass.ReportResponse response = SiloOuterClass.ReportResponse.newBuilder().setError(true).build();
+                responseObserver.onNext(response);
+                responseObserver.onCompleted();
 
-            SiloOuterClass.ReportResponse response = SiloOuterClass.ReportResponse.newBuilder().setError(true).build();
-            responseObserver.onNext(response);
-            responseObserver.onCompleted();
-
-        } else if (request.getType().equals(SiloOuterClass.ObjectType.CAR)) {
-            Ops.report(camName, id, "car");
-            SiloOuterClass.ReportResponse response = SiloOuterClass.ReportResponse.newBuilder().setError(true).build();
-            responseObserver.onNext(response);
-            responseObserver.onCompleted();
-
-        } else {
-            SiloOuterClass.ReportResponse response = SiloOuterClass.ReportResponse.newBuilder().setError(false).build();
-            responseObserver.onNext(response);
-            responseObserver.onCompleted();
-
-            // excepcao
+            } else if (request.getType().equals(SiloOuterClass.ObjectType.CAR)) {
+                Ops.report(camName, id, "car");
+                SiloOuterClass.ReportResponse response = SiloOuterClass.ReportResponse.newBuilder().setError(true).build();
+                responseObserver.onNext(response);
+                responseObserver.onCompleted();
+            } else {
+                Ops.report(camName, id, "other");
+                SiloOuterClass.ReportResponse response = SiloOuterClass.ReportResponse.newBuilder().setError(false).build();
+                responseObserver.onNext(response);
+                responseObserver.onCompleted();
+            }
+        } catch (BadEntryException e){
+            throw e;
         }
 
 
     }
+
+    public void track(SiloOuterClass.TTTRequest request, StreamObserver<SiloOuterClass.ObservationResponse> responseObserver){
+
+
+    }
+
+    public void trackMatch(SiloOuterClass.TTTRequest request, StreamObserver<SiloOuterClass.ObservationListResponse> responseObserver) throws BadEntryException {
+
+
+        try{
+
+            String type = getTTTType(request);
+            List<String> strResponse = Ops.trackMatch(type, request.getId());
+
+            //SiloOuterClass.ReportResponse response = SiloOuterClass.ObservationListResponse.newBuilder().setObservationlist(strResponse).build();
+            SiloOuterClass.ObservationListResponse response = SiloOuterClass.ObservationListResponse.newBuilder().setObservationlist()
+            responseObserver.onNext(response);
+            responseObserver.onCompleted();
+
+
+
+        } catch (BadEntryException e){
+            throw e;
+        }
+    }
+
+    public void trace(SiloOuterClass.TTTRequest request, StreamObserver<SiloOuterClass.ObservationListResponse> responseObserver){
+
+    }
+
+
+    public String getTTTType(SiloOuterClass.TTTRequest request) throws BadEntryException {
+        if (request.getType().equals(SiloOuterClass.ObjectType.PERSON)){
+            return "person";
+        } else if (request.getType().equals(SiloOuterClass.ObjectType.CAR)){
+            return "car";
+        } else {
+            throw new BadEntryException("Wrong Type");
+        }
+    }
+
 }
+
