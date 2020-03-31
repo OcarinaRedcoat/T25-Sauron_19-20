@@ -63,6 +63,6 @@ public class SiloServerOps {
 
     public void trackMatch(){}
 
-    public void trace
+    public void trace(){}
 
 }
