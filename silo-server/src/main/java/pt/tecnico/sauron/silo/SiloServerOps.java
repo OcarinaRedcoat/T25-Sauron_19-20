@@ -1,13 +1,9 @@
 package pt.tecnico.sauron.silo;
 
-import domain.Location;
+import pt.tecnico.sauron.silo.domain.Location;
 
 import java.util.HashMap;
 import java.util.Map;
-
-
-//private ArrayList <Pair <String, Location> > camsList = new ArrayList <Pair <String,Integer> > ();
-//camsList.add(new Pair <String, Location> (name, cam_location));
 
 
 
@@ -17,6 +13,11 @@ public class SiloServerOps {
 
     public SiloServerOps() {}
 
+
+
+
+
+
     public String camJoin(String name, float locationX, float locationY) {
 
         Location cam_location = new Location(locationX, locationY);
@@ -24,6 +25,10 @@ public class SiloServerOps {
 
         return "CAM_NAME:" + name + "CAM_LOCATION" + locationX + ":" + locationY;
     }
+
+
+
+
 
     public Location camInfo(String name) {
 
