@@ -40,5 +40,25 @@ public class Observation {
 
     public List<Camera> getCamLst(){ return camLst; }
 
+    public List<Instant> getTimeLst(){ return timeLst; }
+
+    public Observation.Type getObsType(){ return obsType; }
+
+    public String toStringRecent(String type){
+
+        Camera cam = this.getCamLst().get(this.getCamLst().size()-1); // last item of the list
+        Instant inst = this.getTimeLst().get(this.getTimeLst().size()-1); // last item of the list
+
+        return type + "," + this.getId() + "," + inst.toString() + "," + "," + cam.getName() + "," + cam.getLatitude() + "," + cam.getLongitude();
+    }
+
+    public boolean equalType(String type){
+        if (type.equals("person") && this.obsType == Type.PERSON){
+            return true;
+        } else if (type.equals("car") && this.obsType == Type.CAR){
+            return true;
+        }
+        return false;
+    }
 
 }
