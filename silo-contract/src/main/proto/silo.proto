@@ -58,7 +58,7 @@ message ObservationResponse {
 
 //Trace and trackMatch Response
 message ObservationListResponse {
-    repeated ObservationResponse Observationlist = 1;
+    string Observationlist = 1;
 }
 
 // Track and Trace and TrackMatch
