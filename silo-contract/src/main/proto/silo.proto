@@ -43,6 +43,7 @@ message ReportResponse {
 enum ObjectType {
     PERSON = 0;
     CAR = 1;
+    OTHER = 2;
 }
 
 

@@ -1,5 +1,7 @@
 package pt.tecnico.sauron.silo.domain;
 
+import pt.tecnico.sauron.silo.exception.BadEntryException;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.time.Instant;
@@ -14,11 +16,13 @@ public class Observation {
         CAR, PERSON
     }
 
-    public Observation(String type, String id, Camera cam){
+    public Observation(String type, String id, Camera cam) throws BadEntryException {
         if (type.equals("person")){
             this.obsType = Type.PERSON;
-        } else {
+        } else if (type.equals("car")){
             this.obsType = Type.CAR;
+        }else{
+            throw new BadEntryException("Type not valid");
         }
         this.id = id;
         camLst = new ArrayList<>();

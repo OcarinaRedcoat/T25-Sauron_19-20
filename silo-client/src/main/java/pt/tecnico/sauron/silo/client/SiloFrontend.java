@@ -65,8 +65,10 @@ public class SiloFrontend {
         SiloOuterClass.ObjectType requestType;
         if (type.equals("person")){
             requestType = SiloOuterClass.ObjectType.PERSON;
-        } else {
+        } else if (type.equals("car")){
             requestType = SiloOuterClass.ObjectType.CAR;
+        } else {
+            requestType = SiloOuterClass.ObjectType.OTHER;
         }
         SiloOuterClass.ReportResponse response = stub.report(SiloOuterClass.ReportRequest.newBuilder().setType(requestType).setId(id).setCamName(camName).build());
 
@@ -82,8 +84,10 @@ public class SiloFrontend {
         SiloOuterClass.ObjectType requestType;
         if (type.equals("person")){
             requestType = SiloOuterClass.ObjectType.PERSON;
-        } else {
+        } else if (type.equals("car")) {
             requestType = SiloOuterClass.ObjectType.CAR;
+        } else {
+            requestType = SiloOuterClass.ObjectType.OTHER;
         }
         SiloOuterClass.ObservationResponse response = stub.track(SiloOuterClass.TTTRequest.newBuilder().setType(requestType).setId(id).build());
 
@@ -111,10 +115,11 @@ public class SiloFrontend {
 
         if (type.equals("person")){
             requestType = SiloOuterClass.ObjectType.PERSON;
-        } else {
+        } else if (type.equals("car")) {
             requestType = SiloOuterClass.ObjectType.CAR;
+        } else {
+            requestType = SiloOuterClass.ObjectType.OTHER;
         }
-        //FIXME
         SiloOuterClass.ObservationListResponse response = stub.trackMatch(SiloOuterClass.TTTRequest.newBuilder().setType(requestType).setId(id).build());
 
         for(SiloOuterClass.ObservationResponse obList : response.getObservationlistList()) {
@@ -136,8 +141,10 @@ public class SiloFrontend {
         SiloOuterClass.ObjectType requestType;
         if (type.equals("person")){
             requestType = SiloOuterClass.ObjectType.PERSON;
-        } else {
+        } else if (type.equals("car")){
             requestType = SiloOuterClass.ObjectType.CAR;
+        } else {
+            requestType = SiloOuterClass.ObjectType.OTHER;
         }
         //FIXME
         SiloOuterClass.ObservationResponse response = stub.track(SiloOuterClass.TTTRequest.newBuilder().setType(requestType).setId(id).build());
