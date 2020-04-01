@@ -11,10 +11,9 @@ public class SiloFrontend {
 
     private  SiloGrpc.SiloBlockingStub stub;
 
-    public SiloFrontend(String []args){
+    public SiloFrontend(String host, String portStr){
 
-        final String host = args[1];
-        final int port = Integer.parseInt(args[2]);
+        final int port = Integer.parseInt(portStr);
         final String target = host + ":" + port;
 
         // Channel is the abstraction to connect to a service endpoint.
@@ -123,8 +122,8 @@ public class SiloFrontend {
         }
 
         SiloOuterClass.ObservationListResponse response = stub.trackMatch(SiloOuterClass.TTTRequest.newBuilder().setType(requestType).setId(id).build());
-
-        return getString(type, observations, response);
+        return response.getObservationlist();
+        //return getString(type, observations, response);
 
     }
 
@@ -148,18 +147,18 @@ public class SiloFrontend {
         }
 
         SiloOuterClass.ObservationListResponse response = stub.trace(SiloOuterClass.TTTRequest.newBuilder().setType(requestType).setId(id).build());
-
-        return getString(type, observations, response);
+        return response.getObservationlist();
+        //return getString(type, observations, response);
     }
 
-    private String getString(String type, String observations, SiloOuterClass.ObservationListResponse response) {
+    /*private String getString(String type, String observations, SiloOuterClass.ObservationListResponse response) {
         float[] coords;
-        for(SiloOuterClass.ObservationResponse obList : response.getObservationlistList()) {
+        for(SiloOuterClass.ObservationResponse obList : response.getObservationlist()) {
             String camLocal = obList.getCamName();
             coords = camInfo(camLocal);
             observations += type + ',' + obList.getId() + ',' + obList.getTimestamp().toString() + ',' + camLocal + ',' + coords[0] + ',' + coords[1] + "\n";
 
         }
         return observations;
-    }
+    }*/
 }
