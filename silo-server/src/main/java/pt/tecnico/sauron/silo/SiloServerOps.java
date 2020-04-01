@@ -118,13 +118,13 @@ public class SiloServerOps {
 
     public String splitTrackResponse(List<String> Observations) {
 
-        String result = "";
+        StringBuilder result  = new StringBuilder();
 
         for (String o: Observations) {
-            result = result + o + "\n";
+            result.append(o).append("\n");
         }
 
-        return result;
+        return result.toString();
     }
 
 }
