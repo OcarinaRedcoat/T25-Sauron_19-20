@@ -3,7 +3,6 @@ package pt.tecnico.sauron.silo;
 import io.grpc.stub.StreamObserver;
 import pt.tecnico.sauron.silo.domain.Camera;
 import pt.tecnico.sauron.silo.domain.Observation;
-import pt.tecnico.sauron.silo.exception.BadEntryException;
 import pt.tecnico.sauron.silo.grpc.*;
 
 import java.util.List;
@@ -14,7 +13,7 @@ public class SiloServerImpl extends SiloGrpc.SiloImplBase{
     private SiloServerOps Ops = new SiloServerOps();
 
     @Override
-    public void camJoin(SiloOuterClass.CamJoinRequest request, StreamObserver<SiloOuterClass.CamJoinResponse> responseObserver) throws BadEntryException {
+    public void camJoin(SiloOuterClass.CamJoinRequest request, StreamObserver<SiloOuterClass.CamJoinResponse> responseObserver) throws IllegalArgumentException {
         // StreamObserver is used to represent the gRPC stream between the server and
         // client in order to send the appropriate responses (or errors, if any occur).
 
@@ -24,7 +23,7 @@ public class SiloServerImpl extends SiloGrpc.SiloImplBase{
 
         try{
             Ops.camJoin(localName, locationX, locationY);
-        } catch (BadEntryException e){
+        } catch (IllegalArgumentException e){
             throw e;
         }
         SiloOuterClass.CamJoinResponse response = SiloOuterClass.CamJoinResponse.newBuilder().setResult(Ops.camJoin(localName, locationX, locationY)).build();
@@ -57,7 +56,7 @@ public class SiloServerImpl extends SiloGrpc.SiloImplBase{
     }
 
     @Override
-    public void report(SiloOuterClass.ReportRequest request, StreamObserver<SiloOuterClass.ReportResponse> responseObserver) throws BadEntryException {
+    public void report(SiloOuterClass.ReportRequest request, StreamObserver<SiloOuterClass.ReportResponse> responseObserver) throws IllegalArgumentException {
         // StreamObserver is used to represent the gRPC stream between the server and
         // client in order to send the appropriate responses (or errors, if any occur).
 
@@ -84,7 +83,7 @@ public class SiloServerImpl extends SiloGrpc.SiloImplBase{
                 responseObserver.onNext(response);
                 responseObserver.onCompleted();
             }
-        } catch (BadEntryException e){
+        } catch (IllegalArgumentException e){
             throw e;
         }
 
@@ -96,7 +95,7 @@ public class SiloServerImpl extends SiloGrpc.SiloImplBase{
 
     }
 
-    public void trackMatch(SiloOuterClass.TTTRequest request, StreamObserver<SiloOuterClass.ObservationListResponse> responseObserver) throws BadEntryException {
+    public void trackMatch(SiloOuterClass.TTTRequest request, StreamObserver<SiloOuterClass.ObservationListResponse> responseObserver) throws IllegalArgumentException {
 
 
         try{
@@ -111,7 +110,7 @@ public class SiloServerImpl extends SiloGrpc.SiloImplBase{
 
 
 
-        } catch (BadEntryException e){
+        } catch (IllegalArgumentException e){
             throw e;
         }
     }
@@ -121,13 +120,13 @@ public class SiloServerImpl extends SiloGrpc.SiloImplBase{
     }
 
 
-    public String getTTTType(SiloOuterClass.TTTRequest request) throws BadEntryException {
+    public String getTTTType(SiloOuterClass.TTTRequest request) throws IllegalArgumentException {
         if (request.getType().equals(SiloOuterClass.ObjectType.PERSON)){
             return "person";
         } else if (request.getType().equals(SiloOuterClass.ObjectType.CAR)){
             return "car";
         } else {
-            throw new BadEntryException("Wrong Type");
+            throw new IllegalArgumentException("Wrong Type");
         }
     }
 

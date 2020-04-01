@@ -2,7 +2,6 @@ package pt.tecnico.sauron.silo;
 
 import pt.tecnico.sauron.silo.domain.Camera;
 import pt.tecnico.sauron.silo.domain.Observation;
-import pt.tecnico.sauron.silo.exception.BadEntryException;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -24,7 +23,7 @@ public class SiloServerOps {
 
 
 
-    public String camJoin(String name, float locationX, float locationY) throws BadEntryException {
+    public String camJoin(String name, float locationX, float locationY) throws IllegalArgumentException {
         Camera newCamera;
 
         if (name.matches("[A-Za-z0-9]+") && name.length() >= 3 && name.length() <= 15) {
@@ -39,7 +38,7 @@ public class SiloServerOps {
         }
 
         else {
-            throw new BadEntryException("Name non alhpanumeric");
+            throw new IllegalArgumentException("Name non alhpanumeric");
         }
     }
 
@@ -49,7 +48,7 @@ public class SiloServerOps {
         return camsMap.get(name);
     }
 
-    public void report(String camName, String id, String type) throws BadEntryException {
+    public void report(String camName, String id, String type) throws IllegalArgumentException {
 
         Camera cam = camsMap.get(camName);
         if (obsMap.get(id) == null){
@@ -67,7 +66,7 @@ public class SiloServerOps {
         return obs.toStringRecent(type);
     }
 
-    public List<String> trackMatch(String type, String partId) throws BadEntryException {
+    public List<String> trackMatch(String type, String partId) throws IllegalArgumentException {
 
         List<String> lst = new ArrayList<>();
         if (partId.startsWith("*")){
@@ -100,18 +99,18 @@ public class SiloServerOps {
 
         }
         if (lst.isEmpty()){
-            throw new BadEntryException("No lst, so somthing wrong is not right");
+            throw new IllegalArgumentException("No lst, so somthing wrong is not right");
         }
         return lst;
     }
 
-    public List<String> trace(String type, String id) throws BadEntryException {
+    public List<String> trace(String type, String id) throws IllegalArgumentException {
         Observation obs = obsMap.get(id);
         List<String> lst = obs.toStringAll(type);
         if (!obs.equalType(type)){
-            throw new BadEntryException("Wrong Type");
+            throw new IllegalArgumentException("Wrong Type");
         } else if (lst.isEmpty()){
-            throw new BadEntryException("Lst empty");
+            throw new IllegalArgumentException("Lst empty");
         }
         return lst;
     }
