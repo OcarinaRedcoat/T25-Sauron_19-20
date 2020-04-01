@@ -4,6 +4,7 @@ import pt.tecnico.sauron.silo.domain.Camera;
 import pt.tecnico.sauron.silo.domain.Observation;
 import pt.tecnico.sauron.silo.grpc.SiloOuterClass.*;
 
+
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,6 +18,8 @@ public class SiloServerOps {
     private Map<String, Camera> camsMap = new HashMap<>();
     private Map<String, Observation> obsMap = new HashMap<>();
 
+    private List<Observation> allObservations = new ArrayList<>();
+
     public SiloServerOps() {}
 
 
@@ -24,7 +27,7 @@ public class SiloServerOps {
 
 
 
-    public String camJoin(String name, float locationX, float locationY) throws IllegalArgumentException {
+    public void camJoin(String name, float locationX, float locationY) throws IllegalArgumentException {
         Camera newCamera;
 
         if (name.matches("[A-Za-z0-9]+") && name.length() >= 3 && name.length() <= 15) {
@@ -35,7 +38,6 @@ public class SiloServerOps {
                 camsMap.put(name, newCamera);
             }
 
-            return "CAM_NAME:" + name + "CAM_LOCATION" + locationX + ":" + locationY;
         }
 
         else {
@@ -50,11 +52,10 @@ public class SiloServerOps {
     }
 
     public void report(String camName, String id, ObjectType type) throws IllegalArgumentException {
-
-        if (obsMap.get(id) == null){
-            Observation obs = new Observation(type, id, camName);
-            obsMap.put(id, obs);
-        }
+        // TODO veridicar os argumentos
+        Observation obs = new Observation(type, id, camName);
+        obsMap.put(id, obs);
+        allObservations.add(obs);
 
     }
 
@@ -68,7 +69,7 @@ public class SiloServerOps {
         return obs;
     }
 
-    public List<Observation> trackMatch(String type, String partId) throws IllegalArgumentException {
+    public List<Observation> trackMatch(ObjectType type, String partId) throws IllegalArgumentException {
 
         List<Observation> lst = new ArrayList<>();
         if (partId.startsWith("*")){
@@ -101,13 +102,21 @@ public class SiloServerOps {
 
         }
         if (lst.isEmpty()){
-            throw new IllegalArgumentException("No lst, so somthing wrong is not right");
+            throw new IllegalArgumentException("No lst, so something wrong is not right");
         }
         return lst;
     }
 
-    public List<Observation> trace(String type, String id) throws IllegalArgumentException {
+    public List<Observation> trace(ObjectType type, String id) throws IllegalArgumentException {
         List<Observation> obsLst = new ArrayList<>();
+        for (Observation o: allObservations) {
+            if (o.getId().equals(id) && o.equalType(type)){
+                obsLst.add(o);
+            }
+        }
+        if (obsLst.isEmpty()){
+            throw new IllegalArgumentException("No lst, so something wrong is not right");
+        }
         return obsLst;
     }
 

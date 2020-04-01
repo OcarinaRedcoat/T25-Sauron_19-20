@@ -1,12 +1,9 @@
 package pt.tecnico.sauron.silo.domain;
 
-
 import pt.tecnico.sauron.silo.grpc.SiloOuterClass.*;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.time.Instant;
-
 public class Observation {
 
 
@@ -15,15 +12,17 @@ public class Observation {
     private Instant timestamp;
     private String camera;
 
-
     public Observation(ObjectType type, String id, String cam) {
         this.obsType = type;
         this.id = id;
         this.camera = cam;
         this.timestamp = Instant.now();
+
     }
 
     public String getId(){ return this.id; }
+
+    public ObjectType getType(){ return this.obsType; }
 
     public String getCamera(){ return this.camera; }
 

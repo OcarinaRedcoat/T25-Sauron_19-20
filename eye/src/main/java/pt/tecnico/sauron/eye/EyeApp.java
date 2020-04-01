@@ -1,8 +1,6 @@
 package pt.tecnico.sauron.eye;
 
-
 import pt.tecnico.sauron.silo.client.SiloFrontend;
-
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
@@ -32,7 +30,7 @@ public class EyeApp {
 //		library = new SiloFrontend(args.toString().substring(3, argsSize));
 		System.out.println("deu merda\n");
 
-		SiloFrontend library = new SiloFrontend(args);
+		SiloFrontend library = new SiloFrontend(args[1], args[2]);
 
 
 		String name = args[2]; // camera name
@@ -56,7 +54,7 @@ public class EyeApp {
 			int size =  currentLine.length();
 
 			if (token.equals("#")) {
-				System.out.println("\n"); /* eu sou um genio */
+				System.out.println("\n");
 			}
 			else if (currentLine.substring(0, 3).equals("zzz")) {
 				TimeUnit.SECONDS.sleep(Integer.parseInt(currentLine.substring(4, size)));
@@ -65,8 +63,7 @@ public class EyeApp {
 
 				if (token.equals("p")) { /* aka person*/
 					library.report("person", currentLine.substring(6, size), name);
-				}
-				else { /* aka car */
+				} else { /* aka car */
 					library.report("car", currentLine.substring(3, size), name);
 				}
 			}

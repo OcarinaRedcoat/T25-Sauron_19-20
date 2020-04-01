@@ -1,5 +1,6 @@
 package pt.tecnico.sauron.silo;
 
+import com.google.protobuf.Timestamp;
 import io.grpc.stub.StreamObserver;
 import pt.tecnico.sauron.silo.domain.Camera;
 import pt.tecnico.sauron.silo.domain.Observation;
@@ -26,8 +27,7 @@ public class SiloServerImpl extends SiloGrpc.SiloImplBase{
         } catch (IllegalArgumentException e){
             throw e;
         }
-        SiloOuterClass.CamJoinResponse response = SiloOuterClass.CamJoinResponse.newBuilder().setResult(Ops.camJoin(localName, locationX, locationY)).build();
-
+        SiloOuterClass.CamJoinResponse response = SiloOuterClass.CamJoinResponse.newBuilder().build();
         // Send a single response through the stream.
         responseObserver.onNext(response);
         // Notify the client that the operation has been completed.
@@ -63,70 +63,73 @@ public class SiloServerImpl extends SiloGrpc.SiloImplBase{
         String camName = request.getCamName();
         String id = request.getId();
 
+
         try{
-            if (request.getType().equals(SiloOuterClass.ObjectType.PERSON)){
-                Ops.report(camName, id, "person");
+            Ops.report(camName, id, request.getType());
+            SiloOuterClass.ReportResponse response = SiloOuterClass.ReportResponse.newBuilder().build();
+            responseObserver.onNext(response);
+            responseObserver.onCompleted();
+        } catch (IllegalArgumentException e){
+            throw e;
+        }
 
-                SiloOuterClass.ReportResponse response = SiloOuterClass.ReportResponse.newBuilder().setError(true).build();
-                responseObserver.onNext(response);
-                responseObserver.onCompleted();
 
-            } else if (request.getType().equals(SiloOuterClass.ObjectType.CAR)) {
-                Ops.report(camName, id, "car");
-                SiloOuterClass.ReportResponse response = SiloOuterClass.ReportResponse.newBuilder().setError(true).build();
-                responseObserver.onNext(response);
-                responseObserver.onCompleted();
-            } else {
-                Ops.report(camName, id, "other");
-                SiloOuterClass.ReportResponse response = SiloOuterClass.ReportResponse.newBuilder().setError(false).build();
-                responseObserver.onNext(response);
-                responseObserver.onCompleted();
+    }
+
+    public void track(SiloOuterClass.TrackRequest request, StreamObserver<SiloOuterClass.TrackResponse> responseObserver) throws IllegalArgumentException{
+
+        try{
+            Observation trackedObs = Ops.track(request.getType(), request.getId());
+
+
+            Camera cam = Ops.camInfo(trackedObs.getCamera());
+
+            SiloOuterClass.Camera camera = SiloOuterClass.Camera.newBuilder().setName(trackedObs.getCamera()).setLatitude(cam.getLatitude()).setLongitude(cam.getLongitude()).build();
+
+
+            SiloOuterClass.Observation obs = SiloOuterClass.Observation.newBuilder().setId(trackedObs.getId()).setType(trackedObs.getType()).setCam(camera).setTimestamp()
+
+
+
+            SiloOuterClass.TrackResponse response = SiloOuterClass.TrackResponse.newBuilder().setObsRes(obs).build();
+            responseObserver.onNext(response);
+            responseObserver.onCompleted();
+        } catch (IllegalArgumentException e){
+            throw e;
+        }
+
+    }
+
+    public void trackMatch(SiloOuterClass.TrackMatchRequest request, StreamObserver<SiloOuterClass.TrackMatchResponse> responseObserver) throws IllegalArgumentException {
+
+
+        try{
+
+            List<Observation> obsResponse = Ops.trackMatch(request.getType(), request.getId());
+
+            //SiloOuterClass.ObservationListResponse response = SiloOuterClass.ObservationListResponse.newBuilder().setObservationlist(ObsList).build();
+            //responseObserver.onNext(response);
+            //responseObserver.onCompleted();
+
+
+
+        } catch (IllegalArgumentException e){
+            throw e;
+        }
+    }
+
+    public void trace(SiloOuterClass.TraceRequest request, StreamObserver<SiloOuterClass.TraceResponse> responseObserver) throws IllegalArgumentException{
+
+        try{
+            List<Observation> obsResponse = Ops.trace(request.getType(), request.getId());
+            for (int i=0; i < obsResponse.size(); i++) {
+                SiloOuterClass.TrackResponse responseLst = SiloOuterClass.TraceResponse.newBuilder().setObsRes(i, )
+                //Camera cam = Ops.camInfo();
             }
         } catch (IllegalArgumentException e){
             throw e;
         }
 
-
-    }
-
-    public void track(SiloOuterClass.TTTRequest request, StreamObserver<SiloOuterClass.ObservationResponse> responseObserver){
-
-
-    }
-
-    public void trackMatch(SiloOuterClass.TTTRequest request, StreamObserver<SiloOuterClass.ObservationListResponse> responseObserver) throws IllegalArgumentException {
-
-
-        try{
-
-            String type = getTTTType(request);
-            List<String> strResponse = Ops.trackMatch(type, request.getId());
-            String ObsList = Ops.splitTrackResponse(strResponse);
-
-            SiloOuterClass.ObservationListResponse response = SiloOuterClass.ObservationListResponse.newBuilder().setObservationlist(ObsList).build();
-            responseObserver.onNext(response);
-            responseObserver.onCompleted();
-
-
-
-        } catch (IllegalArgumentException e){
-            throw e;
-        }
-    }
-
-    public void trace(SiloOuterClass.TTTRequest request, StreamObserver<SiloOuterClass.ObservationListResponse> responseObserver){
-
-    }
-
-
-    public String getTTTType(SiloOuterClass.TTTRequest request) throws IllegalArgumentException {
-        if (request.getType().equals(SiloOuterClass.ObjectType.PERSON)){
-            return "person";
-        } else if (request.getType().equals(SiloOuterClass.ObjectType.CAR)){
-            return "car";
-        } else {
-            throw new IllegalArgumentException("Wrong Type");
-        }
     }
 
 }
