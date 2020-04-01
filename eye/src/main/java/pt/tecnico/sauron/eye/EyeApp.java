@@ -8,8 +8,8 @@ import java.util.concurrent.TimeUnit;
 
 public class EyeApp {
 
-//	private static SiloFrontend library;
-//	private static String name;
+	private static SiloFrontend library;
+	private static String name;
 
 	public static void main(String[] args) throws InterruptedException {
 		System.out.println(EyeApp.class.getSimpleName());
@@ -20,19 +20,8 @@ public class EyeApp {
 			System.out.printf("arg[%d] = %s%n", i, args[i]);
 		}
 
-//		String[] hpToLib = new String[2]; //host and port to Library (SiloFrontend library)
-//		hpToLib[0] = args[1];
-//		hpToLib[1] = args[2];
-//		System.out.println("deu merda" + hpToLib[0]);
-
-
-//		int argsSize = args.toString().length();
-
-//		se calhar usar o substring para o FE
-//		library = new SiloFrontend(args.toString().substring(3, argsSize));
+		library = new SiloFrontend(args);
 		System.out.println("deu merda\n");
-
-		SiloFrontend library = new SiloFrontend(args);
 
 
 		String name = args[2]; // camera name
@@ -43,33 +32,37 @@ public class EyeApp {
 		library.camJoin(args[2], latitude, longitude); // args[2] -> name
 
 
+		System.out.print("\nWelcome to EyeApp, type in a report\n\n");
 
-		Scanner scanner = new Scanner("Welcome to EyeApp, type in a report");
+		try (Scanner scanner = new Scanner(System.in)){
 
-		while (scanner.hasNext()){
+			do {
 
-			String token = scanner.next();
-			String currentLine = scanner.nextLine();
+				String token = scanner.nextLine();
+				int size = token.length();
 
-			System.out.println("line:" + currentLine);
-
-			int size =  currentLine.length();
-
-			if (token.equals("#")) {
-				System.out.println("\n"); /* eu sou um genio */
-			}
-			else if (currentLine.substring(0, 3).equals("zzz")) {
-				TimeUnit.SECONDS.sleep(Integer.parseInt(currentLine.substring(4, size)));
-			}
-			else {
-
-				if (token.equals("p")) { /* aka person*/
-					library.report("person", currentLine.substring(6, size), name);
+				if (token.contains("#")) {
+					continue;
 				}
-				else { /* aka car */
-					library.report("car", currentLine.substring(3, size), name);
+				else if (token.contains("zzz")) {
+					System.out.println();
+					TimeUnit.SECONDS.sleep(Integer.parseInt(token.substring(4, size)));
+//					System.out.print("acabou o sleep\n");
 				}
-			}
+				else {
+
+					if (token.startsWith("person")) { /* aka person*/
+						library.report("person", token.substring(7, size), name);
+//						System.out.println("PERSON!!!");
+					}
+					else if (token.startsWith("car")) { /* aka car */
+						library.report("car", token.substring(4, size), name);
+//						System.out.println("CAAAAAR!!!!");
+					}
+				}
+
+			}while (scanner.hasNextLine());
+
 		}
 	}
 }
