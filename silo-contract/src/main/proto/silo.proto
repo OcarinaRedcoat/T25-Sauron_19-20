@@ -65,8 +65,8 @@ message Observation {
     ObjectType type = 1;
     string id = 2;
     Camera cam = 3;
-    google.protobuf.Timestamp timestamp = 4;
-
+    //google.protobuf.Timestamp timestamp = 4;
+    string timestamp = 4;
 }
 
 //----------------------------------------------------------------------------------------------------------------------

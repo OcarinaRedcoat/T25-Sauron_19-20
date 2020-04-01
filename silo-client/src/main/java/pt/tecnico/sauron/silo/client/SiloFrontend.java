@@ -36,7 +36,6 @@ public class SiloFrontend {
      * This method is to be called only in eye
      */
     public void camJoin(String name, float locationX, float locationY){
-        //TODO check for errors
         stub.camJoin(SiloOuterClass.CamJoinRequest.newBuilder().setLocal(name).setLatitude(locationX).setLongitude(locationY).build());
     }
 
