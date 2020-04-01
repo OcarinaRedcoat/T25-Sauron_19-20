@@ -2,6 +2,7 @@ package pt.tecnico.sauron.silo;
 
 import pt.tecnico.sauron.silo.domain.Camera;
 import pt.tecnico.sauron.silo.domain.Observation;
+import pt.tecnico.sauron.silo.grpc.SiloOuterClass.*;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -48,31 +49,32 @@ public class SiloServerOps {
         return camsMap.get(name);
     }
 
-    public void report(String camName, String id, String type) throws IllegalArgumentException {
+    public void report(String camName, String id, ObjectType type) throws IllegalArgumentException {
 
-        Camera cam = camsMap.get(camName);
         if (obsMap.get(id) == null){
-            Observation obs = new Observation(type, id, cam);
+            Observation obs = new Observation(type, id, camName);
             obsMap.put(id, obs);
-        } else {
-            Observation obs = obsMap.get(id);
-            obs.addCamera(cam);
         }
 
     }
 
-    public String track(String type, String id){
+    public Observation track(ObjectType type, String id) throws IllegalArgumentException{
         Observation obs = obsMap.get(id);
-        return obs.toStringRecent(type);
+        if (!obs.equals(type)){
+            throw new IllegalArgumentException("Id exists but wrong type");
+        } else if (obs == null){
+            throw new IllegalArgumentException("Id doesnt exist");
+        }
+        return obs;
     }
 
-    public List<String> trackMatch(String type, String partId) throws IllegalArgumentException {
+    public List<Observation> trackMatch(String type, String partId) throws IllegalArgumentException {
 
-        List<String> lst = new ArrayList<>();
+        List<Observation> lst = new ArrayList<>();
         if (partId.startsWith("*")){
             for (Observation o: obsMap.values()) {
                 if (o.getId().endsWith(partId.substring(1)) && o.equalType(type)){
-                    lst.add(o.toStringRecent(type));
+                    lst.add(o);
                 }
             }
         } else if (partId.endsWith("*")) {
@@ -80,7 +82,7 @@ public class SiloServerOps {
 
             for (Observation o : obsMap.values()) {
                 if (o.getId().startsWith(part) && o.equalType(type)) {
-                    lst.add(o.toStringRecent(type));
+                    lst.add(o);
                 }
             }
         }
@@ -92,7 +94,7 @@ public class SiloServerOps {
 
             for (Observation o : obsMap.values()) {
                 if (o.getId().startsWith(part1) && o.getId().endsWith(part2) && o.equalType(type)) {
-                    lst.add(o.toStringRecent(type));
+                    lst.add(o);
                 }
             }
 
@@ -104,26 +106,9 @@ public class SiloServerOps {
         return lst;
     }
 
-    public List<String> trace(String type, String id) throws IllegalArgumentException {
-        Observation obs = obsMap.get(id);
-        List<String> lst = obs.toStringAll(type);
-        if (!obs.equalType(type)){
-            throw new IllegalArgumentException("Wrong Type");
-        } else if (lst.isEmpty()){
-            throw new IllegalArgumentException("Lst empty");
-        }
-        return lst;
-    }
-
-    public String splitTrackResponse(List<String> Observations) {
-
-        StringBuilder result  = new StringBuilder();
-
-        for (String o: Observations) {
-            result.append(o).append("\n");
-        }
-
-        return result.toString();
+    public List<Observation> trace(String type, String id) throws IllegalArgumentException {
+        List<Observation> obsLst = new ArrayList<>();
+        return obsLst;
     }
 
 }

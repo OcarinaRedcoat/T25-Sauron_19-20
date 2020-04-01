@@ -63,7 +63,6 @@ public class SiloServerImpl extends SiloGrpc.SiloImplBase{
         String camName = request.getCamName();
         String id = request.getId();
 
-        // verificacao de argumentos aqui
         try{
             if (request.getType().equals(SiloOuterClass.ObjectType.PERSON)){
                 Ops.report(camName, id, "person");
