@@ -1,15 +1,20 @@
 package pt.tecnico.sauron.silo;
 
 import com.google.protobuf.Timestamp;
+import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 import pt.tecnico.sauron.silo.domain.Camera;
 import pt.tecnico.sauron.silo.domain.Observation;
 import pt.tecnico.sauron.silo.grpc.*;
 
+import javax.management.RuntimeErrorException;
 import javax.security.auth.login.FailedLoginException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
+import static io.grpc.Status.INVALID_ARGUMENT;
+
+
 
 
 public class SiloServerImpl extends SiloGrpc.SiloImplBase{
@@ -169,10 +174,15 @@ public class SiloServerImpl extends SiloGrpc.SiloImplBase{
 
     }
 
-    public void ctrlPing(SiloOuterClass.PingRequest request, StreamObserver<SiloOuterClass.PingResponse> responseObserver) {
+    public void ctrlPing(SiloOuterClass.PingRequest request, StreamObserver<SiloOuterClass.PingResponse> responseObserver){
 
         String input = request.getPing();
-        String output = "Server Running" + input;
+        String output = "Server Running " + input;
+
+        if (input == null || input.isBlank()) {
+            responseObserver.onError(INVALID_ARGUMENT
+                    .withDescription("Input cannot be empty!").asRuntimeException());
+        }
 
         SiloOuterClass.PingResponse response = SiloOuterClass.PingResponse.newBuilder().
                 setPong(output).build();
