@@ -51,8 +51,8 @@ message ReportResponse {}
 
 
 enum ObjectType {
-    PERSON = 0;
-    CAR = 1;
+    person = 0;
+    car = 1;
 }
 
 message Camera{

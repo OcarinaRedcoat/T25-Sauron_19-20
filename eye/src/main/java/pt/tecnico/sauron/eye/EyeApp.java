@@ -1,5 +1,6 @@
 package pt.tecnico.sauron.eye;
 
+import io.grpc.ManagedChannel;
 import pt.tecnico.sauron.silo.client.SiloFrontend;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
@@ -7,7 +8,6 @@ import java.util.concurrent.TimeUnit;
 public class EyeApp {
 
 	private static SiloFrontend library;
-	private static String name;
 
 	public static void main(String[] args) throws InterruptedException {
 		System.out.println(EyeApp.class.getSimpleName());
@@ -18,15 +18,14 @@ public class EyeApp {
 			System.out.printf("arg[%d] = %s%n", i, args[i]);
 		}
 
-
-		library = new SiloFrontend(args[1], args[2]);
-
-		name = args[3]; // camera name
-
+		String name = args[3]; // camera name
 		float latitude = Float.parseFloat(args[4]);
 		float longitude = Float.parseFloat(args[5]);
 
-		library.camJoin(args[3], latitude, longitude); // args[2] -> name
+		library = new SiloFrontend();
+		ManagedChannel channel = library.createChannel(args[1], args[2]);
+
+		library.camJoin(name, latitude, longitude);
 
 
 		System.out.print("\nWelcome to EyeApp, type in a report\n\n");
@@ -44,22 +43,24 @@ public class EyeApp {
 				else if (token.contains("zzz")) {
 					System.out.println();
 					TimeUnit.SECONDS.sleep(Integer.parseInt(token.substring(4, size)));
-//					System.out.print("acabou o sleep\n");
+					System.out.print("acabou o sleep\n");
 				}
 				else {
 
 					if (token.startsWith("person")) { /* aka person*/
 						library.report("person", token.substring(7, size), name);
-//						System.out.println("PERSON!!!");
+						System.out.println("!!!" + token.substring(7, size) + "!!!");
+						System.out.println("PERSON!!!");
 					}
 					else if (token.startsWith("car")) { /* aka car */
 						library.report("car", token.substring(4, size), name);
-//						System.out.println("CAAAAAR!!!!");
+						System.out.println("CAAAAAR!!!!");
 					}
 				}
 
 			}while (scanner.hasNextLine());
 
 		}
+		channel.shutdownNow();
 	}
 }

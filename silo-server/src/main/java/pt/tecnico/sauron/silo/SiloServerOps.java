@@ -53,15 +53,18 @@ public class SiloServerOps {
 
     public void report(String camName, String id, ObjectType type) throws IllegalArgumentException {
         // TODO veridicar os argumentos
+
         Observation obs = new Observation(type, id, camName);
         obsMap.put(id, obs);
         allObservations.add(obs);
-
+        System.out.println("!!!" + obs.getId() + "!!!" + obs.getTimestamp().toString() + "!!!" + obs.getType().toString() + "!!!" + obs.getCamera() + "!!!");
     }
 
     public Observation track(ObjectType type, String id) throws IllegalArgumentException{
+
         Observation obs = obsMap.get(id);
-        if (!obs.equals(type)){
+        System.out.println(type.toString() + "||||" + id);
+        if (!obs.equalType(type)){
             throw new IllegalArgumentException("Id exists but wrong type");
         } else if (obs == null){
             throw new IllegalArgumentException("Id doesnt exist");
