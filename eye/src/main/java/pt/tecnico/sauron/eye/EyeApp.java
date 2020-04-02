@@ -19,9 +19,9 @@ public class EyeApp {
 		}
 
 
-		SiloFrontend library = new SiloFrontend(args[1], args[2]);
+		library = new SiloFrontend(args[1], args[2]);
 
-		String name = args[3]; // camera name
+		name = args[3]; // camera name
 
 		float latitude = Float.parseFloat(args[4]);
 		float longitude = Float.parseFloat(args[5]);
