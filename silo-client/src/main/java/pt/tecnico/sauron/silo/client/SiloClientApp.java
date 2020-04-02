@@ -2,12 +2,9 @@ package pt.tecnico.sauron.silo.client;
 
 
 import io.grpc.StatusRuntimeException;
-import pt.tecnico.sauron.silo.grpc.SiloGrpc;
 import pt.tecnico.sauron.silo.grpc.SiloOuterClass;
 
 public class SiloClientApp {
-
-	private  SiloGrpc.SiloBlockingStub stub;
 
 	public static void main(String[] args) {
 		System.out.println(SiloClientApp.class.getSimpleName());
@@ -18,19 +15,21 @@ public class SiloClientApp {
 			System.out.printf("arg[%d] = %s%n", i, args[i]);
 		}
 
-		ctrl_ping(args[0], args[1]);
+		SiloFrontend frontend = new SiloFrontend(args[0], args[1]);
+
+		ctrl_ping(frontend);
 
 	}
 
 //	testar no SiloIT
-	public static void ctrl_ping(String host, String port) {
+	public static void ctrl_ping(SiloFrontend library) {
 
-		SiloFrontend frontend = new SiloFrontend(host, port);
-
+//		maybe later send as arg the string for setPing
 		try {
-			SiloOuterClass.PingRequest request = SiloOuterClass.PingRequest.newBuilder().setPing("").build();
-			SiloOuterClass.PingResponse response = frontend.ctrlPing(request);
+			SiloOuterClass.PingRequest request = SiloOuterClass.PingRequest.newBuilder().setPing("Fine").build();
+			SiloOuterClass.PingResponse response = library.ctrlPing(request);
 			System.out.println(response);
+
 		} catch (StatusRuntimeException e) {
 			System.out.println("Caught exception with description: " +
 					e.getStatus().getDescription());
