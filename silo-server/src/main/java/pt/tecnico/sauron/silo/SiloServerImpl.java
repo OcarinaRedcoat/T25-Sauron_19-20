@@ -88,7 +88,7 @@ public class SiloServerImpl extends SiloGrpc.SiloImplBase{
 
             SiloOuterClass.Camera camera = SiloOuterClass.Camera.newBuilder().setName(trackedObs.getCamera()).setLatitude(cam.getLatitude()).setLongitude(cam.getLongitude()).build();
 
-
+            //Timestamp tmp = Timestamp.newBuilder().setSeconds(trackedObs.getTimestamp().getEpochSecond()).build();
             SiloOuterClass.Observation obs = SiloOuterClass.Observation.newBuilder().setId(trackedObs.getId()).setType(trackedObs.getType()).setCam(camera).setTimestamp(trackedObs.getTimestamp().toString()).build();
 
 
@@ -109,8 +109,7 @@ public class SiloServerImpl extends SiloGrpc.SiloImplBase{
 
             List<Observation> obsResponse = Ops.trackMatch(request.getType(), request.getId());
 
-            SiloOuterClass.TrackMatchResponse builder = SiloOuterClass.TrackMatchResponse.newBuilder().addAllObsRes(new ArrayList<SiloOuterClass.Observation>()).build();
-
+            SiloOuterClass.TrackMatchResponse builder = null;
 
             for (Observation o: obsResponse){
 
@@ -121,8 +120,21 @@ public class SiloServerImpl extends SiloGrpc.SiloImplBase{
 
                 SiloOuterClass.Observation obs = SiloOuterClass.Observation.newBuilder().setId(o.getId()).setCam(camera).setType(o.getType()).setTimestamp(o.getTimestamp().toString()).build();
 
-                builder.getObsResList().add(obs);
+                builder = SiloOuterClass.TrackMatchResponse.newBuilder().addObsRes(obs).build();
+/*            SiloOuterClass.TrackMatchResponse builder = SiloOuterClass.TrackMatchResponse.newBuilder().addAllObsRes(new ArrayList<SiloOuterClass.Observation>()).build();
 
+            SiloOuterClass.TrackMatchResponse response = SiloOuterClass.TrackMatchResponse.newBuilder().addAllObsRes(obsResponse)
+            for (Observation o: obsResponse){
+
+                Camera cam = Ops.camInfo(o.getCamera());
+
+                SiloOuterClass.Camera camera = SiloOuterClass.Camera.newBuilder().setName(o.getCamera()).setLatitude(cam.getLatitude()).setLongitude(cam.getLongitude()).build();
+
+
+                SiloOuterClass.Observation obs = SiloOuterClass.Observation.newBuilder().setId(o.getId()).setCam(camera).setType(o.getType()).setTimestamp(o.getTimestamp().toString()).build();
+
+                builder.getObsResList().add(obs);
+*/
             }
 
             responseObserver.onNext(builder);
@@ -140,8 +152,8 @@ public class SiloServerImpl extends SiloGrpc.SiloImplBase{
             List<Observation> obsResponse = Ops.trace(request.getType(), request.getId());
 
 
-            SiloOuterClass.TraceResponse builder = SiloOuterClass.TraceResponse.newBuilder().addAllObsRes(new ArrayList<SiloOuterClass.Observation>()).build();
-
+            //SiloOuterClass.TraceResponse builder = SiloOuterClass.TraceResponse.newBuilder().addAllObsRes(new ArrayList<SiloOuterClass.Observation>()).build();
+            SiloOuterClass.TraceResponse builder = null;
 
 
             for (Observation o: obsResponse){
@@ -152,8 +164,8 @@ public class SiloServerImpl extends SiloGrpc.SiloImplBase{
 
 
                 SiloOuterClass.Observation obs = SiloOuterClass.Observation.newBuilder().setId(o.getId()).setCam(camera).setType(o.getType()).setTimestamp(o.getTimestamp().toString()).build();
-
-                builder.getObsResList().add(obs);
+                builder = SiloOuterClass.TraceResponse.newBuilder().addObsRes(obs).build();
+                //builder.getObsResList().add(obs);
 
             }
 
