@@ -91,11 +91,12 @@ public class SiloFrontend {
         if (type.equals("person")){
             requestType = SiloOuterClass.ObjectType.person;
             response = stub.track(SiloOuterClass.TrackRequest.newBuilder().setType(requestType).setId(id).build());
-            return type + ',' + response.getObsRes().getId() + ',' + response.getObsRes().getTimestamp().toString() + ',' + response.getObsRes().getCam().getName() + ',' + response.getObsRes().getCam().getLatitude() + ',' + response.getObsRes().getCam().getLongitude();
+            return type + ',' + response.getObsRes().getId() + ',' + response.getObsRes().getTimestamp() + ',' + response.getObsRes().getCam().getName() + ',' + response.getObsRes().getCam().getLatitude() + ',' + response.getObsRes().getCam().getLongitude();
         } else if (type.equals("car")) {
             requestType = SiloOuterClass.ObjectType.car;
             response = stub.track(SiloOuterClass.TrackRequest.newBuilder().setType(requestType).setId(id).build());
-            return type + ',' + response.getObsRes().getId() + ',' + response.getObsRes().getTimestamp().toString() + ',' + response.getObsRes().getCam().getName() + ',' + response.getObsRes().getCam().getLatitude() + ',' + response.getObsRes().getCam().getLongitude();
+            return type + ',' + response.getObsRes().getId() + ',' +  response.getObsRes().getTimestamp() + ',' + response.getObsRes().getCam().getName() + ',' + response.getObsRes().getCam().getLatitude() + ',' + response.getObsRes().getCam().getLongitude();
+
         }
 
         return ""; // se chegou aqui significa que nao recebeu nada e os argumentos estao mal
@@ -133,7 +134,8 @@ public class SiloFrontend {
         String rest = "";
 
         for (SiloOuterClass.Observation o: response.getObsResList() ){
-            rest += o.getType().toString() + ',' + o.getId() + ',' + o.getTimestamp().toString() + ',' + o.getCam().getName() + ',' + o.getCam().getLatitude() + ',' + o.getCam().getLongitude() + "\n";
+            rest += o.getType().toString() + ',' + o.getId() + ',' + o.getTimestamp() + ',' + o.getCam().getName() + ',' + o.getCam().getLatitude() + ',' + o.getCam().getLongitude() + "\n";
+
         }
 
         return rest;
@@ -169,7 +171,7 @@ public class SiloFrontend {
         String rest = "";
 
         for (SiloOuterClass.Observation o: response.getObsResList() ){
-            rest += o.getType().toString() + ',' + o.getId() + ',' + o.getTimestamp().toString() + ',' + o.getCam().getName() + ',' + o.getCam().getLatitude() + ',' + o.getCam().getLongitude() + "\n";
+            rest += o.getType().toString() + ',' + o.getId() + ',' + o.getTimestamp() + ',' + o.getCam().getName() + ',' + o.getCam().getLatitude() + ',' + o.getCam().getLongitude() + "\n";
         }
 
         return rest;
