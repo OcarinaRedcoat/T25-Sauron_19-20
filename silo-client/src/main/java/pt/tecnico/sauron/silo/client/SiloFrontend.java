@@ -36,6 +36,7 @@ public class SiloFrontend {
      * This method is to be called only in eye
      */
     public void camJoin(String name, float locationX, float locationY){
+
         stub.camJoin(SiloOuterClass.CamJoinRequest.newBuilder().setLocal(name).setLatitude(locationX).setLongitude(locationY).build());
     }
 
@@ -60,6 +61,7 @@ public class SiloFrontend {
      * The server records the observations with their date and time, at the time of receipt;
      */
     public void report(String type, String id, String camName){
+
         SiloOuterClass.ObjectType requestType;
         if (type.equals("person")){
 
@@ -80,8 +82,10 @@ public class SiloFrontend {
      * Returns the most recent observation of the searched object;
      */
     public String track(String type, String id){
+
         SiloOuterClass.ObjectType requestType;
         SiloOuterClass.TrackResponse response;
+
         if (type.equals("person")){
             requestType = SiloOuterClass.ObjectType.PERSON;
             response = stub.track(SiloOuterClass.TrackRequest.newBuilder().setType(requestType).setId(id).build());
@@ -102,6 +106,7 @@ public class SiloFrontend {
      * Returns the most recent observation for each object found, with no specific ordering;
      */
     public String trackMatch(String type, String id){
+
         SiloOuterClass.TrackMatchResponse response;
         SiloOuterClass.ObjectType requestType;
         String observations = "";
