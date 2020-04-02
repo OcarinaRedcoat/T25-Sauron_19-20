@@ -34,9 +34,36 @@ public class SiloIT extends BaseIT {
 	// tests 
 	
 	@Test
-	public void test() {
-		
-		
+	// Teste ao T1, cam_info cam_join eye
+	public void testT1() {
+
+	}
+
+	@Test
+	public void failingTestT1() {
+
+	}
+
+	// Teste ao T2, report, spotter
+	@Test
+	public void testT2() {
+
+	}
+
+	@Test
+	public void failingTestT2() {
+
+	}
+
+	// Teste ao T3, track, trackMatch, trace
+	@Test
+	public void testT3() {
+
+	}
+
+	@Test
+	public void failingTestT3() {
+
 	}
 
 }
