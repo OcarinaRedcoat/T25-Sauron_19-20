@@ -101,6 +101,14 @@ message TraceRequest {
     string id = 2;
 }
 
+message PingRequest {
+    string ping = 1;
+}
+
+message PingResponse {
+    string pong = 1;
+}
+
 service Silo{
 
     rpc CamJoin(CamJoinRequest) returns (CamJoinResponse);
@@ -111,4 +119,6 @@ service Silo{
     rpc Track(TrackRequest) returns (TrackResponse);
     rpc TrackMatch(TrackMatchRequest) returns (TrackMatchResponse);
     rpc Trace(TraceRequest) returns (TraceResponse);
+
+    rpc Ctrl_ping(PingRequest) returns (PingResponse);
 }

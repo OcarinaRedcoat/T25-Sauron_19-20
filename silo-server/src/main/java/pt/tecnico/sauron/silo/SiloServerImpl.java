@@ -169,5 +169,17 @@ public class SiloServerImpl extends SiloGrpc.SiloImplBase{
 
     }
 
+    public void ctrlPing(SiloOuterClass.PingRequest request, StreamObserver<SiloOuterClass.PingResponse> responseObserver) {
+
+        String input = request.getPing();
+        String output = "Server Running" + input;
+
+        SiloOuterClass.PingResponse response = SiloOuterClass.PingResponse.newBuilder().
+                setPong(output).build();
+
+        responseObserver.onNext(response);
+        responseObserver.onCompleted();
+    }
+
 }
 

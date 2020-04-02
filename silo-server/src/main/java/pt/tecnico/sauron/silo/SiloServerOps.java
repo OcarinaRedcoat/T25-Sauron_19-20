@@ -126,7 +126,6 @@ public class SiloServerOps {
         checkArgs(id, type);
 
         Observation obs = obsMap.get(id);
-        System.out.println(type.toString() + "||||" + id);
         if (!obs.equalType(type)){
             throw new IllegalArgumentException("Id exists but wrong type");
         } else if (obs == null){
