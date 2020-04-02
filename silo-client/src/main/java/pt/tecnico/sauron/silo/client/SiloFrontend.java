@@ -5,7 +5,8 @@ import io.grpc.ManagedChannelBuilder;
 import pt.tecnico.sauron.silo.grpc.SiloGrpc;
 import pt.tecnico.sauron.silo.grpc.SiloOuterClass;
 
-import java.util.List;
+import java.time.Instant;
+import java.util.*;
 
 public class SiloFrontend {
 
@@ -170,11 +171,35 @@ public class SiloFrontend {
     public String getTraceString(SiloOuterClass.TraceResponse response){
         String rest = "";
 
-        for (SiloOuterClass.Observation o: response.getObsResList() ){
+        List<SiloOuterClass.Observation> list = response.getObsResList();
+
+        //list.sort(new ComparatorInstant());
+        //Collections.sort(list, new ComparatorInstant());
+
+
+        for (SiloOuterClass.Observation o: list){
             rest += o.getType().toString() + ',' + o.getId() + ',' + o.getTimestamp() + ',' + o.getCam().getName() + ',' + o.getCam().getLatitude() + ',' + o.getCam().getLongitude() + "\n";
         }
 
         return rest;
+    }
+
+
+
+    class ComparatorInstant implements Comparator<SiloOuterClass.Observation> {
+
+        @Override
+        public int compare(SiloOuterClass.Observation observation, SiloOuterClass.Observation t1) {
+
+            Instant tmp1 = Instant.parse(observation.getTimestamp());
+            Instant tmp2 = Instant.parse(t1.getTimestamp());
+            if(tmp1.isAfter(tmp2)) {
+                return 1;
+            }
+            else {
+                return 0;
+            }
+        }
     }
 
 }
