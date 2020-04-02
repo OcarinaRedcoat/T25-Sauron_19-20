@@ -63,7 +63,6 @@ public class SiloServerOps {
     public Observation track(ObjectType type, String id) throws IllegalArgumentException{
 
         Observation obs = obsMap.get(id);
-        System.out.println(type.toString() + "||||" + id);
         if (!obs.equalType(type)){
             throw new IllegalArgumentException("Id exists but wrong type");
         } else if (obs == null){
