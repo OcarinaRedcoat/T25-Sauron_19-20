@@ -5,32 +5,37 @@ import io.grpc.ManagedChannelBuilder;
 import pt.tecnico.sauron.silo.grpc.SiloGrpc;
 import pt.tecnico.sauron.silo.grpc.SiloOuterClass;
 
-import java.util.List;
-
 public class SiloFrontend {
 
     private  SiloGrpc.SiloBlockingStub stub;
+    private final ManagedChannel channel;
 
-    public SiloFrontend() {}
+    public SiloFrontend(String host, String portStr) {
 
-    public ManagedChannel createChannel(String host, String portStr) {
-
-        System.out.println("FE DEBUGGING...");
         final int port = Integer.parseInt(portStr);
         final String target = host + ":" + port;
 
         // Channel is the abstraction to connect to a service endpoint.
         // Let us use plaintext communication because we do not have certificates.
-        final ManagedChannel channel = ManagedChannelBuilder.forTarget(target).usePlaintext().build();
+        channel = ManagedChannelBuilder.forTarget(target).usePlaintext().build();
 
         // It is up to the client to determine whether to block the call.
         // Here we create a blocking stub, but an async stub, or an async stub with
         // Future are also available.
         stub = SiloGrpc.newBlockingStub(channel);
 
-        return channel;
-
     }
+
+    public ManagedChannel getChannel() {
+        return channel;
+    }
+
+
+
+    public SiloOuterClass.PingResponse ctrlPing(SiloOuterClass.PingRequest request) {
+        return stub.ctrlPing(request);
+    }
+
 
     /**
      * Arguments: name (String), and 2 locations X and Y (floats)
