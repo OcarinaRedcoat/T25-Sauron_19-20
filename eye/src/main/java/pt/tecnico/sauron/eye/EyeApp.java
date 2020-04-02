@@ -22,8 +22,8 @@ public class EyeApp {
 		float latitude = Float.parseFloat(args[4]);
 		float longitude = Float.parseFloat(args[5]);
 
-		library = new SiloFrontend();
-		ManagedChannel channel = library.createChannel(args[1], args[2]);
+		library = new SiloFrontend(args[1], args[2]);
+		ManagedChannel channel = library.getChannel();
 
 		library.camJoin(name, latitude, longitude);
 
