@@ -33,48 +33,43 @@ public class SpotterApp {
 				String info = scanner.nextLine();	// example: person 26r8723 ou car 67890*
 				int size = info.length();			// size of info
 
-
 				if(command.equals("spot")) {		// spot: track or trackMatch, depending on having *
 					if(info.substring(1,7).startsWith("person") && info.substring(8, size).contains("*")) {
 						//System.out.println("spot person COM asterisco");
-						library.trackMatch("person", info.substring(8, size));
+						System.out.println(library.trackMatch("person", info.substring(8, size)));
 					}
-					else if (info.substring(1,4).startsWith("car") && info.substring(4, size).contains("*")) {
+					else if (info.substring(1,4).startsWith("car") && info.substring(5, size).contains("*")) {
 						//System.out.println("spot car COM asterisco");
-						library.trackMatch("car", info.substring(4, size));
+						System.out.println(library.trackMatch("car", info.substring(5, size)));
 					}
 					else if(info.substring(1,7).startsWith("person") && !(info.substring(8, size).contains("*"))) {
 						//System.out.println("spot person SEM asterisco");
-						System.out.println("!!!" + info.substring(8, size) + "!!!");
-
-//						library.track("person", info.substring(8, size));
-						
 						System.out.println(library.track("person", info.substring(8, size)));
 
 					}
-					else if (info.substring(1,4).startsWith("car") && !(info.substring(4, size).contains("*"))) {
+					else if (info.substring(1,4).startsWith("car") && !(info.substring(5, size).contains("*"))) {
 						//System.out.println("spot car SEM asterisco");
-						library.track("car", info.substring(4, size));
+						System.out.println(library.track("car", info.substring(5, size)));
 					}
 					else {
-						//System.out.println(("Deves ter escrito mal o spot, pá"));	//FIXME exceção?
+						System.out.println(("Deves ter escrito mal o spot, pá"));	//FIXME exceção?
 					}
 				}
 				else if (command.equals("trail")) {		// trail: only trace
 					if(info.substring(1,7).startsWith("person") && !(info.substring(8, size).contains("*"))) {
 						//System.out.println("trail person");
-						library.trace("person", info.substring(8, size));
+						System.out.println(library.trace("person", info.substring(8, size)));
 					}
-					else if (info.substring(1,7).startsWith("car") && !(info.substring(4, size).contains("*"))) {
+					else if (info.substring(1,7).startsWith("car") && !(info.substring(5, size).contains("*"))) {
 						//System.out.println("trail car");
-						library.trace("car", info.substring(4, size));
+						System.out.println(library.trace("car", info.substring(5, size)));
 					}
 					else {
-						//System.out.println(("Deves ter escrito mal o trail, pá"));	//FIXME exceção?
+						System.out.println(("Deves ter escrito mal o trail, pá"));	//FIXME exceção?
 					}
 				}
 				else {
-					//System.out.println(("Exceção, i guess"));	//FIXME exceção?
+					System.out.println(("Exceção, i guess"));	//FIXME exceção?
 				}
 
 			}
