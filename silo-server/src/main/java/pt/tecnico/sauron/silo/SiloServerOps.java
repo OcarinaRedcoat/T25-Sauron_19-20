@@ -2,7 +2,8 @@ package pt.tecnico.sauron.silo;
 
 import pt.tecnico.sauron.silo.domain.Camera;
 import pt.tecnico.sauron.silo.domain.Observation;
-import pt.tecnico.sauron.silo.exception.BadEntryException;
+import pt.tecnico.sauron.silo.grpc.SiloOuterClass.*;
+
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -17,6 +18,8 @@ public class SiloServerOps {
     private Map<String, Camera> camsMap = new HashMap<>();
     private Map<String, Observation> obsMap = new HashMap<>();
 
+    private List<Observation> allObservations = new ArrayList<>();
+
     public SiloServerOps() {}
 
 
@@ -24,7 +27,7 @@ public class SiloServerOps {
 
 
 
-    public String camJoin(String name, float locationX, float locationY) throws BadEntryException {
+    public void camJoin(String name, float locationX, float locationY) throws IllegalArgumentException {
         Camera newCamera;
 
         if (name.matches("[A-Za-z0-9]+") && name.length() >= 3 && name.length() <= 15) {
@@ -35,11 +38,10 @@ public class SiloServerOps {
                 camsMap.put(name, newCamera);
             }
 
-            return "CAM_NAME:" + name + "CAM_LOCATION" + locationX + ":" + locationY;
         }
 
         else {
-            throw new BadEntryException("Name non alhpanumeric");
+            throw new IllegalArgumentException("Name non alhpanumeric");
         }
     }
 
@@ -49,30 +51,31 @@ public class SiloServerOps {
         return camsMap.get(name);
     }
 
-    public void report(String camName, String id, String type) throws BadEntryException {
-
-        Camera cam = camsMap.get(camName);
-        if (obsMap.get(id) == null){
-            Observation obs = new Observation(type, id, cam);
-            obsMap.put(id, obs);
-        } else {
-            Observation obs = obsMap.get(id);
-            obs.addCamera(cam);
-        }
+    public void report(String camName, String id, ObjectType type) throws IllegalArgumentException {
+        // TODO veridicar os argumentos
+        Observation obs = new Observation(type, id, camName);
+        obsMap.put(id, obs);
+        allObservations.add(obs);
 
     }
 
-    public String track(String type, String id){
+    public Observation track(ObjectType type, String id) throws IllegalArgumentException{
         Observation obs = obsMap.get(id);
-        return obs.toStringRecent(type);
+        if (!obs.equals(type)){
+            throw new IllegalArgumentException("Id exists but wrong type");
+        } else if (obs == null){
+            throw new IllegalArgumentException("Id doesnt exist");
+        }
+        return obs;
     }
 
-    public List<String> trackMatch(String type, String partId) throws BadEntryException {
-        List<String> lst = new ArrayList<>();
+    public List<Observation> trackMatch(ObjectType type, String partId) throws IllegalArgumentException {
+
+        List<Observation> lst = new ArrayList<>();
         if (partId.startsWith("*")){
             for (Observation o: obsMap.values()) {
                 if (o.getId().endsWith(partId.substring(1)) && o.equalType(type)){
-                    lst.add(o.toStringRecent(type));
+                    lst.add(o);
                 }
             }
         } else if (partId.endsWith("*")) {
@@ -80,7 +83,7 @@ public class SiloServerOps {
 
             for (Observation o : obsMap.values()) {
                 if (o.getId().startsWith(part) && o.equalType(type)) {
-                    lst.add(o.toStringRecent(type));
+                    lst.add(o);
                 }
             }
         }
@@ -92,27 +95,29 @@ public class SiloServerOps {
 
             for (Observation o : obsMap.values()) {
                 if (o.getId().startsWith(part1) && o.getId().endsWith(part2) && o.equalType(type)) {
-                    lst.add(o.toStringRecent(type));
+                    lst.add(o);
                 }
             }
 
 
         }
         if (lst.isEmpty()){
-            throw new BadEntryException("No lst, so somthing wrong is not right");
+            throw new IllegalArgumentException("No lst, so something wrong is not right");
         }
         return lst;
     }
 
-    public List<String> trace(String type, String id) throws BadEntryException {
-        Observation obs = obsMap.get(id);
-        List<String> lst = obs.toStringAll(type);
-        if (!obs.equalType(type)){
-            throw new BadEntryException("Wrong Type");
-        } else if (lst.isEmpty()){
-            throw new BadEntryException("Lst empty");
+    public List<Observation> trace(ObjectType type, String id) throws IllegalArgumentException {
+        List<Observation> obsLst = new ArrayList<>();
+        for (Observation o: allObservations) {
+            if (o.getId().equals(id) && o.equalType(type)){
+                obsLst.add(o);
+            }
         }
-        return lst;
+        if (obsLst.isEmpty()){
+            throw new IllegalArgumentException("No lst, so something wrong is not right");
+        }
+        return obsLst;
     }
 
 }

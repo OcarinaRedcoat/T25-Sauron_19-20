@@ -11,10 +11,9 @@ public class SiloFrontend {
 
     private  SiloGrpc.SiloBlockingStub stub;
 
-    public SiloFrontend(String []args){
+    public SiloFrontend(String host, String portStr){
 
-        final String host = args[1];
-        final int port = Integer.parseInt(args[2]);
+        final int port = Integer.parseInt(portStr);
         final String target = host + ":" + port;
 
         // Channel is the abstraction to connect to a service endpoint.
@@ -37,8 +36,8 @@ public class SiloFrontend {
      * This method is to be called only in eye
      */
     public void camJoin(String name, float locationX, float locationY){
-        //TODO check for errors
-        String result = stub.camJoin(SiloOuterClass.CamJoinRequest.newBuilder().setLocal(name).setLatitude(locationX).setLongitude(locationY).build()).getResult();
+
+        stub.camJoin(SiloOuterClass.CamJoinRequest.newBuilder().setLocal(name).setLatitude(locationX).setLongitude(locationY).build());
     }
 
     /**
@@ -61,18 +60,20 @@ public class SiloFrontend {
      * The name must correspond to a previously registered camera.
      * The server records the observations with their date and time, at the time of receipt;
      */
-    public boolean report(String type, String id, String camName){
+    public void report(String type, String id, String camName){
+
         SiloOuterClass.ObjectType requestType;
         if (type.equals("person")){
-            requestType = SiloOuterClass.ObjectType.PERSON;
-        } else if (type.equals("car")){
-            requestType = SiloOuterClass.ObjectType.CAR;
-        } else {
-            requestType = SiloOuterClass.ObjectType.OTHER;
-        }
-        SiloOuterClass.ReportResponse response = stub.report(SiloOuterClass.ReportRequest.newBuilder().setType(requestType).setId(id).setCamName(camName).build());
 
-        return response.getError(); //Se retornar false deu erro, se retornar true deu certo
+            requestType = SiloOuterClass.ObjectType.PERSON;
+            stub.report(SiloOuterClass.ReportRequest.newBuilder().setType(requestType).setId(id).setCamName(camName).build());
+
+        } else if (type.equals("car")){
+
+            requestType = SiloOuterClass.ObjectType.CAR;
+            stub.report(SiloOuterClass.ReportRequest.newBuilder().setType(requestType).setId(id).setCamName(camName).build());
+
+        }
     }
 
     /**
@@ -81,24 +82,21 @@ public class SiloFrontend {
      * Returns the most recent observation of the searched object;
      */
     public String track(String type, String id){
+
         SiloOuterClass.ObjectType requestType;
+        SiloOuterClass.TrackResponse response;
+
         if (type.equals("person")){
             requestType = SiloOuterClass.ObjectType.PERSON;
+            response = stub.track(SiloOuterClass.TrackRequest.newBuilder().setType(requestType).setId(id).build());
+            return type + ',' + response.getObsRes().getId() + ',' + response.getObsRes().getTimestamp().toString() + ',' + response.getObsRes().getCam().getName() + ',' + response.getObsRes().getCam().getLatitude() + ',' + response.getObsRes().getCam().getLongitude();
         } else if (type.equals("car")) {
             requestType = SiloOuterClass.ObjectType.CAR;
-        } else {
-            requestType = SiloOuterClass.ObjectType.OTHER;
+            response = stub.track(SiloOuterClass.TrackRequest.newBuilder().setType(requestType).setId(id).build());
+            return type + ',' + response.getObsRes().getId() + ',' + response.getObsRes().getTimestamp().toString() + ',' + response.getObsRes().getCam().getName() + ',' + response.getObsRes().getCam().getLatitude() + ',' + response.getObsRes().getCam().getLongitude();
         }
-        SiloOuterClass.ObservationResponse response = stub.track(SiloOuterClass.TTTRequest.newBuilder().setType(requestType).setId(id).build());
 
-        String camLocal = response.getCamName();
-
-        float []coords = new float[2];
-
-        coords = camInfo(camLocal);
-
-        return type + ',' + response.getId() + ',' + response.getTimestamp().toString() + ',' + camLocal + ',' + coords[0] + ',' + coords[1];
-
+        return ""; // se chegou aqui significa que nao recebeu nada e os argumentos estao mal
     }
 
     /**
@@ -108,24 +106,35 @@ public class SiloFrontend {
      * Returns the most recent observation for each object found, with no specific ordering;
      */
     public String trackMatch(String type, String id){
-        //FIXME deviamos iterar sobre uma lista de IDs que tenham dado match e imprimir a 1ª observacao de cada
 
+        SiloOuterClass.TrackMatchResponse response;
         SiloOuterClass.ObjectType requestType;
         String observations = "";
         float[] coords;
 
         if (type.equals("person")){
             requestType = SiloOuterClass.ObjectType.PERSON;
+            response = stub.trackMatch(SiloOuterClass.TrackMatchRequest.newBuilder().setType(requestType).setId(id).build());
+            return getTrackMatchString(response);
         } else if (type.equals("car")) {
             requestType = SiloOuterClass.ObjectType.CAR;
-        } else {
-            requestType = SiloOuterClass.ObjectType.OTHER;
+            response = stub.trackMatch(SiloOuterClass.TrackMatchRequest.newBuilder().setType(requestType).setId(id).build());
+            return getTrackMatchString(response);
         }
 
-        SiloOuterClass.ObservationListResponse response = stub.trackMatch(SiloOuterClass.TTTRequest.newBuilder().setType(requestType).setId(id).build());
+        return "";
+        //return getString(type, observations, response);
 
-        return getString(type, observations, response);
+    }
 
+    public String getTrackMatchString(SiloOuterClass.TrackMatchResponse response){
+        String rest = "";
+
+        for (SiloOuterClass.Observation o: response.getObsResList() ){
+            rest += o.getType().toString() + ',' + o.getId() + ',' + o.getTimestamp().toString() + ',' + o.getCam().getName() + ',' + o.getCam().getLatitude() + ',' + o.getCam().getLongitude() + "\n";
+        }
+
+        return rest;
     }
 
     /**
@@ -135,31 +144,33 @@ public class SiloFrontend {
      */
     public String trace(String type, String id){
 
+        SiloOuterClass.TraceResponse response;
         SiloOuterClass.ObjectType requestType;
         String observations = "";
         float[] coords;
 
         if (type.equals("person")){
             requestType = SiloOuterClass.ObjectType.PERSON;
+            response = stub.trace(SiloOuterClass.TraceRequest.newBuilder().setType(requestType).setId(id).build());
+            return getTraceString(response);
         } else if (type.equals("car")){
             requestType = SiloOuterClass.ObjectType.CAR;
-        } else {
-            requestType = SiloOuterClass.ObjectType.OTHER;
+            response = stub.trace(SiloOuterClass.TraceRequest.newBuilder().setType(requestType).setId(id).build());
+            return getTraceString(response);
         }
 
-        SiloOuterClass.ObservationListResponse response = stub.trace(SiloOuterClass.TTTRequest.newBuilder().setType(requestType).setId(id).build());
-
-        return getString(type, observations, response);
+        return "";
     }
 
-    private String getString(String type, String observations, SiloOuterClass.ObservationListResponse response) {
-        float[] coords;
-        for(SiloOuterClass.ObservationResponse obList : response.getObservationlistList()) {
-            String camLocal = obList.getCamName();
-            coords = camInfo(camLocal);
-            observations += type + ',' + obList.getId() + ',' + obList.getTimestamp().toString() + ',' + camLocal + ',' + coords[0] + ',' + coords[1] + "\n";
 
+    public String getTraceString(SiloOuterClass.TraceResponse response){
+        String rest = "";
+
+        for (SiloOuterClass.Observation o: response.getObsResList() ){
+            rest += o.getType().toString() + ',' + o.getId() + ',' + o.getTimestamp().toString() + ',' + o.getCam().getName() + ',' + o.getCam().getLatitude() + ',' + o.getCam().getLongitude() + "\n";
         }
-        return observations;
+
+        return rest;
     }
+
 }

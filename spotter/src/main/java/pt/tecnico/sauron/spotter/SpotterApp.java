@@ -20,7 +20,7 @@ public class SpotterApp {
 			System.out.printf("arg[%d] = %s%n", i, args[i]);
 		}
 
-		SiloFrontend library = new SiloFrontend(args);
+		SiloFrontend library = new SiloFrontend(args[1], args[2]);
 
 		try (Scanner scanner = new Scanner(System.in)){
 

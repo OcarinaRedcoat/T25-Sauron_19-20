@@ -1,8 +1,6 @@
 package pt.tecnico.sauron.eye;
 
-
 import pt.tecnico.sauron.silo.client.SiloFrontend;
-
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
@@ -20,16 +18,15 @@ public class EyeApp {
 			System.out.printf("arg[%d] = %s%n", i, args[i]);
 		}
 
-		library = new SiloFrontend(args);
-		System.out.println("deu merda\n");
 
+		SiloFrontend library = new SiloFrontend(args[1], args[2]);
 
-		String name = args[2]; // camera name
+		String name = args[3]; // camera name
 
-		float latitude = Float.parseFloat(args[3]);
-		float longitude = Float.parseFloat(args[4]);
+		float latitude = Float.parseFloat(args[4]);
+		float longitude = Float.parseFloat(args[5]);
 
-		library.camJoin(args[2], latitude, longitude); // args[2] -> name
+		library.camJoin(args[3], latitude, longitude); // args[2] -> name
 
 
 		System.out.print("\nWelcome to EyeApp, type in a report\n\n");
