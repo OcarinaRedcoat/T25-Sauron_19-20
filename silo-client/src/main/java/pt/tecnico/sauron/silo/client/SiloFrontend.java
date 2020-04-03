@@ -86,9 +86,6 @@ public class SiloFrontend {
      */
     public String track(String type, String id){
 
-        type = "person";
-        id = "1";
-
         SiloOuterClass.ObjectType requestType;
         SiloOuterClass.TrackResponse response;
         //System.out.println("cheguei");
