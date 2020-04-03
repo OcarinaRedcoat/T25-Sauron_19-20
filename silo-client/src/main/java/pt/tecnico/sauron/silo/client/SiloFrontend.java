@@ -174,9 +174,7 @@ public class SiloFrontend {
 
         List<SiloOuterClass.Observation> list = response.getObsResList();
 
-        //list.sort(new ComparatorInstant());
         //Collections.sort(list, new ComparatorInstant());
-
 
         for (SiloOuterClass.Observation o: list){
             rest += o.getType().toString() + ',' + o.getId() + ',' + o.getTimestamp() + ',' + o.getCam().getName() + ',' + o.getCam().getLatitude() + ',' + o.getCam().getLongitude() + "\n";
@@ -186,7 +184,7 @@ public class SiloFrontend {
     }
 
 
-
+/*
     class ComparatorInstant implements Comparator<SiloOuterClass.Observation> {
 
         @Override
@@ -201,6 +199,6 @@ public class SiloFrontend {
                 return 0;
             }
         }
-    }
+    }*/
 
 }

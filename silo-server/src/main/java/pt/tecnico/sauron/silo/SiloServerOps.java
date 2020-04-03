@@ -169,11 +169,17 @@ public class SiloServerOps {
             throw new BadEntryException("Wrong carId or personId");
         }
         List<Observation> obsLst = new ArrayList<>();
-        for (Observation o: allObservations) {
+        for (int i = allObservations.size(); i > 0; i--){
+            Observation o = allObservations.get(i - 1);
             if (o.getId().equals(id) && o.equalType(type)){
                 obsLst.add(o);
             }
         }
+        /*for (Observation o: allObservations) {
+            if (o.getId().equals(id) && o.equalType(type)){
+                obsLst.add(o);
+            }
+        }*/
         if (obsLst.isEmpty()){
             throw new BadEntryException("No lst, so something wrong is not right");
         }
