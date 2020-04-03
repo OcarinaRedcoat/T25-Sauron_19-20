@@ -26,7 +26,9 @@ public class SiloServerOps {
         if(type.equals(ObjectType.person)) {
             try {
                 Long.parseLong(id);
-                return true;
+                if (Long.parseLong(id) >= 0) {
+                    return true;
+                }
             } catch (NumberFormatException e) {
                 System.out.println("deu raia person");
                 return false;
@@ -156,6 +158,29 @@ public class SiloServerOps {
             throw new BadEntryException("No lst, so something wrong is not right");
         }
 
+        if (type.equals(ObjectType.person)){
+            System.out.println("-----------");
+            Collections.sort(lst, new Comparator<Observation>() {
+                @Override
+                public int compare(Observation o1, Observation o2) {
+                    if (Long.parseLong(o1.getId()) > Long.parseLong(o2.getId())) {
+                        return 1;
+                    }
+                    return -1;
+                }
+            });
+
+
+        } else {
+            System.out.println("||||||||||");
+            Collections.sort(lst, new Comparator<Observation>() {
+                @Override
+                public int compare(Observation o1, Observation o2) {
+                    return o1.getId().compareTo(o2.getId());
+                }
+            });
+
+        }
         return lst;
     }
 

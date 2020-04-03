@@ -2,6 +2,7 @@ package pt.tecnico.sauron.silo.domain;
 
 import pt.tecnico.sauron.silo.grpc.SiloOuterClass.*;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.time.Instant;
 public class Observation  {
@@ -31,5 +32,6 @@ public class Observation  {
     public boolean equalType(ObjectType type){
         return this.obsType.equals(type);
     }
+
 
 }
