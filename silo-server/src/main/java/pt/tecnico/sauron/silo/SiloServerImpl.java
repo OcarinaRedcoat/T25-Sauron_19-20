@@ -89,6 +89,7 @@ public class SiloServerImpl extends SiloGrpc.SiloImplBase{
 
     public void track(SiloOuterClass.TrackRequest request, StreamObserver<SiloOuterClass.TrackResponse> responseObserver) {
 
+
         try{
             Observation trackedObs = Ops.track(request.getType(), request.getId());
 

@@ -113,6 +113,8 @@ public class SiloServerOps {
         }
 
         Observation obs = obsMap.get(id);
+
+        System.out.println("algo de errado nao esta certo" + "|||" + obs.getId() + "|||" + id);
         if (obs == null){
             throw new BadEntryException("Id doesnt exist");
         }

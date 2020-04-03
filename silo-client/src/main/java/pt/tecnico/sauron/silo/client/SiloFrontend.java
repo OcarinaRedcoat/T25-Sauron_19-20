@@ -11,28 +11,48 @@ import java.util.*;
 public class SiloFrontend {
 
     private  SiloGrpc.SiloBlockingStub stub;
-    private final ManagedChannel channel;
 
-    public SiloFrontend(String host, String portStr) {
+//    public SiloFrontend(String host, String portStr) {
+//
+//        final int port = Integer.parseInt(portStr);
+//        final String target = host + ":" + port;
+//
+//        // Channel is the abstraction to connect to a service endpoint.
+//        // Let us use plaintext communication because we do not have certificates.
+//        channel = ManagedChannelBuilder.forTarget(target).usePlaintext().build();
+//
+//        // It is up to the client to determine whether to block the call.
+//        // Here we create a blocking stub, but an async stub, or an async stub with
+//        // Future are also available.
+//        stub = SiloGrpc.newBlockingStub(channel);
+//
+//    }
+//
+//    public ManagedChannel getChannel() {
+//        return channel;
+//    }
 
+
+    public SiloFrontend() {}
+
+    public ManagedChannel createChannel(String host, String portStr) {
+
+        System.out.println("FE DEBUGGING...");
         final int port = Integer.parseInt(portStr);
         final String target = host + ":" + port;
 
         // Channel is the abstraction to connect to a service endpoint.
         // Let us use plaintext communication because we do not have certificates.
-        channel = ManagedChannelBuilder.forTarget(target).usePlaintext().build();
+        final ManagedChannel channel = ManagedChannelBuilder.forTarget(target).usePlaintext().build();
 
         // It is up to the client to determine whether to block the call.
         // Here we create a blocking stub, but an async stub, or an async stub with
         // Future are also available.
         stub = SiloGrpc.newBlockingStub(channel);
 
-    }
-
-    public ManagedChannel getChannel() {
         return channel;
-    }
 
+    }
 
 
     public SiloOuterClass.PingResponse ctrlPing(SiloOuterClass.PingRequest request) {
@@ -91,12 +111,9 @@ public class SiloFrontend {
      */
     public String track(String type, String id){
 
-        type = "person";
-        id = "1";
 
         SiloOuterClass.ObjectType requestType;
         SiloOuterClass.TrackResponse response;
-        //System.out.println("cheguei");
 
         if (type.equals("person")){
             requestType = SiloOuterClass.ObjectType.person;

@@ -24,8 +24,8 @@ public class SpotterApp {
 			System.out.printf("arg[%d] = %s%n", i, args[i]);
 		}
 
-		library = new SiloFrontend(args[1], args[2]);
-		ManagedChannel channel = library.getChannel();
+		library = new SiloFrontend();
+		ManagedChannel channel = library.createChannel(args[1], args[2]);
 
 		try (Scanner scanner = new Scanner(System.in)){
 

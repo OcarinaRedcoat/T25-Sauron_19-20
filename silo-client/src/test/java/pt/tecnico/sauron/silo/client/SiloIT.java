@@ -27,7 +27,7 @@ public class SiloIT extends BaseIT {
 
 	@BeforeEach
 	public void setUp() {
-		frontEnd = new SiloFrontend("localhost", "8080");
+		frontEnd = new SiloFrontend();
 	}
 
 	@AfterEach
