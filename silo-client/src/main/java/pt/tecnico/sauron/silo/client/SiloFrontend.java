@@ -42,12 +42,7 @@ public class SiloFrontend {
      */
     public void camJoin(String name, float locationX, float locationY){
 
-        try {
-            stub.camJoin(SiloOuterClass.CamJoinRequest.newBuilder().setLocal(name).setLatitude(locationX).setLongitude(locationY).build());
-        } catch (StatusRuntimeException e) {
-            Status status = e.getStatus();
-            System.out.println(status.getDescription());
-        }
+        stub.camJoin(SiloOuterClass.CamJoinRequest.newBuilder().setLocal(name).setLatitude(locationX).setLongitude(locationY).build());
     }
 
     /**
@@ -74,21 +69,13 @@ public class SiloFrontend {
     public void report(String type, String id, String camName){
 
         SiloOuterClass.ObjectType requestType;
-        try {
-            if (type.equals("person")){
 
-                requestType = SiloOuterClass.ObjectType.person;
-                stub.report(SiloOuterClass.ReportRequest.newBuilder().setType(requestType).setId(id).setCamName(camName).build());
-
-            } else if (type.equals("car")){
-
-                requestType = SiloOuterClass.ObjectType.car;
-                stub.report(SiloOuterClass.ReportRequest.newBuilder().setType(requestType).setId(id).setCamName(camName).build());
-
-            }
-        } catch (StatusRuntimeException e) {
-            Status status = e.getStatus();
-            System.out.println(status.getDescription());
+        if (type.equals("person")){
+            requestType = SiloOuterClass.ObjectType.person;
+            stub.report(SiloOuterClass.ReportRequest.newBuilder().setType(requestType).setId(id).setCamName(camName).build());
+        } else if (type.equals("car")){
+            requestType = SiloOuterClass.ObjectType.car;
+            stub.report(SiloOuterClass.ReportRequest.newBuilder().setType(requestType).setId(id).setCamName(camName).build());
         }
     }
 
@@ -106,24 +93,15 @@ public class SiloFrontend {
         SiloOuterClass.TrackResponse response;
         //System.out.println("cheguei");
 
-        try {
-            if (type.equals("person")){
-                requestType = SiloOuterClass.ObjectType.person;
-                response = stub.track(SiloOuterClass.TrackRequest.newBuilder().setType(requestType).setId(id).build());
-                return type + ',' + response.getObsRes().getId() + ',' + response.getObsRes().getTimestamp() + ',' + response.getObsRes().getCam().getName() + ',' + response.getObsRes().getCam().getLatitude() + ',' + response.getObsRes().getCam().getLongitude();
-            } else if (type.equals("car")) {
-                requestType = SiloOuterClass.ObjectType.car;
-                response = stub.track(SiloOuterClass.TrackRequest.newBuilder().setType(requestType).setId(id).build());
-                return type + ',' + response.getObsRes().getId() + ',' +  response.getObsRes().getTimestamp() + ',' + response.getObsRes().getCam().getName() + ',' + response.getObsRes().getCam().getLatitude() + ',' + response.getObsRes().getCam().getLongitude();
-
-            }
-        } catch (StatusRuntimeException e) {
-            Status status = e.getStatus();
-            System.out.println(status.getDescription());
-            return "";
+        if (type.equals("person")){
+            requestType = SiloOuterClass.ObjectType.person;
+            response = stub.track(SiloOuterClass.TrackRequest.newBuilder().setType(requestType).setId(id).build());
+            return type + ',' + response.getObsRes().getId() + ',' + response.getObsRes().getTimestamp() + ',' + response.getObsRes().getCam().getName() + ',' + response.getObsRes().getCam().getLatitude() + ',' + response.getObsRes().getCam().getLongitude();
+        } else if (type.equals("car")) {
+            requestType = SiloOuterClass.ObjectType.car;
+            response = stub.track(SiloOuterClass.TrackRequest.newBuilder().setType(requestType).setId(id).build());
+            return type + ',' + response.getObsRes().getId() + ',' +  response.getObsRes().getTimestamp() + ',' + response.getObsRes().getCam().getName() + ',' + response.getObsRes().getCam().getLatitude() + ',' + response.getObsRes().getCam().getLongitude();
         }
-
-
         return ""; // se chegou aqui significa que nao recebeu nada e os argumentos estao mal
     }
 
@@ -140,22 +118,15 @@ public class SiloFrontend {
         String observations = "";
         float[] coords;
 
-        try {
-            if (type.equals("person")){
-                requestType = SiloOuterClass.ObjectType.person;
-                response = stub.trackMatch(SiloOuterClass.TrackMatchRequest.newBuilder().setType(requestType).setId(id).build());
-                return getTrackMatchString(response);
-            } else if (type.equals("car")) {
-                requestType = SiloOuterClass.ObjectType.car;
-                response = stub.trackMatch(SiloOuterClass.TrackMatchRequest.newBuilder().setType(requestType).setId(id).build());
-                return getTrackMatchString(response);
-            }
-        } catch (StatusRuntimeException e) {
-            Status status = e.getStatus();
-            System.out.println(status.getDescription());
-            return "";
+        if (type.equals("person")){
+            requestType = SiloOuterClass.ObjectType.person;
+            response = stub.trackMatch(SiloOuterClass.TrackMatchRequest.newBuilder().setType(requestType).setId(id).build());
+            return getTrackMatchString(response);
+        } else if (type.equals("car")) {
+            requestType = SiloOuterClass.ObjectType.car;
+            response = stub.trackMatch(SiloOuterClass.TrackMatchRequest.newBuilder().setType(requestType).setId(id).build());
+            return getTrackMatchString(response);
         }
-
         return "";
         //return getString(type, observations, response);
 
@@ -184,23 +155,16 @@ public class SiloFrontend {
         String observations = "";
         float[] coords;
 
-        try {
-            if (type.equals("person")){
-                requestType = SiloOuterClass.ObjectType.person;
-                response = stub.trace(SiloOuterClass.TraceRequest.newBuilder().setType(requestType).setId(id).build());
-                return getTraceString(response);
-            } else if (type.equals("car")){
-                requestType = SiloOuterClass.ObjectType.car;
-                response = stub.trace(SiloOuterClass.TraceRequest.newBuilder().setType(requestType).setId(id).build());
-                return getTraceString(response);
-            }
-        } catch (StatusRuntimeException e) {
-            Status status = e.getStatus();
-            System.out.println(status.getDescription());
-            return "";
+
+        if (type.equals("person")){
+            requestType = SiloOuterClass.ObjectType.person;
+            response = stub.trace(SiloOuterClass.TraceRequest.newBuilder().setType(requestType).setId(id).build());
+            return getTraceString(response);
+        } else if (type.equals("car")){
+            requestType = SiloOuterClass.ObjectType.car;
+            response = stub.trace(SiloOuterClass.TraceRequest.newBuilder().setType(requestType).setId(id).build());
+            return getTraceString(response);
         }
-
-
         return "";
     }
 
