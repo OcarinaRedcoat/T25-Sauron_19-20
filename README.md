@@ -25,17 +25,13 @@ This change is important for code dependency management, to make sure that your 
 
 ### Task leaders
 
-*(fill-in table below with with team members assigned as leader to each task set; and then delete this line)*  
-
 | Task set | To-Do                         | Leader              |
 | ---------|-------------------------------| --------------------|
 | core     | protocol buffers, silo-client | _(whole team)_      |
-| T1       | cam_join, cam_info, eye       | _Alice Distributed_ |
-| T2       | report, spotter               | _Bob Systems_       |
-| T3       | track, trackMatch, trace      | _Charlie Rules_     |
-| T4       | test T1                       | _Charlie Rules_     |
-| T5       | test T2                       | _Alice Distributed_ |
-| T6       | test T3                       | _Bob Systems_       |
+| T1       | cam_join, cam_info, eye       | Pedro Teixeira      |
+| T2       | report, spotter               | Bernardo Faria      |
+| T3       | track, trackMatch, trace      | Ricardo Caetano     |
+| T4       | test T1,T2,T3                    | _(whole team)_      |
 
 
 ## Getting Started
