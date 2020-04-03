@@ -1,12 +1,20 @@
 package pt.tecnico.sauron.silo;
 
+import com.google.protobuf.Timestamp;
+import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 import pt.tecnico.sauron.silo.domain.Camera;
 import pt.tecnico.sauron.silo.domain.Observation;
-import pt.tecnico.sauron.silo.exception.BadEntryException;
 import pt.tecnico.sauron.silo.grpc.*;
 
+import javax.management.RuntimeErrorException;
+import javax.security.auth.login.FailedLoginException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ArrayBlockingQueue;
+import static io.grpc.Status.INVALID_ARGUMENT;
+
+
 
 
 public class SiloServerImpl extends SiloGrpc.SiloImplBase{
@@ -14,7 +22,7 @@ public class SiloServerImpl extends SiloGrpc.SiloImplBase{
     private SiloServerOps Ops = new SiloServerOps();
 
     @Override
-    public void camJoin(SiloOuterClass.CamJoinRequest request, StreamObserver<SiloOuterClass.CamJoinResponse> responseObserver) throws BadEntryException {
+    public void camJoin(SiloOuterClass.CamJoinRequest request, StreamObserver<SiloOuterClass.CamJoinResponse> responseObserver) throws IllegalArgumentException {
         // StreamObserver is used to represent the gRPC stream between the server and
         // client in order to send the appropriate responses (or errors, if any occur).
 
@@ -24,11 +32,10 @@ public class SiloServerImpl extends SiloGrpc.SiloImplBase{
 
         try{
             Ops.camJoin(localName, locationX, locationY);
-        } catch (BadEntryException e){
+        } catch (IllegalArgumentException e){
             throw e;
         }
-        SiloOuterClass.CamJoinResponse response = SiloOuterClass.CamJoinResponse.newBuilder().setResult(Ops.camJoin(localName, locationX, locationY)).build();
-
+        SiloOuterClass.CamJoinResponse response = SiloOuterClass.CamJoinResponse.newBuilder().build();
         // Send a single response through the stream.
         responseObserver.onNext(response);
         // Notify the client that the operation has been completed.
@@ -57,78 +64,131 @@ public class SiloServerImpl extends SiloGrpc.SiloImplBase{
     }
 
     @Override
-    public void report(SiloOuterClass.ReportRequest request, StreamObserver<SiloOuterClass.ReportResponse> responseObserver) throws BadEntryException {
+    public void report(SiloOuterClass.ReportRequest request, StreamObserver<SiloOuterClass.ReportResponse> responseObserver) throws IllegalArgumentException {
         // StreamObserver is used to represent the gRPC stream between the server and
         // client in order to send the appropriate responses (or errors, if any occur).
 
         String camName = request.getCamName();
         String id = request.getId();
 
-        // verificacao de argumentos aqui
+
         try{
-            if (request.getType().equals(SiloOuterClass.ObjectType.PERSON)){
-                Ops.report(camName, id, "person");
-
-                SiloOuterClass.ReportResponse response = SiloOuterClass.ReportResponse.newBuilder().setError(true).build();
-                responseObserver.onNext(response);
-                responseObserver.onCompleted();
-
-            } else if (request.getType().equals(SiloOuterClass.ObjectType.CAR)) {
-                Ops.report(camName, id, "car");
-                SiloOuterClass.ReportResponse response = SiloOuterClass.ReportResponse.newBuilder().setError(true).build();
-                responseObserver.onNext(response);
-                responseObserver.onCompleted();
-            } else {
-                Ops.report(camName, id, "other");
-                SiloOuterClass.ReportResponse response = SiloOuterClass.ReportResponse.newBuilder().setError(false).build();
-                responseObserver.onNext(response);
-                responseObserver.onCompleted();
-            }
-        } catch (BadEntryException e){
+            Ops.report(camName, id, request.getType());
+            SiloOuterClass.ReportResponse response = SiloOuterClass.ReportResponse.newBuilder().build();
+            responseObserver.onNext(response);
+            responseObserver.onCompleted();
+        } catch (IllegalArgumentException e){
             throw e;
         }
 
 
     }
 
-    public void track(SiloOuterClass.TTTRequest request, StreamObserver<SiloOuterClass.ObservationResponse> responseObserver){
+    public void track(SiloOuterClass.TrackRequest request, StreamObserver<SiloOuterClass.TrackResponse> responseObserver) throws IllegalArgumentException{
 
+        try{
+            Observation trackedObs = Ops.track(request.getType(), request.getId());
+
+
+            Camera cam = Ops.camInfo(trackedObs.getCamera());
+
+            SiloOuterClass.Camera camera = SiloOuterClass.Camera.newBuilder().setName(trackedObs.getCamera()).setLatitude(cam.getLatitude()).setLongitude(cam.getLongitude()).build();
+
+            //Timestamp tmp = Timestamp.newBuilder().setSeconds(trackedObs.getTimestamp().getEpochSecond()).build();
+
+            SiloOuterClass.Observation obs = SiloOuterClass.Observation.newBuilder().setId(trackedObs.getId()).setType(trackedObs.getType()).setCam(camera).setTimestamp(trackedObs.getTimestamp().toString()).build();
+
+
+
+            SiloOuterClass.TrackResponse response = SiloOuterClass.TrackResponse.newBuilder().setObsRes(obs).build();
+            responseObserver.onNext(response);
+            responseObserver.onCompleted();
+        } catch (IllegalArgumentException e){
+            throw e;
+        }
 
     }
 
-    public void trackMatch(SiloOuterClass.TTTRequest request, StreamObserver<SiloOuterClass.ObservationListResponse> responseObserver) throws BadEntryException {
+    public void trackMatch(SiloOuterClass.TrackMatchRequest request, StreamObserver<SiloOuterClass.TrackMatchResponse> responseObserver) throws IllegalArgumentException {
 
 
         try{
 
-            String type = getTTTType(request);
-            List<String> strResponse = Ops.trackMatch(type, request.getId());
+            List<Observation> obsResponse = Ops.trackMatch(request.getType(), request.getId());
 
-            //SiloOuterClass.ReportResponse response = SiloOuterClass.ObservationListResponse.newBuilder().setObservationlist(strResponse).build();
-            SiloOuterClass.ObservationListResponse response = SiloOuterClass.ObservationListResponse.newBuilder().setObservationlist()
+            //SiloOuterClass.TrackMatchResponse builder = null;
+
+            List<SiloOuterClass.Observation> obsRes = new ArrayList<>();
+            for (Observation o: obsResponse){
+
+                Camera cam = Ops.camInfo(o.getCamera());
+
+                SiloOuterClass.Camera camera = SiloOuterClass.Camera.newBuilder().setName(o.getCamera()).setLatitude(cam.getLatitude()).setLongitude(cam.getLongitude()).build();
+
+                //Timestamp tmp = Timestamp.newBuilder().setSeconds(o.getTimestamp().getEpochSecond()).build();
+
+                SiloOuterClass.Observation obs = SiloOuterClass.Observation.newBuilder().setId(o.getId()).setCam(camera).setType(o.getType()).setTimestamp(o.getTimestamp().toString()).build();
+
+                obsRes.add(obs);
+                //builder = SiloOuterClass.TrackMatchResponse.newBuilder().addObsRes(obs).build();
+
+            }
+            SiloOuterClass.TrackMatchResponse response = SiloOuterClass.TrackMatchResponse.newBuilder().addAllObsRes(obsRes).build();
             responseObserver.onNext(response);
             responseObserver.onCompleted();
 
 
-
-        } catch (BadEntryException e){
+        } catch (IllegalArgumentException e){
             throw e;
         }
     }
 
-    public void trace(SiloOuterClass.TTTRequest request, StreamObserver<SiloOuterClass.ObservationListResponse> responseObserver){
+    public void trace(SiloOuterClass.TraceRequest request, StreamObserver<SiloOuterClass.TraceResponse> responseObserver) throws IllegalArgumentException{
+
+        try{
+            List<Observation> obsResponse = Ops.trace(request.getType(), request.getId());
+
+
+            SiloOuterClass.TraceResponse builder = null;
+
+            List<SiloOuterClass.Observation> obsLst = new ArrayList<>();
+            for (Observation o: obsResponse){
+
+                Camera cam = Ops.camInfo(o.getCamera());
+
+                SiloOuterClass.Camera camera = SiloOuterClass.Camera.newBuilder().setName(o.getCamera()).setLatitude(cam.getLatitude()).setLongitude(cam.getLongitude()).build();
+
+                //Timestamp tmp = Timestamp.newBuilder().setSeconds(o.getTimestamp().getEpochSecond()).build();
+                SiloOuterClass.Observation obs = SiloOuterClass.Observation.newBuilder().setId(o.getId()).setCam(camera).setType(o.getType()).setTimestamp(o.getTimestamp().toString()).build();
+                //builder = SiloOuterClass.TraceResponse.newBuilder().addObsRes(obs).build();
+
+                obsLst.add(obs);
+            }
+            SiloOuterClass.TraceResponse response = SiloOuterClass.TraceResponse.newBuilder().addAllObsRes(obsLst).build();
+            responseObserver.onNext(response);
+            responseObserver.onCompleted();
+
+        } catch (IllegalArgumentException e){
+            throw e;
+        }
 
     }
 
+    public void ctrlPing(SiloOuterClass.PingRequest request, StreamObserver<SiloOuterClass.PingResponse> responseObserver){
 
-    public String getTTTType(SiloOuterClass.TTTRequest request) throws BadEntryException {
-        if (request.getType().equals(SiloOuterClass.ObjectType.PERSON)){
-            return "person";
-        } else if (request.getType().equals(SiloOuterClass.ObjectType.CAR)){
-            return "car";
-        } else {
-            throw new BadEntryException("Wrong Type");
+        String input = request.getPing();
+        String output = "Server Running " + input;
+
+        if (input == null || input.isBlank()) {
+            responseObserver.onError(INVALID_ARGUMENT
+                    .withDescription("Input cannot be empty!").asRuntimeException());
         }
+
+        SiloOuterClass.PingResponse response = SiloOuterClass.PingResponse.newBuilder().
+                setPong(output).build();
+
+        responseObserver.onNext(response);
+        responseObserver.onCompleted();
     }
 
 }
