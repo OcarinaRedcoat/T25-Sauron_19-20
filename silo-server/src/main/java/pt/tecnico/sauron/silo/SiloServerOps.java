@@ -30,7 +30,6 @@ public class SiloServerOps {
                     return true;
                 }
             } catch (NumberFormatException e) {
-                System.out.println("deu raia person");
                 return false;
             }
         }
@@ -45,7 +44,6 @@ public class SiloServerOps {
                 return true;
             }
             else {
-                System.out.println("deu raia car");
                 return false;
             }
         }
@@ -101,7 +99,6 @@ public class SiloServerOps {
         Observation obs = new Observation(type, id, camName);
         obsMap.put(id, obs);
         allObservations.add(obs);
-        System.out.println("!!!" + obs.getId() + "!!!" + obs.getTimestamp().toString() + "!!!" + obs.getType().toString() + "!!!" + obs.getCamera() + "!!!");
     }
 
     public Observation track(ObjectType type, String id) throws BadEntryException{
@@ -112,7 +109,6 @@ public class SiloServerOps {
 
         Observation obs = obsMap.get(id);
 
-        System.out.println("algo de errado nao esta certo" + "|||" + obs.getId() + "|||" + id);
         if (obs == null){
             throw new BadEntryException("Id doesnt exist");
         }
@@ -159,7 +155,6 @@ public class SiloServerOps {
         }
 
         if (type.equals(ObjectType.person)){
-            System.out.println("-----------");
             Collections.sort(lst, new Comparator<Observation>() {
                 @Override
                 public int compare(Observation o1, Observation o2) {
@@ -172,7 +167,6 @@ public class SiloServerOps {
 
 
         } else {
-            System.out.println("||||||||||");
             Collections.sort(lst, new Comparator<Observation>() {
                 @Override
                 public int compare(Observation o1, Observation o2) {
