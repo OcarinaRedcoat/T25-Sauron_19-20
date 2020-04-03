@@ -37,6 +37,9 @@ public class SiloServerOps {
             }
         }
         else if(type.equals(ObjectType.car)) {
+            if(id.length() != 6) {
+                return false;
+            }
             String s1 = id.substring(0,2);
             String s2 = id.substring(2,4);
             String s3 = id.substring(4,6);
