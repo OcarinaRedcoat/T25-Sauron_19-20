@@ -1,6 +1,8 @@
 package pt.tecnico.sauron.spotter;
 
 
+import io.grpc.Status;
+import io.grpc.StatusRuntimeException;
 import pt.tecnico.sauron.silo.client.SiloFrontend;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
@@ -36,20 +38,39 @@ public class SpotterApp {
 				if(command.equals("spot")) {		// spot: track or trackMatch, depending on having *
 					if(info.substring(1,7).startsWith("person") && info.substring(8, size).contains("*")) {
 						//System.out.println("spot person COM asterisco");
-						System.out.print(library.trackMatch("person", info.substring(8, size)));
+						try {
+							System.out.print(library.trackMatch("person", info.substring(8, size)));
+						} catch (StatusRuntimeException e) {
+							Status status = e.getStatus();
+							System.out.println(status.getDescription());
+						}
 					}
 					else if (info.substring(1,4).startsWith("car") && info.substring(5, size).contains("*")) {
 						//System.out.println("spot car COM asterisco");
-						System.out.print(library.trackMatch("car", info.substring(5, size)));
+						try {
+							System.out.print(library.trackMatch("car", info.substring(5, size)));
+						} catch (StatusRuntimeException e) {
+							Status status = e.getStatus();
+							System.out.println(status.getDescription());
+						}
 					}
 					else if(info.substring(1,7).startsWith("person") && !(info.substring(8, size).contains("*"))) {
 						//System.out.println("spot person SEM asterisco");
-						System.out.println(library.track("person", info.substring(8, size)));
-
+						try {
+							System.out.println(library.track("person", info.substring(8, size)));
+						} catch (StatusRuntimeException e) {
+							Status status = e.getStatus();
+							System.out.println(status.getDescription());
+						}
 					}
 					else if (info.substring(1,4).startsWith("car") && !(info.substring(5, size).contains("*"))) {
 						//System.out.println("spot car SEM asterisco");
-						System.out.println(library.track("car", info.substring(5, size)));
+						try {
+							System.out.println(library.track("car", info.substring(5, size)));
+						} catch (StatusRuntimeException e) {
+							Status status = e.getStatus();
+							System.out.println(status.getDescription());
+						}
 					}
 					else {
 						System.out.println(("Deves ter escrito mal o spot, pá"));	//FIXME exceção?
@@ -58,11 +79,21 @@ public class SpotterApp {
 				else if (command.equals("trail")) {		// trail: only trace
 					if(info.substring(1,7).startsWith("person") && !(info.substring(8, size).contains("*"))) {
 						//System.out.println("trail person");
-						System.out.print(library.trace("person", info.substring(8, size)));
+						try {
+							System.out.print(library.trace("person", info.substring(8, size)));
+						} catch (StatusRuntimeException e) {
+							Status status = e.getStatus();
+							System.out.println(status.getDescription());
+						}
 					}
 					else if (info.substring(1,7).startsWith("car") && !(info.substring(5, size).contains("*"))) {
 						//System.out.println("trail car");
-						System.out.print(library.trace("car", info.substring(5, size)));
+						try {
+							System.out.print(library.trace("car", info.substring(5, size)));
+						} catch (StatusRuntimeException e) {
+							Status status = e.getStatus();
+							System.out.println(status.getDescription());
+						}
 					}
 					else {
 						System.out.println(("Deves ter escrito mal o trail, pá"));	//FIXME exceção?
