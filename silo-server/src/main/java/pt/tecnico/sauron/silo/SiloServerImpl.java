@@ -1,18 +1,17 @@
 package pt.tecnico.sauron.silo;
 
-import com.google.protobuf.Timestamp;
 import io.grpc.Status;
-import io.grpc.StatusException;
 import io.grpc.stub.StreamObserver;
 import pt.tecnico.sauron.silo.domain.Camera;
 import pt.tecnico.sauron.silo.domain.Observation;
 import pt.tecnico.sauron.silo.exceptions.BadEntryException;
 import pt.tecnico.sauron.silo.grpc.*;
 
-import javax.security.auth.login.FailedLoginException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ArrayBlockingQueue;
+import static io.grpc.Status.INVALID_ARGUMENT;
+
+
 
 
 public class SiloServerImpl extends SiloGrpc.SiloImplBase{
@@ -86,6 +85,7 @@ public class SiloServerImpl extends SiloGrpc.SiloImplBase{
 
     public void track(SiloOuterClass.TrackRequest request, StreamObserver<SiloOuterClass.TrackResponse> responseObserver) {
 
+
         try{
             Observation trackedObs = Ops.track(request.getType(), request.getId());
 
@@ -93,8 +93,6 @@ public class SiloServerImpl extends SiloGrpc.SiloImplBase{
             Camera cam = Ops.camInfo(trackedObs.getCamera());
 
             SiloOuterClass.Camera camera = SiloOuterClass.Camera.newBuilder().setName(trackedObs.getCamera()).setLatitude(cam.getLatitude()).setLongitude(cam.getLongitude()).build();
-
-            //Timestamp tmp = Timestamp.newBuilder().setSeconds(trackedObs.getTimestamp().getEpochSecond()).build();
 
             SiloOuterClass.Observation obs = SiloOuterClass.Observation.newBuilder().setId(trackedObs.getId()).setType(trackedObs.getType()).setCam(camera).setTimestamp(trackedObs.getTimestamp().toString()).build();
 
@@ -117,7 +115,6 @@ public class SiloServerImpl extends SiloGrpc.SiloImplBase{
 
             List<Observation> obsResponse = Ops.trackMatch(request.getType(), request.getId());
 
-            //SiloOuterClass.TrackMatchResponse builder = null;
 
             List<SiloOuterClass.Observation> obsRes = new ArrayList<>();
             for (Observation o: obsResponse){
@@ -126,12 +123,10 @@ public class SiloServerImpl extends SiloGrpc.SiloImplBase{
 
                 SiloOuterClass.Camera camera = SiloOuterClass.Camera.newBuilder().setName(o.getCamera()).setLatitude(cam.getLatitude()).setLongitude(cam.getLongitude()).build();
 
-                //Timestamp tmp = Timestamp.newBuilder().setSeconds(o.getTimestamp().getEpochSecond()).build();
 
                 SiloOuterClass.Observation obs = SiloOuterClass.Observation.newBuilder().setId(o.getId()).setCam(camera).setType(o.getType()).setTimestamp(o.getTimestamp().toString()).build();
 
                 obsRes.add(obs);
-                //builder = SiloOuterClass.TrackMatchResponse.newBuilder().addObsRes(obs).build();
 
             }
             SiloOuterClass.TrackMatchResponse response = SiloOuterClass.TrackMatchResponse.newBuilder().addAllObsRes(obsRes).build();
@@ -160,9 +155,7 @@ public class SiloServerImpl extends SiloGrpc.SiloImplBase{
 
                 SiloOuterClass.Camera camera = SiloOuterClass.Camera.newBuilder().setName(o.getCamera()).setLatitude(cam.getLatitude()).setLongitude(cam.getLongitude()).build();
 
-                //Timestamp tmp = Timestamp.newBuilder().setSeconds(o.getTimestamp().getEpochSecond()).build();
                 SiloOuterClass.Observation obs = SiloOuterClass.Observation.newBuilder().setId(o.getId()).setCam(camera).setType(o.getType()).setTimestamp(o.getTimestamp().toString()).build();
-                //builder = SiloOuterClass.TraceResponse.newBuilder().addObsRes(obs).build();
 
                 obsLst.add(obs);
             }
@@ -177,10 +170,15 @@ public class SiloServerImpl extends SiloGrpc.SiloImplBase{
 
     }
 
-    public void ctrlPing(SiloOuterClass.PingRequest request, StreamObserver<SiloOuterClass.PingResponse> responseObserver) {
+    public void ctrlPing(SiloOuterClass.PingRequest request, StreamObserver<SiloOuterClass.PingResponse> responseObserver){
 
         String input = request.getPing();
-        String output = "Server Running" + input;
+        String output = "Server Running " + input;
+
+        if (input == null || input.isBlank()) {
+            responseObserver.onError(INVALID_ARGUMENT
+                    .withDescription("Input cannot be empty!").asRuntimeException());
+        }
 
         SiloOuterClass.PingResponse response = SiloOuterClass.PingResponse.newBuilder().
                 setPong(output).build();

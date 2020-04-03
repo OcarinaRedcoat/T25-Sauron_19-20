@@ -4,7 +4,7 @@ import pt.tecnico.sauron.silo.grpc.SiloOuterClass.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.time.Instant;
-public class Observation implements Comparable<Observation> {
+public class Observation  {
 
 
     private String id ;
@@ -32,12 +32,4 @@ public class Observation implements Comparable<Observation> {
         return this.obsType.equals(type);
     }
 
-
-    @Override
-    public int compareTo(Observation o) {
-        if (this.timestamp.isBefore(o.getTimestamp())){
-            return -1;
-        }
-        return 1;
-    }
 }
