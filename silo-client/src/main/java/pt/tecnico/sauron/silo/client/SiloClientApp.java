@@ -21,12 +21,13 @@ public class SiloClientApp {
 
 	}
 
-//	testar no SiloIT
+//	estas funcoes servem apenas para testar a partir do client
+
 	public static void ctrl_ping(SiloFrontend library) {
 
 //		maybe later send as arg the string for setPing
 		try {
-			SiloOuterClass.PingRequest request = SiloOuterClass.PingRequest.newBuilder().setPing("Fine").build();
+			SiloOuterClass.PingRequest request = SiloOuterClass.PingRequest.newBuilder().setPing("").build();
 			SiloOuterClass.PingResponse response = library.ctrlPing(request);
 			System.out.println(response);
 
@@ -34,6 +35,14 @@ public class SiloClientApp {
 			System.out.println("Caught exception with description: " +
 					e.getStatus().getDescription());
 		}
+	}
+
+	public static void ctrl_clear(SiloFrontend library) {
+
+	}
+
+	public static void ctrl_init(/*para testar aqui: vai ter de receber os args para a cricao do frontend*/) {
+		
 	}
 
 }
