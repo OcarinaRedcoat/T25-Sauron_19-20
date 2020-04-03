@@ -1,6 +1,8 @@
 package pt.tecnico.sauron.eye;
 
 import io.grpc.ManagedChannel;
+import io.grpc.Status;
+import io.grpc.StatusRuntimeException;
 import pt.tecnico.sauron.silo.client.SiloFrontend;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
@@ -25,7 +27,14 @@ public class EyeApp {
 		library = new SiloFrontend();
 		ManagedChannel channel = library.createChannel(args[1], args[2]);
 
-		library.camJoin(name, latitude, longitude);
+		//FIXME excao???
+		try {
+			library.camJoin(name, latitude, longitude);
+		} catch (StatusRuntimeException e) {
+			Status status = e.getStatus();
+			System.out.println(status.getDescription());
+			return;
+		}
 
 
 		System.out.print("\nWelcome to EyeApp, type in a report\n\n");
@@ -48,13 +57,23 @@ public class EyeApp {
 				else {
 
 					if (token.startsWith("person")) { /* aka person*/
-						library.report("person", token.substring(7, size), name);
-						System.out.println("!!!" + token.substring(7, size) + "!!!");
-						System.out.println("PERSON!!!");
+						try {
+							library.report("person", token.substring(7, size), name);
+						} catch (StatusRuntimeException e) {
+							Status status = e.getStatus();
+							System.out.println(status.getDescription());
+						}
+						//System.out.println("!!!" + token.substring(7, size) + "!!!");
+						//System.out.println("PERSON!!!");
 					}
 					else if (token.startsWith("car")) { /* aka car */
-						library.report("car", token.substring(4, size), name);
-						System.out.println("CAAAAAR!!!!");
+						try {
+							library.report("car", token.substring(4, size), name);
+						} catch (StatusRuntimeException e) {
+							Status status = e.getStatus();
+							System.out.println(status.getDescription());
+						}
+						//System.out.println("CAAAAAR!!!!");
 					}
 				}
 
