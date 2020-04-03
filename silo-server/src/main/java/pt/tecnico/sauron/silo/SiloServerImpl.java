@@ -31,7 +31,7 @@ public class SiloServerImpl extends SiloGrpc.SiloImplBase{
         try{
             Ops.camJoin(localName, locationX, locationY);
         } catch (BadEntryException e){
-            System.out.println(e);
+            System.out.println(e.toString());
             responseObserver.onError(Status.INVALID_ARGUMENT.withDescription(e.toString()).asRuntimeException());
         }
         SiloOuterClass.CamJoinResponse response = SiloOuterClass.CamJoinResponse.newBuilder().build();
@@ -77,7 +77,7 @@ public class SiloServerImpl extends SiloGrpc.SiloImplBase{
             responseObserver.onNext(response);
             responseObserver.onCompleted();
         } catch (BadEntryException e){
-            System.out.println(e);
+            System.out.println(e.toString());
             responseObserver.onError(Status.INVALID_ARGUMENT.withDescription(e.toString()).asRuntimeException());
         }
 
@@ -104,9 +104,8 @@ public class SiloServerImpl extends SiloGrpc.SiloImplBase{
             responseObserver.onNext(response);
             responseObserver.onCompleted();
         } catch (BadEntryException e){
-            System.out.println(e);
+            System.out.println(e.toString());
             responseObserver.onError(Status.INVALID_ARGUMENT.withDescription(e.toString()).asRuntimeException());
-            return;
         }
 
     }
@@ -141,7 +140,7 @@ public class SiloServerImpl extends SiloGrpc.SiloImplBase{
 
 
         } catch (BadEntryException e){
-            System.out.println(e);
+            System.out.println(e.toString());
             responseObserver.onError(Status.INVALID_ARGUMENT.withDescription(e.toString()).asRuntimeException());
         }
     }
@@ -172,7 +171,7 @@ public class SiloServerImpl extends SiloGrpc.SiloImplBase{
             responseObserver.onCompleted();
 
         } catch (BadEntryException e){
-            System.out.println(e);
+            System.out.println(e.toString());
             responseObserver.onError(Status.INVALID_ARGUMENT.withDescription(e.toString()).asRuntimeException());
         }
 
