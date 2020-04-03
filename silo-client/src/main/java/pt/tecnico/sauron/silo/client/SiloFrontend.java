@@ -35,6 +35,10 @@ public class SiloFrontend {
 
     }
 
+    public SiloOuterClass.ResetResponse ctrlClear(SiloOuterClass.ResetRequest request) {
+        return stub.ctrlClear(request);
+    }
+
     /**
      * Arguments: name (String), and 2 locations X and Y (floats)
      * Converts the location X and Y to latitude and longitude and create a camera in Silo-server
@@ -85,9 +89,6 @@ public class SiloFrontend {
      * Returns the most recent observation of the searched object;
      */
     public String track(String type, String id){
-
-        type = "person";
-        id = "1";
 
         SiloOuterClass.ObjectType requestType;
         SiloOuterClass.TrackResponse response;

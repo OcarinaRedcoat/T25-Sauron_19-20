@@ -25,6 +25,15 @@ public class SiloServerOps {
 
     public SiloServerOps() {}
 
+
+    // For ctrl_clear
+    public void clearAll() {
+        camsMap.clear();;
+        obsMap.clear();
+        allObservations.clear();
+    }
+
+
     public boolean checkArgs(String id, SiloOuterClass.ObjectType type) {
 
         if(type.equals(ObjectType.person)) {
