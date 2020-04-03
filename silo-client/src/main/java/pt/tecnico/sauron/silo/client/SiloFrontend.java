@@ -34,14 +34,27 @@ public class SiloFrontend {
     }
 
 
-    public SiloOuterClass.ResetResponse ctrlClear(SiloOuterClass.ResetRequest request) {
-        return stub.ctrlClear(request);
+    public void ctrlClear() {
+
+        try {
+            SiloOuterClass.ClearRequest request = SiloOuterClass.ClearRequest.newBuilder().build();
+            stub.ctrlClear(request);
+        } catch (StatusRuntimeException e) {
+            System.out.println("Caught exception with description: " +
+                    e.getStatus().getDescription());
+        }
     }
 
 
+    public void ctrlPing(String text) {
 
-    public SiloOuterClass.PingResponse ctrlPing(SiloOuterClass.PingRequest request) {
-        return stub.ctrlPing(request);
+        try {
+            SiloOuterClass.PingRequest request = SiloOuterClass.PingRequest.newBuilder().setPing(text).build();
+            stub.ctrlPing(request);
+        } catch (StatusRuntimeException e) {
+            System.out.println("Caught exception with description: " +
+                    e.getStatus().getDescription());
+        }
     }
 
 

@@ -17,16 +17,18 @@ public class SiloClientApp {
 		
 		SiloFrontend frontend = new SiloFrontend();
 		frontend.createChannel(args[0], args[1]);
+		//ctrl_ping(frontend);
+		//ctrl_clear(frontend);
 
 	}
 
 //	estas funcoes servem apenas para testar a partir do client
 
-	public static void ctrl_ping(SiloFrontend library) {
+	/*public static void ctrl_ping(SiloFrontend library) {
 
 //		maybe later send as arg the string for setPing
 		try {
-			SiloOuterClass.PingRequest request = SiloOuterClass.PingRequest.newBuilder().setPing("").build();
+			SiloOuterClass.PingRequest request = SiloOuterClass.PingRequest.newBuilder().setPing("ola").build();
 			SiloOuterClass.PingResponse response = library.ctrlPing(request);
 			System.out.println(response);
 
@@ -34,14 +36,21 @@ public class SiloClientApp {
 			System.out.println("Caught exception with description: " +
 					e.getStatus().getDescription());
 		}
-	}
+	}*/
 
-	public static void ctrl_clear(SiloFrontend library) {
+	/*public static void ctrl_clear(SiloFrontend library) {
+		try {
+			SiloOuterClass.ClearRequest request = SiloOuterClass.ClearRequest.newBuilder().build();
+			SiloOuterClass.ClearResponse response = library.ctrlClear(request);
+			System.out.println(response);
+		} catch (StatusRuntimeException e) {
+			System.out.println("Caught exception with description: " +
+					e.getStatus().getDescription());
+		}
+	}*/
 
-	}
-
-	public static void ctrl_init(SiloFrontend library) {
+	/*public static void ctrl_init(SiloFrontend library) {
 		
-	}
+	}*/
 
 }

@@ -27,7 +27,6 @@ public class EyeApp {
 		library = new SiloFrontend();
 		ManagedChannel channel = library.createChannel(args[1], args[2]);
 
-		//FIXME excao???
 		try {
 			library.camJoin(name, latitude, longitude);
 		} catch (StatusRuntimeException e) {
@@ -52,7 +51,6 @@ public class EyeApp {
 				else if (token.contains("zzz")) {
 					System.out.println();
 					TimeUnit.MILLISECONDS.sleep(Integer.parseInt(token.substring(4, size)));
-					System.out.print("acabou o sleep\n");
 				}
 				else {
 
@@ -63,8 +61,6 @@ public class EyeApp {
 							Status status = e.getStatus();
 							System.out.println(status.getDescription());
 						}
-						//System.out.println("!!!" + token.substring(7, size) + "!!!");
-						//System.out.println("PERSON!!!");
 					}
 					else if (token.startsWith("car")) { /* aka car */
 						try {
@@ -73,7 +69,10 @@ public class EyeApp {
 							Status status = e.getStatus();
 							System.out.println(status.getDescription());
 						}
-						//System.out.println("CAAAAAR!!!!");
+
+					}
+					else {
+						System.out.println("Enganou-se a escrever");
 					}
 				}
 

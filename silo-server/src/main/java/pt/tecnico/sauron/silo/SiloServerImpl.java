@@ -188,11 +188,23 @@ public class SiloServerImpl extends SiloGrpc.SiloImplBase{
     }
 
 
-/*
-    public void ctrlClear(SiloOuterClass.ResetRequest request, StreamObserver<SiloOuterClass.ResetResponse< responseObserver) {
+
+
+    public void ctrlClear(SiloOuterClass.ClearRequest request, StreamObserver<SiloOuterClass.ClearResponse> responseObserver) {
+
 
         Ops.clearAll();
-        SiloOuterClass.ResetResponse response = SiloOuterClass.ResetResponse.newBuilder().build();
+        SiloOuterClass.ClearResponse response = SiloOuterClass.ClearResponse.newBuilder().build();
+
+        responseObserver.onNext(response);
+        responseObserver.onCompleted();
+    }
+
+
+    /*public void ctrlInit(SiloOuterClass.InitRequest request, StreamObserver<SiloOuterClass.InitResponse> responseObserver) {
+
+        String host = request.getLocalhost();
+        SiloOuterClass.InitResponse response = SiloOuterClass.InitResponse.newBuilder().setHost(host).setPort().build():
 
         responseObserver.onNext(response);
         responseObserver.onCompleted();

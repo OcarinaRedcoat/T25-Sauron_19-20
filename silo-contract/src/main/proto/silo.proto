@@ -108,12 +108,12 @@ message TraceRequest {
 //----------------------------------------------------------------------------------------------------------------------
 
 message InitRequest {
-    string host = 1;
-    int32 port = 2;
+    string localhost = 1;
 }
 
 message InitResponse {
-    string status = 1;
+    string host = 1;
+    int32 port = 2;
 }
 
 
@@ -126,12 +126,12 @@ message PingResponse {
 }
 
 
-message ResetRequest {
-//to implement
+message ClearRequest {
+// empty
 }
 
-message ResetResponse {
-//    to implement
+message ClearResponse {
+// empty
 }
 
 service Silo{
@@ -147,5 +147,5 @@ service Silo{
 
     rpc Ctrl_init(InitRequest) returns (InitResponse);
     rpc Ctrl_ping(PingRequest) returns (PingResponse);
-    rpc Ctrl_reset(ResetRequest) returns (ResetResponse);
+    rpc Ctrl_clear(ClearRequest) returns (ClearResponse);
 }

@@ -37,7 +37,6 @@ public class SpotterApp {
 
 				if(command.equals("spot")) {		// spot: track or trackMatch, depending on having *
 					if(info.substring(1,7).startsWith("person") && info.substring(8, size).contains("*")) {
-						//System.out.println("spot person COM asterisco");
 						try {
 							System.out.print(library.trackMatch("person", info.substring(8, size)));
 						} catch (StatusRuntimeException e) {
@@ -46,7 +45,6 @@ public class SpotterApp {
 						}
 					}
 					else if (info.substring(1,4).startsWith("car") && info.substring(5, size).contains("*")) {
-						//System.out.println("spot car COM asterisco");
 						try {
 							System.out.print(library.trackMatch("car", info.substring(5, size)));
 						} catch (StatusRuntimeException e) {
@@ -55,7 +53,6 @@ public class SpotterApp {
 						}
 					}
 					else if(info.substring(1,7).startsWith("person") && !(info.substring(8, size).contains("*"))) {
-						//System.out.println("spot person SEM asterisco");
 						try {
 							System.out.println(library.track("person", info.substring(8, size)));
 						} catch (StatusRuntimeException e) {
@@ -64,7 +61,6 @@ public class SpotterApp {
 						}
 					}
 					else if (info.substring(1,4).startsWith("car") && !(info.substring(5, size).contains("*"))) {
-						//System.out.println("spot car SEM asterisco");
 						try {
 							System.out.println(library.track("car", info.substring(5, size)));
 						} catch (StatusRuntimeException e) {
@@ -73,12 +69,11 @@ public class SpotterApp {
 						}
 					}
 					else {
-						System.out.println(("Deves ter escrito mal o spot, pá"));	//FIXME exceção?
+						System.out.println(("Escreveu mal o spot"));
 					}
 				}
 				else if (command.equals("trail")) {		// trail: only trace
 					if(info.substring(1,7).startsWith("person") && !(info.substring(8, size).contains("*"))) {
-						//System.out.println("trail person");
 						try {
 							System.out.print(library.trace("person", info.substring(8, size)));
 						} catch (StatusRuntimeException e) {
@@ -87,7 +82,6 @@ public class SpotterApp {
 						}
 					}
 					else if (info.substring(1,7).startsWith("car") && !(info.substring(5, size).contains("*"))) {
-						//System.out.println("trail car");
 						try {
 							System.out.print(library.trace("car", info.substring(5, size)));
 						} catch (StatusRuntimeException e) {
@@ -96,11 +90,11 @@ public class SpotterApp {
 						}
 					}
 					else {
-						System.out.println(("Deves ter escrito mal o trail, pá"));	//FIXME exceção?
+						System.out.println(("Escreveu o trail mal"));
 					}
 				}
 				else {
-					System.out.println(("Exceção, i guess"));	//FIXME exceção?
+					System.out.println(("Exceção, i guess"));
 				}
 
 			}
