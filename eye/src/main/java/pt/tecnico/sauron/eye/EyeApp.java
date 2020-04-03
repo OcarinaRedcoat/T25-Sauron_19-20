@@ -42,7 +42,7 @@ public class EyeApp {
 				}
 				else if (token.contains("zzz")) {
 					System.out.println();
-					TimeUnit.SECONDS.sleep(Integer.parseInt(token.substring(4, size)));
+					TimeUnit.MILLISECONDS.sleep(Integer.parseInt(token.substring(4, size)));
 					System.out.print("acabou o sleep\n");
 				}
 				else {

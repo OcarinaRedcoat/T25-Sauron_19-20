@@ -2,6 +2,7 @@ package pt.tecnico.sauron.silo;
 
 import pt.tecnico.sauron.silo.domain.Camera;
 import pt.tecnico.sauron.silo.domain.Observation;
+import pt.tecnico.sauron.silo.exceptions.BadEntryException;
 import pt.tecnico.sauron.silo.grpc.SiloOuterClass;
 import pt.tecnico.sauron.silo.grpc.SiloOuterClass.*;
 import java.lang.NumberFormatException;
@@ -31,7 +32,6 @@ public class SiloServerOps {
                 Long.parseLong(id);
                 return true;
             } catch (NumberFormatException e) {
-                //FIXME Not long
                 System.out.println("deu raia person");
                 return false;
             }
@@ -44,7 +44,6 @@ public class SiloServerOps {
                 return true;
             }
             else {
-                //FIXME adicionar excecao
                 System.out.println("deu raia car");
                 return false;
             }
@@ -56,36 +55,20 @@ public class SiloServerOps {
         int num = 0;
         int letter = 0;
 
-        if (s1.matches("[A-Z]+")) {
-            letter++;
-        }
-        if (s2.matches("[A-Z]+")) {
-            letter++;
-        }
-        if (s3.matches("[A-Z]+")) {
-            letter++;
-        }
-        if (s1.matches("[0-9]+")) {
-            num++;
-        }
-        if (s2.matches("[0-9]+")) {
-            num++;
-        }
-        if (s3.matches("[0-9]+")) {
-            num++;
-        }
-        if ((num == 2 && letter == 1) || (num == 1 && letter == 2)) {
-            return true;
-        }
-        else {
-            return false;
-        }
+        if (s1.matches("[A-Z]+")) { letter++; }
+        if (s2.matches("[A-Z]+")) { letter++; }
+        if (s3.matches("[A-Z]+")) { letter++; }
+        if (s1.matches("[0-9]+")) { num++; }
+        if (s2.matches("[0-9]+")) { num++; }
+        if (s3.matches("[0-9]+")) { num++; }
+        if ((num == 2 && letter == 1) || (num == 1 && letter == 2)) { return true; }
+        else { return false; }
     }
 
 
 
 
-    public void camJoin(String name, float locationX, float locationY) throws IllegalArgumentException {
+    public void camJoin(String name, float locationX, float locationY) throws BadEntryException {
         Camera newCamera;
 
         if (name.matches("[A-Za-z0-9]+") && name.length() >= 3 && name.length() <= 15) {
@@ -99,42 +82,44 @@ public class SiloServerOps {
         }
 
         else {
-            throw new IllegalArgumentException("Name non alhpanumeric");
+            throw new BadEntryException("Name non alhpanumeric");
         }
     }
 
 
     public Camera camInfo(String name) {
-        // FIXME neste momento retorna o nome e coords da camara
+
         return camsMap.get(name);
     }
 
-    public void report(String camName, String id, ObjectType type) throws IllegalArgumentException {
+    public void report(String camName, String id, ObjectType type) throws BadEntryException {
 
-        if(!checkArgs(id, type)) {
-            return;
+        if (!checkArgs(id, type)){
+            throw new BadEntryException("Wrong carId or personId");
         }
-
         Observation obs = new Observation(type, id, camName);
         obsMap.put(id, obs);
         allObservations.add(obs);
         System.out.println("!!!" + obs.getId() + "!!!" + obs.getTimestamp().toString() + "!!!" + obs.getType().toString() + "!!!" + obs.getCamera() + "!!!");
     }
 
-    public Observation track(ObjectType type, String id) throws IllegalArgumentException{
+    public Observation track(ObjectType type, String id) throws BadEntryException{
 
-        checkArgs(id, type);
+        if (!checkArgs(id, type)){
+            throw new BadEntryException("Wrong carId or personId");
+        }
 
         Observation obs = obsMap.get(id);
+        if (obs == null){
+            throw new BadEntryException("Id doesnt exist");
+        }
         if (!obs.equalType(type)){
-            throw new IllegalArgumentException("Id exists but wrong type");
-        } else if (obs == null){
-            throw new IllegalArgumentException("Id doesnt exist");
+            throw new BadEntryException("Id exists but wrong type");
         }
         return obs;
     }
 
-    public List<Observation> trackMatch(ObjectType type, String partId) throws IllegalArgumentException {
+    public List<Observation> trackMatch(ObjectType type, String partId) throws BadEntryException {
 
         List<Observation> lst = new ArrayList<>();
         if (partId.startsWith("*")){
@@ -167,7 +152,7 @@ public class SiloServerOps {
 
         }
         if (lst.isEmpty()){
-            throw new IllegalArgumentException("No lst, so something wrong is not right");
+            throw new BadEntryException("No lst, so something wrong is not right");
         }
         return lst;
     }
@@ -175,10 +160,11 @@ public class SiloServerOps {
 
 
 
-    public List<Observation> trace(ObjectType type, String id) throws IllegalArgumentException {
+    public List<Observation> trace(ObjectType type, String id) throws BadEntryException {
 
-        checkArgs(id, type);
-
+        if (!checkArgs(id, type)){
+            throw new BadEntryException("Wrong carId or personId");
+        }
         List<Observation> obsLst = new ArrayList<>();
         for (Observation o: allObservations) {
             if (o.getId().equals(id) && o.equalType(type)){
@@ -186,7 +172,7 @@ public class SiloServerOps {
             }
         }
         if (obsLst.isEmpty()){
-            throw new IllegalArgumentException("No lst, so something wrong is not right");
+            throw new BadEntryException("No lst, so something wrong is not right");
         }
         return obsLst;
     }

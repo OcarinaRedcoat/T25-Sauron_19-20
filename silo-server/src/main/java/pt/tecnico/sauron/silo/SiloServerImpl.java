@@ -1,9 +1,12 @@
 package pt.tecnico.sauron.silo;
 
 import com.google.protobuf.Timestamp;
+import io.grpc.Status;
+import io.grpc.StatusException;
 import io.grpc.stub.StreamObserver;
 import pt.tecnico.sauron.silo.domain.Camera;
 import pt.tecnico.sauron.silo.domain.Observation;
+import pt.tecnico.sauron.silo.exceptions.BadEntryException;
 import pt.tecnico.sauron.silo.grpc.*;
 
 import javax.security.auth.login.FailedLoginException;
@@ -17,7 +20,7 @@ public class SiloServerImpl extends SiloGrpc.SiloImplBase{
     private SiloServerOps Ops = new SiloServerOps();
 
     @Override
-    public void camJoin(SiloOuterClass.CamJoinRequest request, StreamObserver<SiloOuterClass.CamJoinResponse> responseObserver) throws IllegalArgumentException {
+    public void camJoin(SiloOuterClass.CamJoinRequest request, StreamObserver<SiloOuterClass.CamJoinResponse> responseObserver) {
         // StreamObserver is used to represent the gRPC stream between the server and
         // client in order to send the appropriate responses (or errors, if any occur).
 
@@ -27,8 +30,9 @@ public class SiloServerImpl extends SiloGrpc.SiloImplBase{
 
         try{
             Ops.camJoin(localName, locationX, locationY);
-        } catch (IllegalArgumentException e){
-            throw e;
+        } catch (BadEntryException e){
+            System.out.println(e);
+            responseObserver.onError(Status.INVALID_ARGUMENT.withDescription(e.toString()).asRuntimeException());
         }
         SiloOuterClass.CamJoinResponse response = SiloOuterClass.CamJoinResponse.newBuilder().build();
         // Send a single response through the stream.
@@ -59,7 +63,7 @@ public class SiloServerImpl extends SiloGrpc.SiloImplBase{
     }
 
     @Override
-    public void report(SiloOuterClass.ReportRequest request, StreamObserver<SiloOuterClass.ReportResponse> responseObserver) throws IllegalArgumentException {
+    public void report(SiloOuterClass.ReportRequest request, StreamObserver<SiloOuterClass.ReportResponse> responseObserver) {
         // StreamObserver is used to represent the gRPC stream between the server and
         // client in order to send the appropriate responses (or errors, if any occur).
 
@@ -72,14 +76,15 @@ public class SiloServerImpl extends SiloGrpc.SiloImplBase{
             SiloOuterClass.ReportResponse response = SiloOuterClass.ReportResponse.newBuilder().build();
             responseObserver.onNext(response);
             responseObserver.onCompleted();
-        } catch (IllegalArgumentException e){
-            throw e;
+        } catch (BadEntryException e){
+            System.out.println(e);
+            responseObserver.onError(Status.INVALID_ARGUMENT.withDescription(e.toString()).asRuntimeException());
         }
 
 
     }
 
-    public void track(SiloOuterClass.TrackRequest request, StreamObserver<SiloOuterClass.TrackResponse> responseObserver) throws IllegalArgumentException{
+    public void track(SiloOuterClass.TrackRequest request, StreamObserver<SiloOuterClass.TrackResponse> responseObserver) {
 
         try{
             Observation trackedObs = Ops.track(request.getType(), request.getId());
@@ -98,13 +103,15 @@ public class SiloServerImpl extends SiloGrpc.SiloImplBase{
             SiloOuterClass.TrackResponse response = SiloOuterClass.TrackResponse.newBuilder().setObsRes(obs).build();
             responseObserver.onNext(response);
             responseObserver.onCompleted();
-        } catch (IllegalArgumentException e){
-            throw e;
+        } catch (BadEntryException e){
+            System.out.println(e);
+            responseObserver.onError(Status.INVALID_ARGUMENT.withDescription(e.toString()).asRuntimeException());
+            return;
         }
 
     }
 
-    public void trackMatch(SiloOuterClass.TrackMatchRequest request, StreamObserver<SiloOuterClass.TrackMatchResponse> responseObserver) throws IllegalArgumentException {
+    public void trackMatch(SiloOuterClass.TrackMatchRequest request, StreamObserver<SiloOuterClass.TrackMatchResponse> responseObserver) {
 
 
         try{
@@ -133,12 +140,13 @@ public class SiloServerImpl extends SiloGrpc.SiloImplBase{
             responseObserver.onCompleted();
 
 
-        } catch (IllegalArgumentException e){
-            throw e;
+        } catch (BadEntryException e){
+            System.out.println(e);
+            responseObserver.onError(Status.INVALID_ARGUMENT.withDescription(e.toString()).asRuntimeException());
         }
     }
 
-    public void trace(SiloOuterClass.TraceRequest request, StreamObserver<SiloOuterClass.TraceResponse> responseObserver) throws IllegalArgumentException{
+    public void trace(SiloOuterClass.TraceRequest request, StreamObserver<SiloOuterClass.TraceResponse> responseObserver){
 
         try{
             List<Observation> obsResponse = Ops.trace(request.getType(), request.getId());
@@ -163,8 +171,9 @@ public class SiloServerImpl extends SiloGrpc.SiloImplBase{
             responseObserver.onNext(response);
             responseObserver.onCompleted();
 
-        } catch (IllegalArgumentException e){
-            throw e;
+        } catch (BadEntryException e){
+            System.out.println(e);
+            responseObserver.onError(Status.INVALID_ARGUMENT.withDescription(e.toString()).asRuntimeException());
         }
 
     }
