@@ -34,6 +34,12 @@ public class SiloFrontend {
     }
 
 
+    public SiloOuterClass.ResetResponse ctrlClear(SiloOuterClass.ResetRequest request) {
+        return stub.ctrlClear(request);
+    }
+
+
+
     public SiloOuterClass.PingResponse ctrlPing(SiloOuterClass.PingRequest request) {
         return stub.ctrlPing(request);
     }

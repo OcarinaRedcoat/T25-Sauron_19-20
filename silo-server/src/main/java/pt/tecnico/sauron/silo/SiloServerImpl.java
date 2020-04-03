@@ -187,5 +187,17 @@ public class SiloServerImpl extends SiloGrpc.SiloImplBase{
         responseObserver.onCompleted();
     }
 
+
+
+    public void ctrlClear(SiloOuterClass.ResetRequest request, StreamObserver<SiloOuterClass.ResetResponse< responseObserver) {
+
+        Ops.clearAll();
+        SiloOuterClass.ResetResponse response = SiloOuterClass.ResetResponse.newBuilder().build();
+
+        responseObserver.onNext(response);
+        responseObserver.onCompleted();
+    }
+
+
 }
 
