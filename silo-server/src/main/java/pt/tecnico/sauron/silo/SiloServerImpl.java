@@ -188,7 +188,7 @@ public class SiloServerImpl extends SiloGrpc.SiloImplBase{
     }
 
 
-
+/*
     public void ctrlClear(SiloOuterClass.ResetRequest request, StreamObserver<SiloOuterClass.ResetResponse< responseObserver) {
 
         Ops.clearAll();
@@ -196,7 +196,7 @@ public class SiloServerImpl extends SiloGrpc.SiloImplBase{
 
         responseObserver.onNext(response);
         responseObserver.onCompleted();
-    }
+    }*/
 
 
 }
