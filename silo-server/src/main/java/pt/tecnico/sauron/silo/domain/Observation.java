@@ -4,7 +4,7 @@ import pt.tecnico.sauron.silo.grpc.SiloOuterClass.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.time.Instant;
-public class Observation {
+public class Observation  {
 
 
     private String id ;
@@ -31,6 +31,5 @@ public class Observation {
     public boolean equalType(ObjectType type){
         return this.obsType.equals(type);
     }
-
 
 }

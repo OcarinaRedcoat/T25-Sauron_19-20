@@ -9,11 +9,7 @@ import java.lang.NumberFormatException;
 
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import java.util.*;
 
 
 public class SiloServerOps {
@@ -122,6 +118,8 @@ public class SiloServerOps {
         }
 
         Observation obs = obsMap.get(id);
+
+        System.out.println("algo de errado nao esta certo" + "|||" + obs.getId() + "|||" + id);
         if (obs == null){
             throw new BadEntryException("Id doesnt exist");
         }
@@ -166,6 +164,7 @@ public class SiloServerOps {
         if (lst.isEmpty()){
             throw new BadEntryException("No lst, so something wrong is not right");
         }
+
         return lst;
     }
 
@@ -184,11 +183,6 @@ public class SiloServerOps {
                 obsLst.add(o);
             }
         }
-        /*for (Observation o: allObservations) {
-            if (o.getId().equals(id) && o.equalType(type)){
-                obsLst.add(o);
-            }
-        }*/
         if (obsLst.isEmpty()){
             throw new BadEntryException("No lst, so something wrong is not right");
         }

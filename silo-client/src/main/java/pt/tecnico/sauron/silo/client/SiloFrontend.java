@@ -6,8 +6,6 @@ import io.grpc.Status;
 import io.grpc.StatusRuntimeException;
 import pt.tecnico.sauron.silo.grpc.SiloGrpc;
 import pt.tecnico.sauron.silo.grpc.SiloOuterClass;
-
-import java.time.Instant;
 import java.util.*;
 
 public class SiloFrontend {
@@ -35,9 +33,17 @@ public class SiloFrontend {
 
     }
 
+
     public SiloOuterClass.ResetResponse ctrlClear(SiloOuterClass.ResetRequest request) {
         return stub.ctrlClear(request);
     }
+
+
+
+    public SiloOuterClass.PingResponse ctrlPing(SiloOuterClass.PingRequest request) {
+        return stub.ctrlPing(request);
+    }
+
 
     /**
      * Arguments: name (String), and 2 locations X and Y (floats)
@@ -58,7 +64,6 @@ public class SiloFrontend {
     public float[] camInfo(String camName){
 
         //CamInfoResponse is a pair of floats
-        //FIXME nao tem excecao???
         SiloOuterClass.CamInfoResponse response = stub.camInfo(SiloOuterClass.CamInfoRequest.newBuilder().setLocal(camName).build());
         float []coords = new float[2];
         coords[0] = response.getLatitude(); coords[1] = response.getLongitude();
@@ -92,7 +97,6 @@ public class SiloFrontend {
 
         SiloOuterClass.ObjectType requestType;
         SiloOuterClass.TrackResponse response;
-        //System.out.println("cheguei");
 
         if (type.equals("person")){
             requestType = SiloOuterClass.ObjectType.person;
@@ -116,8 +120,6 @@ public class SiloFrontend {
 
         SiloOuterClass.TrackMatchResponse response;
         SiloOuterClass.ObjectType requestType;
-        String observations = "";
-        float[] coords;
 
         if (type.equals("person")){
             requestType = SiloOuterClass.ObjectType.person;
@@ -129,7 +131,6 @@ public class SiloFrontend {
             return getTrackMatchString(response);
         }
         return "";
-        //return getString(type, observations, response);
 
     }
 
@@ -153,9 +154,6 @@ public class SiloFrontend {
 
         SiloOuterClass.TraceResponse response;
         SiloOuterClass.ObjectType requestType;
-        String observations = "";
-        float[] coords;
-
 
         if (type.equals("person")){
             requestType = SiloOuterClass.ObjectType.person;
@@ -175,31 +173,11 @@ public class SiloFrontend {
 
         List<SiloOuterClass.Observation> list = response.getObsResList();
 
-        //Collections.sort(list, new ComparatorInstant());
-
         for (SiloOuterClass.Observation o: list){
             rest += o.getType().toString() + ',' + o.getId() + ',' + o.getTimestamp() + ',' + o.getCam().getName() + ',' + o.getCam().getLatitude() + ',' + o.getCam().getLongitude() + "\n";
         }
 
         return rest;
     }
-
-
-/*
-    class ComparatorInstant implements Comparator<SiloOuterClass.Observation> {
-
-        @Override
-        public int compare(SiloOuterClass.Observation observation, SiloOuterClass.Observation t1) {
-
-            Instant tmp1 = Instant.parse(observation.getTimestamp());
-            Instant tmp2 = Instant.parse(t1.getTimestamp());
-            if(tmp1.isAfter(tmp2)) {
-                return 1;
-            }
-            else {
-                return 0;
-            }
-        }
-    }*/
 
 }
