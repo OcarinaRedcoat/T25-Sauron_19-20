@@ -14,11 +14,9 @@ public class SiloClientApp {
 		for (int i = 0; i < args.length; i++) {
 			System.out.printf("arg[%d] = %s%n", i, args[i]);
 		}
-
+		
 		SiloFrontend frontend = new SiloFrontend();
 		frontend.createChannel(args[0], args[1]);
-//
-		ctrl_ping(frontend);
 
 	}
 
@@ -42,7 +40,7 @@ public class SiloClientApp {
 
 	}
 
-	public static void ctrl_init(/*para testar aqui: vai ter de receber os args para a cricao do frontend*/) {
+	public static void ctrl_init(SiloFrontend library) {
 		
 	}
 
