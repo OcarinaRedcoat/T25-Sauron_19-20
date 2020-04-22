@@ -20,12 +20,12 @@ public class EyeApp {
 			System.out.printf("arg[%d] = %s%n", i, args[i]);
 		}
 
-		String name = args[3]; // camera name
-		float latitude = Float.parseFloat(args[4]);
-		float longitude = Float.parseFloat(args[5]);
+		String name = args[2]; // camera name
+		float latitude = Float.parseFloat(args[3]);
+		float longitude = Float.parseFloat(args[4]);
 
 		library = new SiloFrontend();
-		ManagedChannel channel = library.createChannel(args[1], args[2]);
+		ManagedChannel channel = library.createChannel(args[0], args[1]);
 
 		try {
 			library.camJoin(name, latitude, longitude);

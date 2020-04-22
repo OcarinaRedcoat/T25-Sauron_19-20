@@ -25,7 +25,7 @@ public class SpotterApp {
 		}
 
 		library = new SiloFrontend();
-		ManagedChannel channel = library.createChannel(args[1], args[2]);
+		ManagedChannel channel = library.createChannel(args[0], args[1]);
 
 		try (Scanner scanner = new Scanner(System.in)){
 
