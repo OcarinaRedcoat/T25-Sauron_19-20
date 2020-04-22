@@ -4,6 +4,9 @@ import io.grpc.ManagedChannel;
 import io.grpc.Status;
 import io.grpc.StatusRuntimeException;
 import pt.tecnico.sauron.silo.client.SiloFrontend;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
@@ -37,7 +40,10 @@ public class EyeApp {
 
 
 		System.out.print("\nWelcome to EyeApp, type in a report\n\n");
-
+		// TODO: guardar os reports numa lista, apos dois \n enviar essa mesma lista
+		// FIXME: front end tem de receber uma lista de report em vez de report
+		List<String> type =  new ArrayList<>();
+		List<String> id =  new ArrayList<>();
 		try (Scanner scanner = new Scanner(System.in)){
 
 			do {
@@ -56,7 +62,9 @@ public class EyeApp {
 
 					if (token.startsWith("person")) { /* aka person*/
 						try {
-							library.report("person", token.substring(7, size), name);
+							type.add("person");
+							id.add(token.substring(7, size));
+							//library.report("person", token.substring(7, size), name);
 						} catch (StatusRuntimeException e) {
 							Status status = e.getStatus();
 							System.out.println(status.getDescription());
@@ -64,12 +72,24 @@ public class EyeApp {
 					}
 					else if (token.startsWith("car")) { /* aka car */
 						try {
-							library.report("car", token.substring(4, size), name);
+							type.add("car");
+							id.add(token.substring(4, size));
+							//library.report("car", token.substring(4, size), name);
 						} catch (StatusRuntimeException e) {
 							Status status = e.getStatus();
 							System.out.println(status.getDescription());
 						}
 
+					}
+					else if (token.isEmpty()){
+						if (type.size() == 0 || id.size() == 0){
+							System.out.println("O ruca hoje não foi ao cabeleireiro");
+							continue;
+						}
+						System.out.println("Será que o ruca vai ao cabeleireiro?");
+						library.report(type, id, name);
+						type.clear();
+						id.clear();
 					}
 					else {
 						System.out.println("Enganou-se a escrever");

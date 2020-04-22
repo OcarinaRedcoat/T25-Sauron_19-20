@@ -100,14 +100,22 @@ public class SiloServerOps {
         return camsMap.get(name);
     }
 
-    public void report(String camName, String id, ObjectType type) throws BadEntryException {
-
-        if (!checkArgs(id, type)){
-            throw new BadEntryException("Wrong carId or personId");
+    public void report(List<String> camName, List<String> id, List<ObjectType> type) throws BadEntryException {
+        if (id.size() != type.size()){
+            System.out.println("Algo de errado não está certo no tamanho das listas: report SiloServerOps");
         }
-        Observation obs = new Observation(type, id, camName);
-        obsMap.put(id, obs);
-        allObservations.add(obs);
+
+        Instant instantLot = Instant.now();
+
+        for (int i = 0; i < id.size(); i++) {
+            if (!checkArgs(id.get(i), type.get(i))) {
+                throw new BadEntryException("Wrong carId or personId");
+            }
+            Observation obs = new Observation(type.get(i), id.get(i), camName.get(i), instantLot);
+            obsMap.put(id.get(i), obs);
+            allObservations.add(obs);
+        }
+        System.out.println("Não, não vai, ele vai à quimoterapia!");
     }
 
     public Observation track(ObjectType type, String id) throws BadEntryException{

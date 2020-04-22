@@ -13,11 +13,11 @@ public class Observation  {
     private Instant timestamp;
     private String camera;
 
-    public Observation(ObjectType type, String id, String cam) {
+    public Observation(ObjectType type, String id, String cam, Instant inst) {
         this.obsType = type;
         this.id = id;
         this.camera = cam;
-        this.timestamp = Instant.now();
+        this.timestamp = inst;
 
     }
 

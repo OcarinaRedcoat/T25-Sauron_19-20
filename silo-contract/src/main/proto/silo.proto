@@ -32,6 +32,9 @@ message CamInfoResponse {
     float longitude = 2;
 }
 
+message ReportLot{
+    repeated ReportRequest reportLot = 1;
+}
 
 //Report Request
 message ReportRequest {
@@ -139,7 +142,7 @@ service Silo{
     rpc CamJoin(CamJoinRequest) returns (CamJoinResponse);
     rpc CamInfo(CamInfoRequest) returns (CamInfoResponse);
 
-    rpc Report(ReportRequest) returns (ReportResponse);
+    rpc Report(ReportLot) returns (ReportResponse);
 
     rpc Track(TrackRequest) returns (TrackResponse);
     rpc TrackMatch(TrackMatchRequest) returns (TrackMatchResponse);

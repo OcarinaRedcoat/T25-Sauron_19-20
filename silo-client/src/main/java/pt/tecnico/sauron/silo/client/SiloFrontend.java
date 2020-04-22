@@ -88,17 +88,37 @@ public class SiloFrontend {
      * The name must correspond to a previously registered camera.
      * The server records the observations with their date and time, at the time of receipt;
      */
-    public void report(String type, String id, String camName){
+    public void report(List<String> type, List<String> id, String camName){
 
         SiloOuterClass.ObjectType requestType;
 
-        if (type.equals("person")){
+        if (type.size() != id.size()){
+            System.out.println("ORA MERDA");
+        }
+        List<SiloOuterClass.ReportRequest> lot = new ArrayList<>();
+
+        for (int i = 0; i < type.size() ; i++){
+            if (type.get(i).equals("person")){
+                requestType = SiloOuterClass.ObjectType.person;
+                SiloOuterClass.ReportRequest report = SiloOuterClass.ReportRequest.newBuilder().setType(requestType).setId(id.get(i)).setCamName(camName).build();
+                lot.add(report);
+            } else if (type.get(i).equals("car")){
+                requestType = SiloOuterClass.ObjectType.car;
+                SiloOuterClass.ReportRequest report = SiloOuterClass.ReportRequest.newBuilder().setType(requestType).setId(id.get(i)).setCamName(camName).build();
+                lot.add(report);
+            }
+        }
+
+        stub.report(SiloOuterClass.ReportLot.newBuilder().addAllReportLot(lot).build());
+
+
+        /*if (type.equals("person")){
             requestType = SiloOuterClass.ObjectType.person;
             stub.report(SiloOuterClass.ReportRequest.newBuilder().setType(requestType).setId(id).setCamName(camName).build());
         } else if (type.equals("car")){
             requestType = SiloOuterClass.ObjectType.car;
             stub.report(SiloOuterClass.ReportRequest.newBuilder().setType(requestType).setId(id).setCamName(camName).build());
-        }
+        }*/
     }
 
     /**

@@ -62,24 +62,34 @@ public class SiloServerImpl extends SiloGrpc.SiloImplBase{
     }
 
     @Override
-    public void report(SiloOuterClass.ReportRequest request, StreamObserver<SiloOuterClass.ReportResponse> responseObserver) {
+    public void report(SiloOuterClass.ReportLot request, StreamObserver<SiloOuterClass.ReportResponse> responseObserver) {
         // StreamObserver is used to represent the gRPC stream between the server and
         // client in order to send the appropriate responses (or errors, if any occur).
 
-        String camName = request.getCamName();
-        String id = request.getId();
+        //String camName = request.getCamName();
+        //List<String> id = request.getId();
+        List<SiloOuterClass.ReportRequest> list = request.getReportLotList();
 
+        List<String> camLot = new ArrayList<>();
+        List<String> idLot = new ArrayList<>();
+        List<SiloOuterClass.ObjectType> typeLot = new ArrayList<>();
+        for (SiloOuterClass.ReportRequest lotto: list) {
 
-        try{
-            Ops.report(camName, id, request.getType());
+            camLot.add(lotto.getCamName());
+            idLot.add(lotto.getId());
+            typeLot.add(lotto.getType());
+
+        }
+
+        try {
+            Ops.report(camLot, idLot, typeLot);
             SiloOuterClass.ReportResponse response = SiloOuterClass.ReportResponse.newBuilder().build();
             responseObserver.onNext(response);
             responseObserver.onCompleted();
-        } catch (BadEntryException e){
+        } catch (BadEntryException e) {
             System.out.println(e.toString());
             responseObserver.onError(Status.INVALID_ARGUMENT.withDescription(e.toString()).asRuntimeException());
         }
-
 
     }
 
