@@ -61,35 +61,26 @@ public class EyeApp {
 				else {
 
 					if (token.startsWith("person")) { /* aka person*/
-						try {
-							type.add("person");
-							id.add(token.substring(7, size));
-							//library.report("person", token.substring(7, size), name);
-						} catch (StatusRuntimeException e) {
-							Status status = e.getStatus();
-							System.out.println(status.getDescription());
-						}
-					}
-					else if (token.startsWith("car")) { /* aka car */
-						try {
-							type.add("car");
-							id.add(token.substring(4, size));
-							//library.report("car", token.substring(4, size), name);
-						} catch (StatusRuntimeException e) {
-							Status status = e.getStatus();
-							System.out.println(status.getDescription());
-						}
+						type.add("person");
+						id.add(token.substring(7, size));
 
 					}
-					else if (token.isEmpty()){
-						if (type.size() == 0 || id.size() == 0){
-							System.out.println("O ruca hoje não foi ao cabeleireiro");
-							continue;
-						}
+					else if (token.startsWith("car")) { /* aka car */
+						type.add("car");
+						id.add(token.substring(4, size));
+
+					}
+
+					else if (token.isEmpty() && type.size() != 0 && id.size() != 0){
+						try {
 						System.out.println("Será que o ruca vai ao cabeleireiro?");
 						library.report(type, id, name);
 						type.clear();
 						id.clear();
+						} catch (StatusRuntimeException e) {
+							Status status = e.getStatus();
+							System.out.println(status.getDescription());
+						}
 					}
 					else {
 						System.out.println("Enganou-se a escrever");
