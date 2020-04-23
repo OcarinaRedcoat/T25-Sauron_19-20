@@ -5,6 +5,7 @@ import io.grpc.stub.StreamObserver;
 import pt.tecnico.sauron.silo.domain.Camera;
 import pt.tecnico.sauron.silo.domain.Observation;
 import pt.tecnico.sauron.silo.exceptions.BadEntryException;
+import pt.tecnico.sauron.silo.exceptions.ErrorMessage;
 import pt.tecnico.sauron.silo.grpc.*;
 
 import java.util.ArrayList;
@@ -182,12 +183,12 @@ public class SiloServerImpl extends SiloGrpc.SiloImplBase{
 
     public void ctrlPing(SiloOuterClass.PingRequest request, StreamObserver<SiloOuterClass.PingResponse> responseObserver){
 
-        String input = request.getPing();
-        String output = "Server Running " + input;
 
-        if (input == null || input.isBlank()) {
-            responseObserver.onError(INVALID_ARGUMENT
-                    .withDescription("Input cannot be empty!").asRuntimeException());
+        String output = "Server Running " + request.getPing();
+
+
+        if (request.getPing() == null || request.getPing().isEmpty()){
+            responseObserver.onError(INVALID_ARGUMENT.withDescription(ErrorMessage.EMPTY_INPUT.toString()).asRuntimeException());
         }
 
         SiloOuterClass.PingResponse response = SiloOuterClass.PingResponse.newBuilder().
@@ -204,10 +205,14 @@ public class SiloServerImpl extends SiloGrpc.SiloImplBase{
 
 
         Ops.clearAll();
-        SiloOuterClass.ClearResponse response = SiloOuterClass.ClearResponse.newBuilder().build();
 
-        responseObserver.onNext(response);
+        responseObserver.onNext(SiloOuterClass.ClearResponse.getDefaultInstance());
         responseObserver.onCompleted();
+
+        //SiloOuterClass.ClearResponse response = SiloOuterClass.ClearResponse.newBuilder().build();
+
+        //responseObserver.onNext(response);
+        //responseObserver.onCompleted();
     }
 
 

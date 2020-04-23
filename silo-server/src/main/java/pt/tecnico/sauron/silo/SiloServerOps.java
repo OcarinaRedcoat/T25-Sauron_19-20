@@ -3,6 +3,7 @@ package pt.tecnico.sauron.silo;
 import pt.tecnico.sauron.silo.domain.Camera;
 import pt.tecnico.sauron.silo.domain.Observation;
 import pt.tecnico.sauron.silo.exceptions.BadEntryException;
+import pt.tecnico.sauron.silo.exceptions.ErrorMessage;
 import pt.tecnico.sauron.silo.grpc.SiloOuterClass;
 import pt.tecnico.sauron.silo.grpc.SiloOuterClass.*;
 import java.lang.NumberFormatException;
@@ -90,7 +91,7 @@ public class SiloServerOps {
         }
 
         else {
-            throw new BadEntryException("Name non alhpanumeric");
+            throw new BadEntryException(ErrorMessage.CAM_NAME_NOT_VALID);
         }
     }
 
@@ -109,7 +110,7 @@ public class SiloServerOps {
 
         for (int i = 0; i < id.size(); i++) {
             if (!checkArgs(id.get(i), type.get(i))) {
-                throw new BadEntryException("Wrong carId or personId");
+                throw new BadEntryException(ErrorMessage.ID_NOT_VALID);
             }
             Observation obs = new Observation(type.get(i), id.get(i), camName.get(i), instantLot);
             obsMap.put(id.get(i), obs);
@@ -121,16 +122,16 @@ public class SiloServerOps {
     public Observation track(ObjectType type, String id) throws BadEntryException{
 
         if (!checkArgs(id, type)){
-            throw new BadEntryException("Wrong carId or personId");
+            throw new BadEntryException(ErrorMessage.ID_NOT_VALID);
         }
 
         Observation obs = obsMap.get(id);
 
         if (obs == null){
-            throw new BadEntryException("Id doesnt exist");
+            throw new BadEntryException(ErrorMessage.ID_NOT_FOUND);
         }
         if (!obs.equalType(type)){
-            throw new BadEntryException("Id exists but wrong type");
+            throw new BadEntryException(ErrorMessage.ID_FOUND_WRONG_TYPE);
         }
         return obs;
     }
@@ -168,7 +169,7 @@ public class SiloServerOps {
 
         }
         if (lst.isEmpty()){
-            throw new BadEntryException("No lst, so something wrong is not right");
+            throw new BadEntryException(ErrorMessage.NO_ID_MATCH);
         }
 
         if (type.equals(ObjectType.person)){
@@ -201,7 +202,7 @@ public class SiloServerOps {
     public List<Observation> trace(ObjectType type, String id) throws BadEntryException {
 
         if (!checkArgs(id, type)){
-            throw new BadEntryException("Wrong carId or personId");
+            throw new BadEntryException(ErrorMessage.ID_NOT_VALID);
         }
         List<Observation> obsLst = new ArrayList<>();
         for (int i = allObservations.size(); i > 0; i--){
@@ -211,7 +212,7 @@ public class SiloServerOps {
             }
         }
         if (obsLst.isEmpty()){
-            throw new BadEntryException("No lst, so something wrong is not right");
+            throw new BadEntryException(ErrorMessage.NO_ID_MATCH);
         }
         return obsLst;
     }

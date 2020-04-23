@@ -1,0 +1,20 @@
+package pt.tecnico.sauron.silo.exceptions;
+
+public enum ErrorMessage {
+
+    EMPTY_INPUT("Input cannot be empty."),
+
+    NO_ID_MATCH("No id match the expression."),
+
+    ID_FOUND_WRONG_TYPE("Id was found, but wrong type. Try switch the type."),
+    ID_NOT_FOUND("Person or Car does not exist, Id not found."),
+    ID_NOT_VALID("Person or Car Id not valid"),
+
+    CAM_NAME_NOT_VALID("Camera name is not valid, it must be between 3 and 15, and alfa numeric characters.");
+
+    public final String label;
+
+    ErrorMessage(String label) {
+        this.label = label;
+    }
+}
