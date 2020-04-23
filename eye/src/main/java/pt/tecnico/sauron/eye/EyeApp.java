@@ -16,7 +16,12 @@ public class EyeApp {
 
 	public static void main(String[] args) throws InterruptedException {
 		System.out.println(EyeApp.class.getSimpleName());
-		
+
+		if (args.length != 5){
+			System.out.println("Missing Arguments");
+			return;
+		}
+
 		// receive and print arguments
 		System.out.printf("Received %d arguments%n", args.length);
 		for (int i = 0; i < args.length; i++) {
@@ -24,24 +29,30 @@ public class EyeApp {
 		}
 
 		String name = args[2]; // camera name
-		float latitude = Float.parseFloat(args[3]);
-		float longitude = Float.parseFloat(args[4]);
+
+		try {
+			Float.parseFloat(args[3]);
+			Float.parseFloat(args[4]);
+		} catch (NumberFormatException nfe){
+			System.out.println("Longitude or Latitude not floats.");
+			return;
+		}
 
 		library = new SiloFrontend();
 		ManagedChannel channel = library.createChannel(args[0], args[1]);
 
 		try {
-			library.camJoin(name, latitude, longitude);
+			library.camJoin(name, args[3], args[4]);
 		} catch (StatusRuntimeException e) {
 			Status status = e.getStatus();
 			System.out.println(status.getDescription());
+			channel.shutdownNow();
 			return;
 		}
 
 
 		System.out.print("\nWelcome to EyeApp, type in a report\n\n");
-		// TODO: guardar os reports numa lista, apos dois \n enviar essa mesma lista
-		// FIXME: front end tem de receber uma lista de report em vez de report
+
 		List<String> type =  new ArrayList<>();
 		List<String> id =  new ArrayList<>();
 		try (Scanner scanner = new Scanner(System.in)){

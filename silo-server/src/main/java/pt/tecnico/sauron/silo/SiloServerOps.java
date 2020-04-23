@@ -77,21 +77,41 @@ public class SiloServerOps {
 
 
 
-    public void camJoin(String name, float locationX, float locationY) throws BadEntryException {
+    public void camJoin(String name, String locationX, String locationY) throws BadEntryException {
         Camera newCamera;
+        float longitude;
+        float latitude;
 
-        if (name.matches("[A-Za-z0-9]+") && name.length() >= 3 && name.length() <= 15) {
-
-
-            if (camsMap.get(name) == null) {
-                newCamera = new Camera(name, locationX, locationY);
-                camsMap.put(name, newCamera);
-            }
-
+        try {
+            latitude = Float.parseFloat(locationX);
+            longitude = Float.parseFloat(locationY);
+        } catch (NumberFormatException nfe) {
+            throw new BadEntryException(ErrorMessage.CAM_COORDS_NOT_VALID);
         }
 
-        else {
-            throw new BadEntryException(ErrorMessage.CAM_NAME_NOT_VALID);
+        if (camsMap.get(name) == null) {
+
+            if (name.matches("[A-Za-z0-9]+") && name.length() >= 3 && name.length() <= 15) {
+
+
+                if (camsMap.get(name) == null) {
+                    newCamera = new Camera(name, latitude, longitude);
+                    camsMap.put(name, newCamera);
+                }
+
+            } else {
+                throw new BadEntryException(ErrorMessage.CAM_NAME_NOT_VALID);
+            }
+
+        } else{
+
+            Camera cam = camsMap.get(name);
+            if ((cam.getLongitude() != longitude) || (cam.getLatitude() != latitude)){
+                System.out.println("Camara no servidor: " + cam.getLongitude() + " " + cam.getLatitude());
+                System.out.println("Camara input: " + longitude + " " + latitude);
+                throw new BadEntryException(ErrorMessage.CAM_NAME_ALREADY_EXIST);
+            }
+
         }
     }
 

@@ -63,7 +63,7 @@ public class SiloFrontend {
      * Converts the location X and Y to latitude and longitude and create a camera in Silo-server
      * This method is to be called only in eye
      */
-    public void camJoin(String name, float locationX, float locationY){
+    public void camJoin(String name, String locationX, String locationY){
 
         stub.camJoin(SiloOuterClass.CamJoinRequest.newBuilder().setLocal(name).setLatitude(locationX).setLongitude(locationY).build());
     }
@@ -93,8 +93,9 @@ public class SiloFrontend {
         SiloOuterClass.ObjectType requestType;
 
         if (type.size() != id.size()){
-            System.out.println("ORA MERDA");
+            System.out.println("ORA MERDA"); //FIXME
         }
+
         List<SiloOuterClass.ReportRequest> lot = new ArrayList<>();
 
         for (int i = 0; i < type.size() ; i++){

@@ -25,20 +25,25 @@ public class SiloServerImpl extends SiloGrpc.SiloImplBase{
         // client in order to send the appropriate responses (or errors, if any occur).
 
         String localName = request.getLocal();
-        float locationX = request.getLatitude();
-        float locationY = request.getLongitude();
+        String locationX = request.getLatitude();
+        String locationY = request.getLongitude();
 
         try{
             Ops.camJoin(localName, locationX, locationY);
+            SiloOuterClass.CamJoinResponse response = SiloOuterClass.CamJoinResponse.newBuilder().build();
+            // Send a single response through the stream.
+            responseObserver.onNext(response);
+            // Notify the client that the operation has been completed.
+            responseObserver.onCompleted();
         } catch (BadEntryException e){
-            System.out.println(e.toString());
+            System.out.println(e.getErrorMessage());
             responseObserver.onError(Status.INVALID_ARGUMENT.withDescription(e.toString()).asRuntimeException());
         }
-        SiloOuterClass.CamJoinResponse response = SiloOuterClass.CamJoinResponse.newBuilder().build();
+        //SiloOuterClass.CamJoinResponse response = SiloOuterClass.CamJoinResponse.newBuilder().build();
         // Send a single response through the stream.
-        responseObserver.onNext(response);
+        //responseObserver.onNext(response);
         // Notify the client that the operation has been completed.
-        responseObserver.onCompleted();
+        //responseObserver.onCompleted();
     }
 
     @Override
@@ -88,7 +93,7 @@ public class SiloServerImpl extends SiloGrpc.SiloImplBase{
             responseObserver.onNext(response);
             responseObserver.onCompleted();
         } catch (BadEntryException e) {
-            System.out.println(e.toString());
+            System.out.println(e.getErrorMessage());
             responseObserver.onError(Status.INVALID_ARGUMENT.withDescription(e.toString()).asRuntimeException());
         }
 
@@ -113,7 +118,7 @@ public class SiloServerImpl extends SiloGrpc.SiloImplBase{
             responseObserver.onNext(response);
             responseObserver.onCompleted();
         } catch (BadEntryException e){
-            System.out.println(e.toString());
+            System.out.println(e.getErrorMessage());
             responseObserver.onError(Status.INVALID_ARGUMENT.withDescription(e.toString()).asRuntimeException());
         }
 
@@ -146,7 +151,7 @@ public class SiloServerImpl extends SiloGrpc.SiloImplBase{
 
 
         } catch (BadEntryException e){
-            System.out.println(e.toString());
+            System.out.println(e.getErrorMessage());
             responseObserver.onError(Status.INVALID_ARGUMENT.withDescription(e.toString()).asRuntimeException());
         }
     }
@@ -175,7 +180,7 @@ public class SiloServerImpl extends SiloGrpc.SiloImplBase{
             responseObserver.onCompleted();
 
         } catch (BadEntryException e){
-            System.out.println(e.toString());
+            System.out.println(e.getErrorMessage());
             responseObserver.onError(Status.INVALID_ARGUMENT.withDescription(e.toString()).asRuntimeException());
         }
 

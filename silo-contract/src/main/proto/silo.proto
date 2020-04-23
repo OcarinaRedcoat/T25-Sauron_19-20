@@ -16,8 +16,8 @@ import "google/protobuf/timestamp.proto";
 // CamJoin Request
 message CamJoinRequest {
     string local = 1;
-    float latitude = 2;
-    float longitude = 3;
+    string latitude = 2;
+    string longitude = 3;
 }
 
 message CamJoinResponse {}
