@@ -4,7 +4,7 @@
 
 Sistemas Distribuídos<br>2019-2020
 
-## **Authors : Grupo T25** 
+## **Autores : Grupo T25** 
 
 Em conformidade com o enunciado do projeto de Sistemas Distribuídos, serve o presente documento como guia de demonstração do mesmo, apresentando casos de utilização, passo a passo, que demonstram as funcionalidades de todo o trabalho desenvolvido.
 
