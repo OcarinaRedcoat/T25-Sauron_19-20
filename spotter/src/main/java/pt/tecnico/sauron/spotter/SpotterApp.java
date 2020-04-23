@@ -17,6 +17,10 @@ public class SpotterApp {
 	public static void main(String[] args) {
 		System.out.println(SpotterApp.class.getSimpleName());
 
+		if (args.length != 2){
+			System.out.println("Missing Arguments");
+			return;
+		}
 
 		// receive and print arguments
 		System.out.printf("Received %d arguments%n", args.length);
