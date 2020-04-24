@@ -32,7 +32,7 @@ Para testar a aplicação, bem como todos os seus componentes, é necessário a 
 
 
 ### **1.1. Compilação do Projeto**
-Em primeiro lugar, é necessário instalar todas as dependências indispensáveis para os componentes da aplicação: o silo e os clientes (eye e spotter), bem como compilar os próprios. Para isso, basta ir à diretoria root do projeto e correr o seguinte comando:
+Em primeiro lugar, é necessário instalar todas as dependências indispensáveis para os componentes da aplicação: o *silo* e os clientes (eye e spotter), bem como compilar os próprios. Para isso, basta ir à diretoria *root* do projeto e correr o seguinte comando:
 
 ```
 $ mvn clean install -DskipTests    
@@ -42,7 +42,7 @@ Após o comando acima, já é possível analisar se o projeto compila na íntegr
 
 
 ### **1.2. Silo**
-Para que se procedam aos testes seguintes, é necessário o servidos silo estar a correr. Para tal, é necessário ir à diretoria silo-server e executar:
+Para que se procedam aos testes seguintes, é necessário o servidor *silo* estar a correr. Para tal, é necessário ir à diretoria silo-server e executar:
 
 ```
 $ mvn exec:java
@@ -252,7 +252,8 @@ car,19SD89,<timestamp>,Lisboa,32.737613,-15.303164
 car,19SD99,<timestamp>,Lisboa,32.737613,-15.303164
 ```
 
-**2.5.7. Teste do identificador \***  
+**2.5.7. Teste do identificador " \* "**  
+Este teste deve devolver todas as observações encontradas para o tipo de objeto em questão.
 # A FAZER
 Este teste podia devolver todos os objetos encontrados no sistema. Fica a dica ;)
 # A FAZER
