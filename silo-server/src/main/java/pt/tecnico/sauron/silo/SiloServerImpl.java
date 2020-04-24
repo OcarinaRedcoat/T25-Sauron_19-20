@@ -37,7 +37,11 @@ public class SiloServerImpl extends SiloGrpc.SiloImplBase{
             responseObserver.onCompleted();
         } catch (BadEntryException e){
             System.out.println(e.getErrorMessage());
-            responseObserver.onError(Status.INVALID_ARGUMENT.withDescription(e.toString()).asRuntimeException());
+            if (e.getErrorMessage().equals(ErrorMessage.CAM_NAME_ALREADY_EXIST)) {
+                responseObserver.onError(Status.ALREADY_EXISTS.withDescription(e.toString()).asRuntimeException());
+            } else {
+                responseObserver.onError(Status.INVALID_ARGUMENT.withDescription(e.toString()).asRuntimeException());
+            }
         }
         //SiloOuterClass.CamJoinResponse response = SiloOuterClass.CamJoinResponse.newBuilder().build();
         // Send a single response through the stream.
@@ -95,8 +99,8 @@ public class SiloServerImpl extends SiloGrpc.SiloImplBase{
         } catch (BadEntryException e) {
             System.out.println(e.getErrorMessage());
             responseObserver.onError(Status.INVALID_ARGUMENT.withDescription(e.toString()).asRuntimeException());
-        }
 
+        }
     }
 
     public void track(SiloOuterClass.TrackRequest request, StreamObserver<SiloOuterClass.TrackResponse> responseObserver) {
@@ -119,7 +123,11 @@ public class SiloServerImpl extends SiloGrpc.SiloImplBase{
             responseObserver.onCompleted();
         } catch (BadEntryException e){
             System.out.println(e.getErrorMessage());
-            responseObserver.onError(Status.INVALID_ARGUMENT.withDescription(e.toString()).asRuntimeException());
+            if (e.getErrorMessage().equals(ErrorMessage.ID_NOT_VALID) || (e.getErrorMessage().equals(ErrorMessage.ID_FOUND_WRONG_TYPE))) {
+                responseObserver.onError(Status.INVALID_ARGUMENT.withDescription(e.toString()).asRuntimeException());
+            } else {
+                responseObserver.onError(Status.NOT_FOUND.withDescription(e.toString()).asRuntimeException());
+            }
         }
 
     }
@@ -152,7 +160,7 @@ public class SiloServerImpl extends SiloGrpc.SiloImplBase{
 
         } catch (BadEntryException e){
             System.out.println(e.getErrorMessage());
-            responseObserver.onError(Status.INVALID_ARGUMENT.withDescription(e.toString()).asRuntimeException());
+            responseObserver.onError(Status.NOT_FOUND.withDescription(e.toString()).asRuntimeException());
         }
     }
 
@@ -179,11 +187,14 @@ public class SiloServerImpl extends SiloGrpc.SiloImplBase{
             responseObserver.onNext(response);
             responseObserver.onCompleted();
 
-        } catch (BadEntryException e){
+        } catch (BadEntryException e) {
             System.out.println(e.getErrorMessage());
-            responseObserver.onError(Status.INVALID_ARGUMENT.withDescription(e.toString()).asRuntimeException());
+            if (e.getErrorMessage().equals(ErrorMessage.ID_NOT_VALID)) {
+                responseObserver.onError(Status.INVALID_ARGUMENT.withDescription(e.toString()).asRuntimeException());
+            } else {
+                responseObserver.onError(Status.NOT_FOUND.withDescription(e.toString()).asRuntimeException());
+            }
         }
-
     }
 
     public void ctrlPing(SiloOuterClass.PingRequest request, StreamObserver<SiloOuterClass.PongResponse> responseObserver){

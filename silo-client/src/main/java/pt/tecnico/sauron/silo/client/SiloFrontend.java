@@ -126,14 +126,6 @@ public class SiloFrontend {
 
         stub.report(SiloOuterClass.ReportLot.newBuilder().addAllReportLot(lot).build());
 
-
-        /*if (type.equals("person")){
-            requestType = SiloOuterClass.ObjectType.person;
-            stub.report(SiloOuterClass.ReportRequest.newBuilder().setType(requestType).setId(id).setCamName(camName).build());
-        } else if (type.equals("car")){
-            requestType = SiloOuterClass.ObjectType.car;
-            stub.report(SiloOuterClass.ReportRequest.newBuilder().setType(requestType).setId(id).setCamName(camName).build());
-        }*/
     }
 
     /**

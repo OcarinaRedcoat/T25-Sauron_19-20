@@ -39,34 +39,33 @@ public class SpotterApp {
 				String info = scanner.nextLine();	// example: person 26r8723 ou car 67890*
 				int size = info.length();			// size of info
 
-				if(command.equals("spot")) {		// spot: track or trackMatch, depending on having *
-					if(info.substring(1,7).startsWith("person") && info.substring(8, size).contains("*")) {
-						try {
-							System.out.print(library.trackMatch("person", info.substring(8, size)));
-						} catch (StatusRuntimeException e) {
-							Status status = e.getStatus();
-							System.out.println(status.getDescription());
-						}
-					}
-					else if (info.substring(1,4).startsWith("car") && info.substring(5, size).contains("*")) {
+				if(command.equals("spot")) {		// spot: track or trackMatch, depending on having * // car *
+
+
+					if (info.substring(1,4).startsWith("car") && info.substring(5, size).contains("*")) {
 						try {
 							System.out.print(library.trackMatch("car", info.substring(5, size)));
 						} catch (StatusRuntimeException e) {
 							Status status = e.getStatus();
 							System.out.println(status.getDescription());
 						}
-					}
-					else if(info.substring(1,7).startsWith("person") && !(info.substring(8, size).contains("*"))) {
+					} else if (info.substring(1,4).startsWith("car") && !(info.substring(5, size).contains("*"))) {
 						try {
-							System.out.println(library.track("person", info.substring(8, size)));
+							System.out.println(library.track("car", info.substring(5, size)));
 						} catch (StatusRuntimeException e) {
 							Status status = e.getStatus();
 							System.out.println(status.getDescription());
 						}
-					}
-					else if (info.substring(1,4).startsWith("car") && !(info.substring(5, size).contains("*"))) {
+					} else if(info.substring(1,7).startsWith("person") && info.substring(8, size).contains("*")) {
 						try {
-							System.out.println(library.track("car", info.substring(5, size)));
+							System.out.print(library.trackMatch("person", info.substring(8, size)));
+						} catch (StatusRuntimeException e) {
+							Status status = e.getStatus();
+							System.out.println(status.getDescription());
+						}
+					} else if(info.substring(1,7).startsWith("person") && !(info.substring(8, size).contains("*"))) {
+						try {
+							System.out.println(library.track("person", info.substring(8, size)));
 						} catch (StatusRuntimeException e) {
 							Status status = e.getStatus();
 							System.out.println(status.getDescription());
@@ -85,7 +84,7 @@ public class SpotterApp {
 							System.out.println(status.getDescription());
 						}
 					}
-					else if (info.substring(1,7).startsWith("car") && !(info.substring(5, size).contains("*"))) {
+					else if (info.substring(1,4).startsWith("car") && !(info.substring(5, size).contains("*"))) {
 						try {
 							System.out.print(library.trace("car", info.substring(5, size)));
 						} catch (StatusRuntimeException e) {
