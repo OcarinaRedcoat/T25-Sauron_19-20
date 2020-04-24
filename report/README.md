@@ -1,4 +1,4 @@
-![IST Lgo](../img/IST_C_RGB_POS.png "IST Logo")
+![IST Lgo](IST_C_RGB_POS.png "IST Logo")
 
 # **Relatório do Projeto Sauron**
 
@@ -16,7 +16,7 @@ Sistemas Distribuídos<br>2019-2020
 
 
 *(usar imagens com 150px de altura; e depois apagar esta linha)*  
-![Pedro](alice.png) ![Bernardo](../img/87636.jpg) ![Ricardo](charlie.png)
+![Pedro](alice.png) ![Bernardo](87636.jpg) ![Ricardo](charlie.png)
 
 ## Modelo de faltas
 

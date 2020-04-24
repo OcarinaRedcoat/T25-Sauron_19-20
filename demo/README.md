@@ -1,4 +1,4 @@
-![IST Lgo](../img/IST_C_RGB_POS.png "IST Logo")
+![IST Lgo](IST_C_RGB_POS.png "IST Logo")
 
 # **Guião de Demonstração**
 
