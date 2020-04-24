@@ -97,6 +97,18 @@ public class SpotterApp {
 						System.out.println(("Escreveu o trail mal"));
 					}
 				}
+				else if (command.equals("help")) {
+					System.out.println("- Command \"spot\": searches for the most recent observation of the object with the identifier or identifier fragment.\n" +
+							"                  It receives two arguments: the type of the object and the ID or ID fragment.\n" +
+							"                  Example: spot type ID\n" +
+							"                  Return: lines with the format: Type, Identifier, Date-Time, Name-Camera, Latitude-Camera, Longitude-Camera\n");
+
+					System.out.println("- Command \"trail\": searches for the path taken by the object with the exact identifier, with ordered results from the most recent observation to the oldest.\n" +
+							"                   It receives two arguments: the type of the object and the ID.\n" +
+							"                   Example: trail type ID\n" +
+							"                   Return: lines with the format: Type, Identifier, Date-Time, Name-Camera, Latitude-Camera, Longitude-Camera\n");
+
+				}
 				else {
 					System.out.println(("Exceção, i guess"));
 				}
