@@ -167,7 +167,14 @@ public class SiloServerOps {
     public List<Observation> trackMatch(ObjectType type, String partId) throws BadEntryException {
 
         List<Observation> lst = new ArrayList<>();
-        if (partId.startsWith("*")){
+
+        if (partId.equals("*")){
+            for (Observation o: obsMap.values()){
+                if (o.equalType(type)) {
+                    lst.add(o);
+                }
+            }
+        } else if(partId.startsWith("*")){
             for (Observation o: obsMap.values()) {
                 if (o.getId().endsWith(partId.substring(1)) && o.equalType(type)){
                     lst.add(o);
