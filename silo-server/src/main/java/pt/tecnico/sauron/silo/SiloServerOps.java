@@ -23,6 +23,8 @@ public class SiloServerOps {
     public SiloServerOps() {}
 
 
+    public void init(){}
+
     // For ctrl_clear
     public void clearAll() {
         camsMap.clear();;
