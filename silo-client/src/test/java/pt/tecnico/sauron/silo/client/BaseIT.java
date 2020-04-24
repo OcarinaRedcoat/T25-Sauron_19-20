@@ -26,10 +26,5 @@ public class BaseIT {
 			throw e;
 		}
 	}
-	
-	@AfterAll
-	public static void cleanup() {
-		
-	}
 
 }

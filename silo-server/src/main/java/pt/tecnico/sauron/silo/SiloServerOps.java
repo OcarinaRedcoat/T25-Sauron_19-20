@@ -22,24 +22,24 @@ public class SiloServerOps {
 
     public SiloServerOps() {}
 
-    public String ping(String ping) throws BadEntryException{
+    public synchronized String ping(String ping) throws BadEntryException{
         if (ping == null || ping.isEmpty()){
             throw new BadEntryException(ErrorMessage.EMPTY_PING);
         }
         return "pong";
     }
 
-    public void init(){} // We initalize everything when new
+    public synchronized void init(){} // We initalize everything when new
 
     // For ctrl_clear
-    public void clearAll() {
+    public synchronized void clearAll() {
         camsMap.clear();;
         obsMap.clear();
         allObservations.clear();
     }
 
 
-    public boolean checkArgs(String id, SiloOuterClass.ObjectType type) {
+    public synchronized boolean checkArgs(String id, SiloOuterClass.ObjectType type) {
 
         if(type.equals(ObjectType.person)) {
             try {
@@ -68,7 +68,7 @@ public class SiloServerOps {
         return false;
     }
 
-    public boolean checkCarID(String s1, String s2, String s3) {
+    public synchronized boolean checkCarID(String s1, String s2, String s3) {
         int num = 0;
         int letter = 0;
 
@@ -85,7 +85,7 @@ public class SiloServerOps {
 
 
 
-    public void camJoin(String name, String locationX, String locationY) throws BadEntryException {
+    public synchronized void camJoin(String name, String locationX, String locationY) throws BadEntryException {
         Camera newCamera;
         float longitude;
         float latitude;
@@ -124,12 +124,12 @@ public class SiloServerOps {
     }
 
 
-    public Camera camInfo(String name) {
+    public synchronized Camera camInfo(String name) {
 
         return camsMap.get(name);
     }
 
-    public void report(List<String> camName, List<String> id, List<ObjectType> type) throws BadEntryException {
+    public synchronized void report(List<String> camName, List<String> id, List<ObjectType> type) throws BadEntryException {
         if (id.size() != type.size()){
             System.out.println("Algo de errado não está certo no tamanho das listas: report SiloServerOps");
         }
@@ -147,7 +147,7 @@ public class SiloServerOps {
         System.out.println("Não, não vai, ele vai à quimoterapia!");
     }
 
-    public Observation track(ObjectType type, String id) throws BadEntryException{
+    public synchronized Observation track(ObjectType type, String id) throws BadEntryException{
 
         if (!checkArgs(id, type)){
             throw new BadEntryException(ErrorMessage.ID_NOT_VALID);
@@ -164,7 +164,7 @@ public class SiloServerOps {
         return obs;
     }
 
-    public List<Observation> trackMatch(ObjectType type, String partId) throws BadEntryException {
+    public synchronized List<Observation> trackMatch(ObjectType type, String partId) throws BadEntryException {
 
         List<Observation> lst = new ArrayList<>();
 
@@ -234,7 +234,7 @@ public class SiloServerOps {
 
 
 
-    public List<Observation> trace(ObjectType type, String id) throws BadEntryException {
+    public synchronized List<Observation> trace(ObjectType type, String id) throws BadEntryException {
 
         if (!checkArgs(id, type)){
             throw new BadEntryException(ErrorMessage.ID_NOT_VALID);
