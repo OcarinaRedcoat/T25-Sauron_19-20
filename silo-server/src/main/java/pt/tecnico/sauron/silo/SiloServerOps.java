@@ -22,8 +22,14 @@ public class SiloServerOps {
 
     public SiloServerOps() {}
 
+    public String ping(String ping) throws BadEntryException{
+        if (ping == null || ping.isEmpty()){
+            throw new BadEntryException(ErrorMessage.EMPTY_PING);
+        }
+        return "pong";
+    }
 
-    public void init(){}
+    public void init(){} // We initalize everything when new
 
     // For ctrl_clear
     public void clearAll() {

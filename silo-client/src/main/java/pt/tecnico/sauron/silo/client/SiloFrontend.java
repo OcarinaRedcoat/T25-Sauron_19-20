@@ -33,6 +33,16 @@ public class SiloFrontend {
 
     }
 
+    public void ctrlInit() {
+
+        try {
+            SiloOuterClass.InitRequest request = SiloOuterClass.InitRequest.newBuilder().build();
+            stub.ctrlInit(request);
+        } catch (StatusRuntimeException e) {
+            System.out.println("Caught exception with description: " +
+                    e.getStatus().getDescription());
+        }
+    }
 
     public void ctrlClear() {
 
@@ -46,15 +56,19 @@ public class SiloFrontend {
     }
 
 
-    public void ctrlPing(String text) {
-
+    public String ctrlPing(String text) {
+        SiloOuterClass.PongResponse pong;
         try {
             SiloOuterClass.PingRequest request = SiloOuterClass.PingRequest.newBuilder().setPing(text).build();
-            stub.ctrlPing(request);
+            pong = stub.ctrlPing(request);
+            return pong.getPong();
         } catch (StatusRuntimeException e) {
             System.out.println("Caught exception with description: " +
                     e.getStatus().getDescription());
         }
+
+        return ""; // se chegou aqui significa que nao recebeu nada e os argumentos estao mal
+
     }
 
 

@@ -2,7 +2,7 @@ package pt.tecnico.sauron.silo.exceptions;
 
 public enum ErrorMessage {
 
-    EMPTY_INPUT("Input cannot be empty."),
+    EMPTY_PING("The ping is null or empty."),
 
     NO_ID_MATCH("No id match the expression."),
 

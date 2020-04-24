@@ -186,21 +186,19 @@ public class SiloServerImpl extends SiloGrpc.SiloImplBase{
 
     }
 
-    public void ctrlPing(SiloOuterClass.PingRequest request, StreamObserver<SiloOuterClass.PingResponse> responseObserver){
+    public void ctrlPing(SiloOuterClass.PingRequest request, StreamObserver<SiloOuterClass.PongResponse> responseObserver){
 
+        try{
+            String pong = Ops.ping(request.getPing());
+            SiloOuterClass.PongResponse response = SiloOuterClass.PongResponse.newBuilder().
+                    setPong(pong).build();
+            responseObserver.onNext(response);
+            responseObserver.onCompleted();
 
-        String output = "Server Running " + request.getPing();
-
-
-        if (request.getPing() == null || request.getPing().isEmpty()){
-            responseObserver.onError(INVALID_ARGUMENT.withDescription(ErrorMessage.EMPTY_INPUT.toString()).asRuntimeException());
+        } catch (BadEntryException e){
+            responseObserver.onError(INVALID_ARGUMENT.withDescription(e.toString()).asRuntimeException());
         }
 
-        SiloOuterClass.PingResponse response = SiloOuterClass.PingResponse.newBuilder().
-                setPong(output).build();
-
-        responseObserver.onNext(response);
-        responseObserver.onCompleted();
     }
 
 
@@ -220,8 +218,8 @@ public class SiloServerImpl extends SiloGrpc.SiloImplBase{
     public void ctrlInit(SiloOuterClass.InitRequest request, StreamObserver<SiloOuterClass.InitResponse> responseObserver) {
 
         Ops.init();
-        responseObserver.onNext(SiloOuterClass.InitResponse.getDefaultInstance());
 
+        responseObserver.onNext(SiloOuterClass.InitResponse.getDefaultInstance());
         responseObserver.onCompleted();
     }
 
