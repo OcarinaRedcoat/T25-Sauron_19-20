@@ -6,6 +6,7 @@ import io.grpc.StatusRuntimeException;
 import pt.tecnico.sauron.silo.client.SiloFrontend;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
+import pt.ulisboa.tecnico.sdis.zk.ZKNamingException;
 
 import java.util.Scanner;
 
@@ -23,7 +24,7 @@ public class SpotterApp {
 		return count;
 	}
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws ZKNamingException {
 		System.out.println(SpotterApp.class.getSimpleName());
 
 		if (args.length != 2){
@@ -38,7 +39,7 @@ public class SpotterApp {
 		}
 
 		library = new SiloFrontend();
-		ManagedChannel channel = library.createChannel(args[0], args[1]);
+		ManagedChannel channel = library.createChannel(args[0], args[1], args[3]);
 
 		try (Scanner scanner = new Scanner(System.in)){
 

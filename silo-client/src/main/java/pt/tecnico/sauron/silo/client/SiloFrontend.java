@@ -6,6 +6,10 @@ import io.grpc.Status;
 import io.grpc.StatusRuntimeException;
 import pt.tecnico.sauron.silo.grpc.SiloGrpc;
 import pt.tecnico.sauron.silo.grpc.SiloOuterClass;
+import pt.ulisboa.tecnico.sdis.zk.ZKNaming;
+import pt.ulisboa.tecnico.sdis.zk.ZKNamingException;
+import pt.ulisboa.tecnico.sdis.zk.ZKRecord;
+
 import java.util.*;
 
 public class SiloFrontend {
@@ -14,11 +18,17 @@ public class SiloFrontend {
 
     public SiloFrontend() {}
 
-    public ManagedChannel createChannel(String host, String portStr) {
+    public ManagedChannel createChannel(String zooHost, String zooPort, String path/*, String host, String portStr*/) throws ZKNamingException {
 
         System.out.println("FE DEBUGGING...");
-        final int port = Integer.parseInt(portStr);
-        final String target = host + ":" + port;
+
+        ZKNaming zkNaming = new ZKNaming(zooHost,zooPort);
+        // lookup
+        ZKRecord record = zkNaming.lookup(path);
+        String target = record.getURI();
+
+        //final int port = Integer.parseInt(portStr);
+        //final String target = host + ":" + port;
 
         // Channel is the abstraction to connect to a service endpoint.
         // Let us use plaintext communication because we do not have certificates.

@@ -15,8 +15,8 @@ public class SiloClientApp {
 			System.out.printf("arg[%d] = %s%n", i, args[i]);
 		}
 		
-		SiloFrontend frontend = new SiloFrontend();
-		frontend.createChannel(args[0], args[1]);
+		//SiloFrontend frontend = new SiloFrontend();
+		//frontend.createChannel(args[0], args[1]);
 		//ctrl_ping(frontend);
 		//ctrl_clear(frontend);
 
