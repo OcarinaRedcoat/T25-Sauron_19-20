@@ -27,8 +27,8 @@ public class SpotterApp {
 	public static void main(String[] args) throws ZKNamingException {
 		System.out.println(SpotterApp.class.getSimpleName());
 
-		if (args.length != 2){
-			System.out.println("Missing Arguments");
+		if (args.length != 2 && args.length != 3){
+			System.out.println("Wrong Arguments. Expecting 2 or 3 arguments and receiving " + args.length);
 			return;
 		}
 
@@ -39,7 +39,13 @@ public class SpotterApp {
 		}
 
 		library = new SiloFrontend();
-		ManagedChannel channel = library.createChannel(args[0], args[1], args[3]);
+		//ManagedChannel channel = library.createChannel(args[0], args[1], args[3]);
+		ManagedChannel channel;
+		if (args.length == 2) {
+			channel = library.createChannel(args[0], args[1]);
+		} else {
+			channel = library.createChannel(args[0], args[1], args[2]);
+		}
 
 		try (Scanner scanner = new Scanner(System.in)){
 

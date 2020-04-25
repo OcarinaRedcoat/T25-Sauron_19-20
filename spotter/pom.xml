@@ -21,7 +21,7 @@
 		<mainclass>pt.tecnico.sauron.spotter.SpotterApp</mainclass>
 		<zoo.host>localhost</zoo.host>
 		<zoo.port>2181</zoo.port>
-		<server.path>/grpc/sauron/silo/</server.path>
+		<!--server.path>/grpc/sauron/silo/</server.path>-->
 	</properties>
 
 	<dependencies>
@@ -73,7 +73,7 @@
 					<arguments>
 						<argument>${zoo.host}</argument>
 						<argument>${zoo.port}</argument>
-						<argument>${server.path}</argument>
+						<!--argument>${server.path}</argument>-->
 					</arguments>
 				</configuration>
 			</plugin>
