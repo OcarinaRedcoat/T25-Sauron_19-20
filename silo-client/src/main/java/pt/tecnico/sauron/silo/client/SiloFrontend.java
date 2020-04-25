@@ -16,14 +16,50 @@ public class SiloFrontend {
 
     private  SiloGrpc.SiloBlockingStub stub;
 
+    private String path_prefix = "/grpc/sauron/silo";
+
     public SiloFrontend() {}
 
-    public ManagedChannel createChannel(String zooHost, String zooPort, String path/*, String host, String portStr*/) throws ZKNamingException {
 
-        System.out.println("FE DEBUGGING...");
+    public ManagedChannel createChannel(String zooHost, String zooPort) throws ZKNamingException {
+
+        System.out.println("FE DEBUGGING - NO PATH...");
+
+        ZKNaming zkNaming  = new ZKNaming(zooHost,zooPort);
+
+        //Collection<ZKRecord> listRecords = zkNaming.listRecords(path_prefix);
+
+        int numberOfInstances = zkNaming.listRecords(path_prefix).size();
+
+        System.out.println("------------" + numberOfInstances + "------------------");
+
+        Random rand = new Random();
+        int instance = rand.nextInt(numberOfInstances) + 1;
+
+
+
+        String path = path_prefix + "/" + instance;
+
+        ZKRecord record = zkNaming.lookup(path);
+        String target = record.getURI();
+
+        final ManagedChannel channel = ManagedChannelBuilder.forTarget(target).usePlaintext().build();
+
+        stub = SiloGrpc.newBlockingStub(channel);
+
+        return channel;
+
+    }
+
+    public ManagedChannel createChannel(String zooHost, String zooPort, String instance) throws ZKNamingException {
+
+        System.out.println("FE DEBUGGING - WITH PATH...");
 
         ZKNaming zkNaming = new ZKNaming(zooHost,zooPort);
         // lookup
+
+        String path = path_prefix + "/" + instance;
+
         ZKRecord record = zkNaming.lookup(path);
         String target = record.getURI();
 

@@ -27,14 +27,20 @@ public class SiloServerApp{
 			return;
 		}
 
+		String prefix_path = "/grpc/sauron/silo/";
+
+		/* zooHost zooPort i host port */
+
 
 		final String zooHost = args[0];
 		final String zooPort = args[1];
 
-		final String host = args[2];
-		final String port = args[3];
+		final String path = prefix_path + args[2];
+		System.out.println("path = " + path);
 
-		final String path = args[4];
+		final String serverHost = args[3];
+		final String serverPort = args[4];
+
 
 		final BindableService impl = new SiloServerImpl();
 
@@ -42,13 +48,14 @@ public class SiloServerApp{
 		ZKNaming zkNaming = null;
 		try {
 
-			// Create a new server to listen on port
-			Server server = ServerBuilder.forPort(Integer.parseInt(port)).addService(impl).build();
-
 
 			zkNaming = new ZKNaming(zooHost, zooPort);
 			// publish
-			zkNaming.rebind(path, host, port);
+			zkNaming.rebind(path, serverHost, serverPort);
+
+			/* Start grpc server */
+			// Create a new server to listen on port
+			Server server = ServerBuilder.forPort(Integer.parseInt(serverPort)).addService(impl).build();
 
 			// Start the server
 			server.start();
@@ -64,7 +71,7 @@ public class SiloServerApp{
 		} finally {
 			if (zkNaming != null) {
 				// remove
-				zkNaming.unbind(path, host, port);
+				zkNaming.unbind(path, serverHost, serverPort);
 			}
 		}
 	}

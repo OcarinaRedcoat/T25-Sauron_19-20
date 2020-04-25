@@ -18,8 +18,8 @@ public class EyeApp {
 	public static void main(String[] args) throws InterruptedException, ZKNamingException {
 		System.out.println(EyeApp.class.getSimpleName());
 
-		if (args.length != 5){
-			System.out.println("Missing Arguments");
+		if (args.length != 5 && args.length != 6){
+			System.out.println("Wrong Arguments. Expecting 5 or 6 arguments and receiving " + args.length);
 			return;
 		}
 
@@ -40,7 +40,13 @@ public class EyeApp {
 		}
 
 		library = new SiloFrontend();
-		ManagedChannel channel = library.createChannel(args[0], args[1], args[3]);
+		ManagedChannel channel;
+		if (args.length == 5) {
+			channel = library.createChannel(args[0], args[1]);
+		} else {
+			channel = library.createChannel(args[0], args[1], args[5]);
+		}
+
 
 		try {
 			library.camJoin(name, args[3], args[4]);

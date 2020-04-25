@@ -28,7 +28,7 @@
 
 		<server.host>localhost</server.host>
 		<server.port>808${instance}</server.port>
-		<server.path>/grpc/sauron/silo/${instance}</server.path>
+		<!--<server.path>/grpc/sauron/silo/${instance}</server.path>-->
 
 	</properties>
 
@@ -89,9 +89,10 @@
 					<arguments>
 						<argument>${zoo.host}</argument>
 						<argument>${zoo.port}</argument>
+						<argument>${instance}</argument>
 						<argument>${server.host}</argument>
 						<argument>${server.port}</argument>
-						<argument>${server.path}</argument>
+						<!---<argument>${server.path}</argument>-->
 					</arguments>
 				</configuration>
 			</plugin>
