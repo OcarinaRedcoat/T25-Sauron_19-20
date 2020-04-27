@@ -18,6 +18,9 @@ Sistemas Distribuídos<br>2019-2020
 *(usar imagens com 150px de altura; e depois apagar esta linha)*  
 ![Pedro](alice.png) ![Bernardo](87636.jpg) ![Ricardo](charlie.png)
 
+## Melhorias da primeira parte
+_(que correções ou mehroias foram feitas ao código da primeira parte -- incluir link para commits no GitHub onde  as altearções foram feitas)
+
 ## Modelo de faltas
 
 _(que faltas são toleradas, que faltas não são toleradas)_
