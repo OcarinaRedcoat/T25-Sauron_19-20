@@ -16,7 +16,6 @@ public class SiloFrontend {
 
     public ManagedChannel createChannel(String host, String portStr) {
 
-        System.out.println("FE DEBUGGING...");
         final int port = Integer.parseInt(portStr);
         final String target = host + ":" + port;
 

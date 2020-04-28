@@ -1,6 +1,8 @@
 package pt.tecnico.sauron.silo.client;
 
 import org.junit.jupiter.api.*;
+import pt.tecnico.sauron.silo.grpc.SiloOuterClass;
+
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -15,24 +17,32 @@ public class SiloIT extends BaseIT {
 	// one-time initialization and clean-up
 	@BeforeAll
 	public static void oneTimeSetUp() {
-//		ctrl_init
 	}
 
 	@AfterAll
 	public static void oneTimeTearDown() {
-//		ctrl_reset
 	}
 
 	// initialization and clean-up for each test
 
 	@BeforeEach
 	public void setUp() {
+
 		frontEnd = new SiloFrontend();
+		frontEnd.createChannel("localhost", "8080");
 	}
 
 	@AfterEach
 	public void tearDown() {
-		frontEnd = null;
+
+		frontEnd.ctrlClear();
+	}
+
+
+	@Test
+	public void pingOKTest() {
+		//SiloOuterClass.PingRequest request = SiloOuterClass.PingRequest.newBuilder().setPing("ping").build();
+		assertEquals("ping pong!", frontEnd.ctrlPing("ping"));
 	}
 		
 	// test T1

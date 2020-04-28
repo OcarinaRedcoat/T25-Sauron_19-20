@@ -200,7 +200,7 @@ public class SiloServerImpl extends SiloGrpc.SiloImplBase{
     public void ctrlPing(SiloOuterClass.PingRequest request, StreamObserver<SiloOuterClass.PongResponse> responseObserver){
 
         try{
-            String pong = Ops.ping(request.getPing());
+            String pong = Ops.ping(request.getPing()) + " pong!";
             SiloOuterClass.PongResponse response = SiloOuterClass.PongResponse.newBuilder().
                     setPong(pong).build();
             responseObserver.onNext(response);
