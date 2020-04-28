@@ -26,7 +26,7 @@ public class SiloServerOps {
         if (ping == null || ping.isEmpty()){
             throw new BadEntryException(ErrorMessage.EMPTY_PING);
         }
-        return "pong";
+        return ping;
     }
 
     public synchronized void init(){} // We initalize everything when new
