@@ -43,10 +43,6 @@ _(Breve explicação da solução, suportada pela figura anterior)_
 
 ## **Protocolo de replicação**
 
-_(Explicação do protocolo)_
-
-_(descrição das trocas de mensagens)_
-
 Esta secção desdobra-se sobre o protocolo de replicação utilizado no desenvolvimento do projeto, contendo a sua explicação bem como a descrição das trocas de mensagens. As modificações feitas por forma a garantir a coerência com o que nos foi pedido é apresentada na última secção deste relatório, referente às **<i>Opções De Implementação.</i>**
 
 Para a resolução do trabalho, o nosso grupo implementou o protocolo gossip architecture com coerência fraca, que passamos já a explicar.  
