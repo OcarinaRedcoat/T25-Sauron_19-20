@@ -52,7 +52,7 @@
 				<artifactId>maven-resources-plugin</artifactId>
 				<version>${version.maven-resources-plugin}</version>
 				<configuration>
-					<nonFilteredFileExtensions>
+			 		<nonFilteredFileExtensions>
 						<nonFilteredFileExtension>jks</nonFilteredFileExtension>
 					</nonFilteredFileExtensions>
 				</configuration>

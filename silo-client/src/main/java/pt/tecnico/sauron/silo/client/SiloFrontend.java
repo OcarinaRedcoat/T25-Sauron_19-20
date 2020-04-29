@@ -14,7 +14,7 @@ import java.util.*;
 
 public class SiloFrontend {
 
-    private  SiloGrpc.SiloBlockingStub stub;
+    private SiloGrpc.SiloBlockingStub stub;
 
     private String path_prefix = "/grpc/sauron/silo";
 

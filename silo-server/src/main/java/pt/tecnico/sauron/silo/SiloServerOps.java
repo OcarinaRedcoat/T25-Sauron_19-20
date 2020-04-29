@@ -85,7 +85,7 @@ public class SiloServerOps {
 
 
 
-    public synchronized void camJoin(String name, String locationX, String locationY) throws BadEntryException {
+    public synchronized Camera camJoin(String name, String locationX, String locationY) throws BadEntryException {
         Camera newCamera;
         float longitude;
         float latitude;
@@ -104,7 +104,8 @@ public class SiloServerOps {
 
                 if (camsMap.get(name) == null) {
                     newCamera = new Camera(name, latitude, longitude);
-                    camsMap.put(name, newCamera);
+                    //camsMap.put(name, newCamera);
+                    return newCamera;
                 }
 
             } else {
@@ -121,6 +122,9 @@ public class SiloServerOps {
             }
 
         }
+
+        System.out.println("new cam: " + name + " lat: " + latitude + " long: " + longitude);
+        return null; // voltou a entrar uma camera ja existente no server
     }
 
 
@@ -129,22 +133,25 @@ public class SiloServerOps {
         return camsMap.get(name);
     }
 
-    public synchronized void report(List<String> camName, List<String> id, List<ObjectType> type) throws BadEntryException {
+    public synchronized List<Observation> report(List<String> camName, List<String> id, List<ObjectType> type) throws BadEntryException {
         if (id.size() != type.size()){
             System.out.println("Algo de errado não está certo no tamanho das listas: report SiloServerOps");
         }
 
         Instant instantLot = Instant.now();
 
+        List<Observation> listRes = new ArrayList<>();
+
         for (int i = 0; i < id.size(); i++) {
             if (!checkArgs(id.get(i), type.get(i))) {
                 throw new BadEntryException(ErrorMessage.ID_NOT_VALID);
             }
             Observation obs = new Observation(type.get(i), id.get(i), camName.get(i), instantLot);
-            obsMap.put(id.get(i), obs);
-            allObservations.add(obs);
+            //obsMap.put(id.get(i), obs);
+            //allObservations.add(obs);
+            listRes.add(obs);
         }
-        System.out.println("Não, não vai, ele vai à quimoterapia!");
+        return listRes;
     }
 
     public synchronized Observation track(ObjectType type, String id) throws BadEntryException{
