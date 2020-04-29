@@ -1,8 +1,13 @@
 package pt.tecnico.sauron.silo.client;
 
+import io.grpc.StatusRuntimeException;
 import org.junit.jupiter.api.*;
 import pt.tecnico.sauron.silo.grpc.SiloOuterClass;
 
+import java.util.List;
+
+import static io.grpc.Status.ALREADY_EXISTS;
+import static io.grpc.Status.INVALID_ARGUMENT;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -46,47 +51,69 @@ public class SiloIT extends BaseIT {
 	}
 		
 	// test T1
-	
+
 	@Test
-	// Teste ao T1, cam_info cam_join eye
-	public void testSetNullCamJoin() {
-//		assertThrows()
+	public void camJoinOK() {
+		frontEnd.camJoin("Tagus", "10.0", "20.0");
 	}
 
 	@Test
-	public void testGetCamJoin() {
-//		assertEquals(, FrontEnd.camJoin(););
+	public void duplicateCam() {
+		frontEnd.camJoin("Tagus", "10.0", "20.0");
+		assertEquals(ALREADY_EXISTS.getDescription(),
+				assertThrows(StatusRuntimeException.class, () -> frontEnd.camJoin("Tagus", "15.0", "30.0")).getStatus().getDescription());
 	}
 
 	@Test
-	public void testSetNullCamInfo() {
-//		assertThrows();
+	public void camInfo() {
+		frontEnd.camJoin("Tagus", "10.0", "20.0");
+		frontEnd.camInfo("Tagus");
+	}
+
+	/*@Test
+	public void nullCamInfo() {
+		frontEnd.camJoin("Tagus", "10.0", "20.0");
+		assertEquals(ALREADY_EXISTS.getDescription(),
+				assertThrows(StatusRuntimeException.class, () -> frontEnd.camJoin("Tagus", "15.0", "30.0")).getStatus().getDescription());
+	}*/
+
+	@Test
+	public void reportOK() {
+		frontEnd.camJoin("Tagus", "10.0", "20.0");
+		List<String> types = List.of("car", "person", "person");
+		List<String> ids = List.of("HJ23FG", "11", "12");
+		frontEnd.report(types, ids, "Tagus");
 	}
 
 	@Test
-	public void testGetCamInfo() {
+	public void trackOK() {
+		frontEnd.camJoin("Tagus", "10.0", "20.0");
 
-//		frontEnd.camJoin("Tagus", 10.5f, 10.5f);
-//		float[] expected = {10.5f, 10.5f};
-//
-//		assertEquals(expected, frontEnd.camInfo("Tagus"));
+		List<String> types = List.of("car");
+		List<String> ids = List.of("HJ23FG");
+
+		frontEnd.report(types, ids, "Tagus");
+		String obs = frontEnd.track(types.get(0), ids.get(0));
+
+		int obs_size = types.get(0).length() + ids.get(0).length() + 1;
+
+		// provavelmente precisa de for para percorrer lista
+		assertEquals(types.get(0) + ',' + ids.get(0), obs.substring(0,obs_size));
 	}
 
-	@Test
-	public void failingTestT1() {
+	/*@Test
+	public void trackMatchOK() {
 
-	}
+		frontEnd.camJoin("Tagus", "10.0", "20.0");
 
+		List<String> types = List.of("car");
+		List<String> ids = List.of("HJ23FG");
 
-
-
-
-
-
+		frontEnd.report(types, ids, "Tagus");
 
 
 
-
+	}*/
 
 
 
@@ -94,26 +121,6 @@ public class SiloIT extends BaseIT {
 
 
 
-	// Teste ao T2, report, spotter
-	@Test
-	public void testT2() {
 
-	}
-
-	@Test
-	public void failingTestT2() {
-
-	}
-
-	// Teste ao T3, track, trackMatch, trace
-	@Test
-	public void testT3() {
-
-	}
-
-	@Test
-	public void failingTestT3() {
-
-	}
 
 }

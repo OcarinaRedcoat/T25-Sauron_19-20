@@ -45,6 +45,7 @@ public class SiloFrontend {
 
     public void ctrlClear() {
 
+        System.out.println("dei clear");
         try {
             SiloOuterClass.ClearRequest request = SiloOuterClass.ClearRequest.newBuilder().build();
             stub.ctrlClear(request);
