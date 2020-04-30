@@ -111,7 +111,7 @@ public class SiloServerOps {
 
                 if (camsMap.get(name) == null) {
                     newCamera = new Camera(name, latitude, longitude);
-                    //camsMap.put(name, newCamera);
+                    camsMap.put(name, newCamera);
                     return newCamera;
                 }
 
@@ -148,16 +148,17 @@ public class SiloServerOps {
         Instant instantLot = Instant.now();
 
         List<Observation> listRes = new ArrayList<>();
-
         for (int i = 0; i < id.size(); i++) {
             if (!checkArgs(id.get(i), type.get(i))) {
-                throw new BadEntryException(ErrorMessage.ID_NOT_VALID);
+                System.out.println(ErrorMessage.ID_NOT_VALID);
+                continue;
             }
             Observation obs = new Observation(type.get(i), id.get(i), camName.get(i), instantLot);
-            //obsMap.put(id.get(i), obs);
-            //allObservations.add(obs);
+            obsMap.put(id.get(i), obs);
+            allObservations.add(obs);
             listRes.add(obs);
         }
+
         return listRes;
     }
 
@@ -265,7 +266,7 @@ public class SiloServerOps {
         }
         return obsLst;
     }
-
+/*
     public synchronized void stable(List<Observation> obsList, List<Camera> camList, List<Integer> replicaTS){
 
         for (Camera c: camList){
@@ -303,7 +304,8 @@ public class SiloServerOps {
             }
             obsList.add(o);
             System.out.println("Na lista");
-        }*/
+        }
 
     }
+    */
 }

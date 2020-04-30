@@ -24,8 +24,6 @@ public class ReplicaManager {
     private List<Observation> obsLog = new ArrayList<>();
 
 
-    private boolean connected = false;
-
     private int replicaId; // id of the replica
     private String path;    // general path
 
@@ -34,8 +32,8 @@ public class ReplicaManager {
     private ZKNaming zkNaming;
 
 
-    private Map<Integer, SiloBlockingStub> stubMap = new HashMap();
-    private Map<Integer, ManagedChannel> channels = new HashMap();
+    private Map<String, SiloBlockingStub> stubMap = new HashMap();
+    private Map<String, ManagedChannel> channels = new HashMap();
 
     private List<Integer> replicaTS;
 
@@ -59,28 +57,19 @@ public class ReplicaManager {
     public void connectReplica(){
         try {
 
-            for (int i = 0 ; i < zkNaming.listRecords(path).size(); i++){
 
-                if (i == replicaId - 1){ System.out.println("entrou e saiu"); continue; } // Nao conectar a ti mesmo
+            Collection<ZKRecord> recordsList = zkNaming.listRecords(path);
 
-                int repNumber = i + 1;
-                String replica_path = path + "/" + repNumber;
-
-                System.out.println( replicaId +"\n" +replica_path);
-
-                ZKRecord record = zkNaming.lookup(replica_path);
-
-                String target = record.getURI();
-
-                channels.put(repNumber, ManagedChannelBuilder.forTarget(target).usePlaintext().build());
-
-                System.out.println(channels.size() + "\n" + i);
-
-                stubMap.put(repNumber, SiloGrpc.newBlockingStub(channels.get(repNumber)));
-
-                System.out.println("Replica Manager: " + replicaId + " connected to replica number : " + repNumber );
-
+            for (ZKRecord r: recordsList){
+                String target = r.getURI();
+                if (channels.get(r.getPath()) == null) {
+                    channels.put(r.getPath(), ManagedChannelBuilder.forTarget(target).usePlaintext().build());
+                }
+                if (stubMap.get(r.getPath()) == null) {
+                    stubMap.put(r.getPath(), SiloGrpc.newBlockingStub(channels.get(r.getPath())));
+                }
             }
+
 
         } catch (ZKNamingException e) {
             e.printStackTrace();
@@ -88,9 +77,9 @@ public class ReplicaManager {
     }
 
     public void update(){
-        if (!connected){
-            connectReplica(); connected = true;
-        }
+
+        connectReplica();
+
 
         List<SiloOuterClass.Camera> gossipCamList = new ArrayList<>();
         for (Camera c: camLog){
@@ -110,18 +99,9 @@ public class ReplicaManager {
         GossipMessage gossip = GossipMessage.newBuilder().addAllTs(replicaTS).setLog(log).build();
 
 
-        for (Map.Entry<Integer, SiloBlockingStub> stub: stubMap.entrySet()){
+        for (Map.Entry<String, SiloBlockingStub> stub: stubMap.entrySet()){
             //System.out.println("Replica: " + stub.getKey());
             stub.getValue().gossip(gossip);
-        }
-
-        if (replicaNro == 1){
-            Ops.stable(obsLog, camLog, replicaTS);
-            obsLog.clear();
-            camLog.clear();
-            for (int i = 0; i < replicaTS.size(); i++){
-                replicaTS.set(i, 0);
-            }
         }
 
     }
@@ -162,10 +142,11 @@ public class ReplicaManager {
             List<Observation> list = Ops.report(camName, id, type);
             tsVectorPP(replicaId);
 
-            for (Observation obs : list ){
-                obsLog.add(obs);
-            }
+            obsLog.addAll(list);
 
+            if (list.size() != id.size() && list.size() != camName.size() && list.size() != type.size()) {
+                throw new BadEntryException(ErrorMessage.ID_NOT_VALID);
+            }
         } catch (BadEntryException e){
             throw new BadEntryException(ErrorMessage.ID_NOT_VALID);
         }

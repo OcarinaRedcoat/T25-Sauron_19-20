@@ -21,7 +21,7 @@ public class SiloServerApp{
 
 	private static int UPDATE_TIMER = 10000; // -> 30 seconds is 30 000 miliseconds
 
-	private static int replicaNro = 1;
+	private static int replicaNro;
 
 	public static void main(String[] args) throws IOException, InterruptedException, ZKNamingException {
 		System.out.println(SiloServerApp.class.getSimpleName());
@@ -53,6 +53,7 @@ public class SiloServerApp{
 		final String serverHost = args[3];
 		final String serverPort = args[4];
 
+		replicaNro = Integer.parseInt(args[5]);
 
 		//final BindableService impl = new SiloServerImpl();
 
