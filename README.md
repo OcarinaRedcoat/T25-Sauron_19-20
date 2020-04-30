@@ -13,9 +13,7 @@ In all the source files (including POMs), please replace __CXX__ with your group
 The group identifier is composed by Campus - A (Alameda) or T (Tagus) - and number - always with two digits.  
 This change is important for code dependency management, to make sure that your code runs using the correct components and not someone else's.
 
-### Team members
-
-*(fill-in table below with team members; and then delete this line)*  
+### Team members  
 
 | Number | Name              | User                                 | Email                                              |
 |--------|-------------------|--------------------------------------|----------------------------------------------------|

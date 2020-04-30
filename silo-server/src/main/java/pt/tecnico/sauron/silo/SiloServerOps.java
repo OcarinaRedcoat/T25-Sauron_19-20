@@ -1,5 +1,6 @@
 package pt.tecnico.sauron.silo;
 
+import com.google.protobuf.Internal;
 import pt.tecnico.sauron.silo.domain.Camera;
 import pt.tecnico.sauron.silo.domain.Observation;
 import pt.tecnico.sauron.silo.exceptions.BadEntryException;
@@ -20,7 +21,13 @@ public class SiloServerOps {
 
     private List<Observation> allObservations = new ArrayList<>();
 
+    private List<Integer> valueTS;
+
     public SiloServerOps() {}
+
+    public SiloServerOps(int replicaNro) {
+        valueTS = new ArrayList<>(Collections.nCopies(replicaNro, 0)); // initialize the timestamp vector with the number of replicas
+    }
 
     public synchronized String ping(String ping) throws BadEntryException{
         if (ping == null || ping.isEmpty()){
@@ -85,7 +92,7 @@ public class SiloServerOps {
 
 
 
-    public synchronized void camJoin(String name, String locationX, String locationY) throws BadEntryException {
+    public synchronized Camera camJoin(String name, String locationX, String locationY) throws BadEntryException {
         Camera newCamera;
         float longitude;
         float latitude;
@@ -105,6 +112,7 @@ public class SiloServerOps {
                 if (camsMap.get(name) == null) {
                     newCamera = new Camera(name, latitude, longitude);
                     camsMap.put(name, newCamera);
+                    return newCamera;
                 }
 
             } else {
@@ -121,6 +129,9 @@ public class SiloServerOps {
             }
 
         }
+
+        System.out.println("new cam: " + name + " lat: " + latitude + " long: " + longitude);
+        return null; // voltou a entrar uma camera ja existente no server
     }
 
 
@@ -129,22 +140,26 @@ public class SiloServerOps {
         return camsMap.get(name);
     }
 
-    public synchronized void report(List<String> camName, List<String> id, List<ObjectType> type) throws BadEntryException {
+    public synchronized List<Observation> report(List<String> camName, List<String> id, List<ObjectType> type) throws BadEntryException {
         if (id.size() != type.size()){
             System.out.println("Algo de errado não está certo no tamanho das listas: report SiloServerOps");
         }
 
         Instant instantLot = Instant.now();
 
+        List<Observation> listRes = new ArrayList<>();
         for (int i = 0; i < id.size(); i++) {
             if (!checkArgs(id.get(i), type.get(i))) {
-                throw new BadEntryException(ErrorMessage.ID_NOT_VALID);
+                System.out.println(ErrorMessage.ID_NOT_VALID);
+                continue;
             }
             Observation obs = new Observation(type.get(i), id.get(i), camName.get(i), instantLot);
             obsMap.put(id.get(i), obs);
             allObservations.add(obs);
+            listRes.add(obs);
         }
-        System.out.println("Não, não vai, ele vai à quimoterapia!");
+
+        return listRes;
     }
 
     public synchronized Observation track(ObjectType type, String id) throws BadEntryException{
@@ -251,5 +266,65 @@ public class SiloServerOps {
         }
         return obsLst;
     }
+/*
+    public synchronized void stable(List<Observation> obsList, List<Camera> camList, List<Integer> replicaTS){
 
+        for (Camera c: camList){
+            camsMap.put(c.getName(), c);
+        }
+
+        System.out.println(obsList.size() + "size");
+
+        for (Observation o : obsList) {
+            if (obsMap.get(o.getId()) == null) {
+                obsMap.put(o.getId(), o);
+                System.out.println("id: " + o.getId());
+            } else {
+                if (obsMap.get(o.getId()).getTimestamp().isBefore(o.getTimestamp())) {
+                    obsMap.put(o.getId(), o);
+                }
+            }
+            allObservations.add(o);
+            //System.out.println("Na lista 2");
+
+        }
+
+        for (int i = 0; i < valueTS.size(); i++){
+            valueTS.set(i, valueTS.get(i) + replicaTS.get(i));
+            System.out.println("valueTS: " + valueTS.get(i));
+        }
+        /*for (Observation o: obsList){
+            if(obsMap.get(o.getId()) == null){
+                obsMap.put(o.getId(), o);
+                System.out.println("Mais recente");
+            } else {
+                if (obsMap.get(o.getId()).getTimestamp().isBefore(o.getTimestamp())){
+                    obsMap.put(o.getId(), o);
+                }
+            }
+            obsList.add(o);
+            System.out.println("Na lista");
+        }
+
+    }
+    */
+
+    public void merge(List<SiloOuterClass.Camera> camlog, List<SiloOuterClass.ObservationLog> reportlog){
+        for (SiloOuterClass.Camera c: camlog){
+            Camera newCamera = new Camera(c.getName(), c.getLatitude(), c.getLongitude());
+            camsMap.put(c.getName(), newCamera);
+        }
+        for (SiloOuterClass.ObservationLog o: reportlog){
+            Observation newObs = new Observation(o.getType(), o.getId(), o.getCam(), Instant.parse(o.getTimestamp()));
+            if(obsMap.get(newObs.getId()) == null){
+                obsMap.put(newObs.getId(), newObs);
+            } else {
+                if (obsMap.get(newObs.getId()).getTimestamp().isBefore(newObs.getTimestamp())){
+                    obsMap.put(newObs.getId(), newObs);
+                }
+            }
+            allObservations.add(newObs);
+        }
+
+    }
 }

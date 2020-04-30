@@ -18,6 +18,11 @@ import static io.grpc.Status.INVALID_ARGUMENT;
 public class SiloServerImpl extends SiloGrpc.SiloImplBase{
 
     private SiloServerOps Ops = new SiloServerOps();
+    private ReplicaManager manager;
+
+    public SiloServerImpl(String path, String zooHost, String zooPort, int repNro, String id){
+        this.manager = new ReplicaManager(path, zooHost, zooPort, repNro, id);
+    }
 
     @Override
     public void camJoin(SiloOuterClass.CamJoinRequest request, StreamObserver<SiloOuterClass.CamJoinResponse> responseObserver) {
@@ -29,7 +34,8 @@ public class SiloServerImpl extends SiloGrpc.SiloImplBase{
         String locationY = request.getLongitude();
 
         try{
-            Ops.camJoin(localName, locationX, locationY);
+            manager.camJoin(localName, locationX, locationY);
+            //Ops.camJoin(localName, locationX, locationY);
             SiloOuterClass.CamJoinResponse response = SiloOuterClass.CamJoinResponse.newBuilder().build();
             // Send a single response through the stream.
             responseObserver.onNext(response);
@@ -57,7 +63,7 @@ public class SiloServerImpl extends SiloGrpc.SiloImplBase{
 
         String localName = request.getLocal();
 
-        Camera cam_location = Ops.camInfo(localName);
+        Camera cam_location = manager.camInfo(localName);
 
         float locationX = cam_location.getLatitude();
         float locationY = cam_location.getLongitude();
@@ -92,7 +98,8 @@ public class SiloServerImpl extends SiloGrpc.SiloImplBase{
         }
 
         try {
-            Ops.report(camLot, idLot, typeLot);
+            manager.report(camLot, idLot, typeLot);
+            //Ops.report(camLot, idLot, typeLot);
             SiloOuterClass.ReportResponse response = SiloOuterClass.ReportResponse.newBuilder().build();
             responseObserver.onNext(response);
             responseObserver.onCompleted();
@@ -107,10 +114,10 @@ public class SiloServerImpl extends SiloGrpc.SiloImplBase{
 
 
         try{
-            Observation trackedObs = Ops.track(request.getType(), request.getId());
+            Observation trackedObs = manager.track(request.getType(), request.getId());
 
 
-            Camera cam = Ops.camInfo(trackedObs.getCamera());
+            Camera cam = manager.camInfo(trackedObs.getCamera());
 
             SiloOuterClass.Camera camera = SiloOuterClass.Camera.newBuilder().setName(trackedObs.getCamera()).setLatitude(cam.getLatitude()).setLongitude(cam.getLongitude()).build();
 
@@ -137,13 +144,13 @@ public class SiloServerImpl extends SiloGrpc.SiloImplBase{
 
         try{
 
-            List<Observation> obsResponse = Ops.trackMatch(request.getType(), request.getId());
+            List<Observation> obsResponse = manager.trackMatch(request.getType(), request.getId());
 
 
             List<SiloOuterClass.Observation> obsRes = new ArrayList<>();
             for (Observation o: obsResponse){
 
-                Camera cam = Ops.camInfo(o.getCamera());
+                Camera cam = manager.camInfo(o.getCamera());
 
                 SiloOuterClass.Camera camera = SiloOuterClass.Camera.newBuilder().setName(o.getCamera()).setLatitude(cam.getLatitude()).setLongitude(cam.getLongitude()).build();
 
@@ -167,15 +174,15 @@ public class SiloServerImpl extends SiloGrpc.SiloImplBase{
     public void trace(SiloOuterClass.TraceRequest request, StreamObserver<SiloOuterClass.TraceResponse> responseObserver){
 
         try{
-            List<Observation> obsResponse = Ops.trace(request.getType(), request.getId());
+            List<Observation> obsResponse = manager.trace(request.getType(), request.getId());
 
 
-            SiloOuterClass.TraceResponse builder = null;
+            //SiloOuterClass.TraceResponse builder = null;
 
             List<SiloOuterClass.Observation> obsLst = new ArrayList<>();
             for (Observation o: obsResponse){
 
-                Camera cam = Ops.camInfo(o.getCamera());
+                Camera cam = manager.camInfo(o.getCamera());
 
                 SiloOuterClass.Camera camera = SiloOuterClass.Camera.newBuilder().setName(o.getCamera()).setLatitude(cam.getLatitude()).setLongitude(cam.getLongitude()).build();
 
@@ -233,6 +240,18 @@ public class SiloServerImpl extends SiloGrpc.SiloImplBase{
         responseObserver.onNext(SiloOuterClass.InitResponse.getDefaultInstance());
         responseObserver.onCompleted();
     }
+
+
+
+    public void gossip(SiloOuterClass.GossipMessage message, StreamObserver<SiloOuterClass.GossipResponse> responseObserver){
+        manager.gossip(message);
+        SiloOuterClass.GossipResponse response = SiloOuterClass.GossipResponse.newBuilder().build();
+        responseObserver.onNext(response);
+        responseObserver.onCompleted();
+    }
+
+    public void update(){ manager.update();}
+
 
 
 }

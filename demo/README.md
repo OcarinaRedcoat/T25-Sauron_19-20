@@ -21,8 +21,9 @@ Abaixo encontra-se um índice por forma a facilitar a locomoção dentro do docu
 **&nbsp;&nbsp;&nbsp;2.3. *report***  
 **&nbsp;&nbsp;&nbsp;2.4. *track***  
 **&nbsp;&nbsp;&nbsp;2.5. *track_match***  
-**&nbsp;&nbsp;&nbsp;2.6. *trace***  
-**3. Considerações Finais**
+**&nbsp;&nbsp;&nbsp;2.6. *trace***   
+**3. Replicação e Tolerância a Faltas**     
+**4. Considerações Finais**
 
 <br>
 
@@ -298,8 +299,13 @@ car,00AA00,<timestamp>,Tagus,38.737613,-9.303164
 
 
 
+## **3. Replicação e Tolerância a Faltas**
 
-## **3. Considerações Finais**
+Nesta nova secção, devem ser indicados os comandos para: lançar réplicas, fornecer dados, fazer interrogações, etc. Deve também ser indicado o que se espera que aconteça em cada caso.  
+O guião de demonstração deve apresentar situações de funcionamento normal com replicação e também situações de tolerância a faltas.
+
+
+## **4. Considerações Finais**
 
 Dá-se por concluido o guia de demonstração que cobre todo o trabalho desenvolvido.
 

@@ -19,6 +19,9 @@
 		<!-- see parent POM for more properties -->
 
 		<mainclass>pt.tecnico.sauron.eye.EyeApp</mainclass>
+		<zoo.host>localhost</zoo.host>
+		<zoo.port>2181</zoo.port>
+
 	</properties>
 
 	<dependencies>
@@ -49,7 +52,7 @@
 				<artifactId>maven-resources-plugin</artifactId>
 				<version>${version.maven-resources-plugin}</version>
 				<configuration>
-					<nonFilteredFileExtensions>
+			 		<nonFilteredFileExtensions>
 						<nonFilteredFileExtension>jks</nonFilteredFileExtension>
 					</nonFilteredFileExtensions>
 				</configuration>
@@ -68,7 +71,12 @@
 				<configuration>
 					<mainClass>${mainclass}</mainClass>
 					<arguments>
-
+						<argument>${zoo.host}</argument>
+						<argument>${zoo.port}</argument>
+						<!--<argument>Tagus</argument>
+						<argument>12.3345</argument>
+                        <argument>-9.23451</argument>
+                        <argument>1</argument>-->
 					</arguments>
 				</configuration>
 			</plugin>

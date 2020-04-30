@@ -6,18 +6,75 @@ import io.grpc.Status;
 import io.grpc.StatusRuntimeException;
 import pt.tecnico.sauron.silo.grpc.SiloGrpc;
 import pt.tecnico.sauron.silo.grpc.SiloOuterClass;
+import pt.ulisboa.tecnico.sdis.zk.ZKNaming;
+import pt.ulisboa.tecnico.sdis.zk.ZKNamingException;
+import pt.ulisboa.tecnico.sdis.zk.ZKRecord;
+
 import java.util.*;
 
 public class SiloFrontend {
 
-    private  SiloGrpc.SiloBlockingStub stub;
+    private SiloGrpc.SiloBlockingStub stub;
+
+    private String path_prefix = "/grpc/sauron/silo";
+
+    private List<Integer> frontEndTS;
+
+    private int replicaId;
 
     public SiloFrontend() {}
 
-    public ManagedChannel createChannel(String host, String portStr) {
 
-        final int port = Integer.parseInt(portStr);
-        final String target = host + ":" + port;
+    public ManagedChannel createChannel(String zooHost, String zooPort) throws ZKNamingException {
+
+        System.out.println("FE DEBUGGING - NO PATH...");
+
+        ZKNaming zkNaming  = new ZKNaming(zooHost,zooPort);
+
+        //Collection<ZKRecord> listRecords = zkNaming.listRecords(path_prefix);
+
+        int numberOfInstances = zkNaming.listRecords(path_prefix).size();
+
+        frontEndTS = new ArrayList<>(Collections.nCopies(numberOfInstances, 0));
+
+        System.out.println("------------" + numberOfInstances + "------------------");
+
+        Random rand = new Random();
+        this.replicaId = rand.nextInt(numberOfInstances) + 1;
+
+
+
+        String path = path_prefix + "/" + replicaId;
+
+        ZKRecord record = zkNaming.lookup(path);
+        String target = record.getURI();
+
+        final ManagedChannel channel = ManagedChannelBuilder.forTarget(target).usePlaintext().build();
+
+        stub = SiloGrpc.newBlockingStub(channel);
+
+        return channel;
+
+    }
+
+    public ManagedChannel createChannel(String zooHost, String zooPort, String instance) throws ZKNamingException {
+
+        System.out.println("FE DEBUGGING - WITH PATH...");
+
+        ZKNaming zkNaming = new ZKNaming(zooHost,zooPort);
+        // lookup
+
+        this.replicaId = Integer.parseInt(instance);
+
+        frontEndTS = new ArrayList<>(Collections.nCopies(zkNaming.listRecords(path_prefix).size(), 0));
+
+        String path = path_prefix + "/" + instance;
+
+        ZKRecord record = zkNaming.lookup(path);
+        String target = record.getURI();
+
+        //final int port = Integer.parseInt(portStr);
+        //final String target = host + ":" + port;
 
         // Channel is the abstraction to connect to a service endpoint.
         // Let us use plaintext communication because we do not have certificates.
@@ -79,6 +136,7 @@ public class SiloFrontend {
     public void camJoin(String name, String locationX, String locationY){
 
         stub.camJoin(SiloOuterClass.CamJoinRequest.newBuilder().setLocal(name).setLatitude(locationX).setLongitude(locationY).build());
+        frontEndTS.set(replicaId, frontEndTS.get(replicaId) + 1);
     }
 
     /**
@@ -124,7 +182,7 @@ public class SiloFrontend {
         }
 
         stub.report(SiloOuterClass.ReportLot.newBuilder().addAllReportLot(lot).build());
-
+        frontEndTS.set(replicaId, frontEndTS.get(replicaId) + 1);
     }
 
     /**
