@@ -26,21 +26,28 @@ Sistemas Distribuídos<br>2019-2020
 _(que correções ou mehroias foram feitas ao código da primeira parte -- incluir link para commits no GitHub onde  as altearções foram feitas)
 
 **EYE**
-* argumentos da linha de comando corretos: fizemos uma correção nesta medida, tirando o primeiro argumento que por lapso estava errado.
+* argumentos da linha de comando corretos: fizemos uma correção nesta medida, tirando o primeiro argumento que por lapso estava errado;
 * envio de lote de observações: corrigimos o nosso código, que não permitia a diferença de lotes; cada observação era enviada diretamente e não após uma linha vazia.
 
 **SILO**
-* Adicionamos o guião de demonstração que estava em falta na primeira entrega
+* Adicionamos o guião de demonstração que estava em falta na primeira entrega;
+* Corrigimos o tratamento de erros (mapeamento de erros para gRPC).
 
 **SPOTTER**
 * argumentos da linha de comandos corretos: fizemos também uma correção nesta medida, tirando o primeiro argumento que por lapso estava errado. 
 
 **SILO-CLIENT**
 * Cobertura de testes de integração desenvolvidos: adicionamos os testes para cada uma das seguintes operações:
-    * cam_join
-    * cam_info
-    * report
-    * track
+    * cam_join;
+    * cam_info;
+    * report;
+    * track;
+    * track_match.
+
+**QUALIDADE DO CÓDIGO**  
+* Sincronização correta de variáveis partilhadas: foi adicionada esta medida ao nosso código.
+
+
 
 <br>
 
@@ -116,4 +123,4 @@ _(Descrição de opções de implementação, incluindo otimizações e melhoria
 
 ## **Notas finais**
 
-( A preencher)
+Damos por concluído este relatório referente à 2ª entrega do projeto de Sistemas Distribuídos.
