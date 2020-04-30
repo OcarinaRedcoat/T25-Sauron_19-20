@@ -33,24 +33,27 @@ public class ReplicaManager {
 
     private ZKNaming zkNaming;
 
-    private String zooHost;
-    private String zooPort;
 
     private Map<Integer, SiloBlockingStub> stubMap = new HashMap();
     private Map<Integer, ManagedChannel> channels = new HashMap();
 
-    private List<Integer> timeStampVector;
+    private List<Integer> replicaTS;
 
-    private SiloServerOps Ops = new SiloServerOps();
+    private List<List<Integer>> tableTS;
+
+    private SiloServerOps Ops;
 
     public ReplicaManager(String path, String zooHost, String zooPort, int repNro, String id){
         this.path = path;
         this.replicaNro = repNro; // total number of replicas
         this.replicaId = Integer.parseInt(id);      // replica id
+        this.Ops = new SiloServerOps(this.replicaNro);
 
         zkNaming = new ZKNaming(zooHost, zooPort);
 
-        timeStampVector = new ArrayList<>(Collections.nCopies(repNro, 0)); // initialize the timestamp vector with the number of replicas
+        tableTS = new ArrayList<>(Collections.nCopies(replicaNro - 1, new ArrayList<>(Collections.nCopies(replicaNro - 1, 0))));
+        replicaTS = new ArrayList<>(Collections.nCopies(repNro, 0)); // initialize the timestamp vector with the number of replicas
+
     }
 
     public void connectReplica(){
@@ -89,11 +92,6 @@ public class ReplicaManager {
             connectReplica(); connected = true;
         }
 
-        /*System.out.println();
-        for (int i = 0 ;i < timeStampVector.size(); i++ ){
-            System.out.println("Replica = " + i +" timeStamp = " + timeStampVector.get(i));
-        }*/
-
         List<SiloOuterClass.Camera> gossipCamList = new ArrayList<>();
         for (Camera c: camLog){
             SiloOuterClass.Camera gossipCam = SiloOuterClass.Camera.newBuilder().setName(c.getName()).setLatitude(c.getLatitude())
@@ -109,7 +107,7 @@ public class ReplicaManager {
         }
 
         updateLog log = updateLog.newBuilder().addAllCamLog(gossipCamList).addAllReportLog(gossipObsList).build();
-        GossipMessage gossip = GossipMessage.newBuilder().addAllTs(timeStampVector).setLog(log).build();
+        GossipMessage gossip = GossipMessage.newBuilder().addAllTs(replicaTS).setLog(log).build();
 
 
         for (Map.Entry<Integer, SiloBlockingStub> stub: stubMap.entrySet()){
@@ -117,19 +115,27 @@ public class ReplicaManager {
             stub.getValue().gossip(gossip);
         }
 
+        if (replicaNro == 1){
+            Ops.stable(obsLog, camLog, replicaTS);
+            obsLog.clear();
+            camLog.clear();
+            for (int i = 0; i < replicaTS.size(); i++){
+                replicaTS.set(i, 0);
+            }
+        }
 
     }
 
     public List<Integer> getTimeStampVector() {
-        return timeStampVector;
+        return replicaTS;
     }
 
     public void tsVectorPP(int replica){
 
         //System.out.println("tsVectorPP replica: " + replica);
-        int newTs = timeStampVector.get(replica - 1) + 1;
+        int newTs = replicaTS.get(replica - 1) + 1;
         //System.out.println("newTS: "+ newTs + "\nOldTs: " + timeStampVector.get(replica));
-        timeStampVector.set(replica - 1, newTs);
+        replicaTS.set(replica - 1, newTs);
     }
 
     public void camJoin(String localName, String latitude, String longitude) throws BadEntryException {
@@ -168,6 +174,56 @@ public class ReplicaManager {
     public void gossip(GossipMessage message){
         List<Integer> mTS = message.getTsList();
         System.out.println(mTS);
+
     }
 
+
+    public Camera camInfo(String name){
+        return Ops.camInfo(name);
+    }
+
+    public Observation track(ObjectType type, String id) throws BadEntryException {
+        Observation o;
+        try {
+            o = Ops.track(type, id);
+        } catch (BadEntryException e) {
+            if (e.getErrorMessage().equals(ErrorMessage.ID_NOT_VALID)){
+                throw new BadEntryException(ErrorMessage.ID_NOT_VALID);
+            } else if (e.getErrorMessage().equals(ErrorMessage.ID_NOT_FOUND)){
+                throw new BadEntryException(ErrorMessage.ID_NOT_FOUND);
+            } else {
+                throw new BadEntryException(ErrorMessage.ID_FOUND_WRONG_TYPE);
+            }
+        }
+        return o;
+    }
+
+    public List<Observation> trackMatch(ObjectType type, String id) throws BadEntryException {
+        List<Observation> oList;
+        try{
+            oList = Ops.trackMatch(type, id);
+        } catch (BadEntryException e) {
+            throw new BadEntryException(ErrorMessage.NO_ID_MATCH);
+        }
+        return oList;
+    }
+
+    public List<Observation> trace(ObjectType type, String id) throws BadEntryException {
+        List<Observation> oList;
+        try{
+            oList = Ops.trace(type, id);
+        } catch (BadEntryException e) {
+            if (e.getErrorMessage().equals(ErrorMessage.ID_NOT_VALID)){
+                throw new BadEntryException(ErrorMessage.ID_NOT_VALID);
+            } else {
+                throw new BadEntryException(ErrorMessage.NO_ID_MATCH);
+            }
+        }
+        return oList;
+    }
+
+
+    public SiloServerOps getOps() {
+        return Ops;
+    }
 }

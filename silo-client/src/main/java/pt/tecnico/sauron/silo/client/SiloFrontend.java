@@ -18,6 +18,8 @@ public class SiloFrontend {
 
     private String path_prefix = "/grpc/sauron/silo";
 
+    private List<Integer> frontEndTS;
+
     public SiloFrontend() {}
 
 

@@ -1,5 +1,6 @@
 package pt.tecnico.sauron.silo;
 
+import com.google.protobuf.Internal;
 import pt.tecnico.sauron.silo.domain.Camera;
 import pt.tecnico.sauron.silo.domain.Observation;
 import pt.tecnico.sauron.silo.exceptions.BadEntryException;
@@ -20,7 +21,13 @@ public class SiloServerOps {
 
     private List<Observation> allObservations = new ArrayList<>();
 
+    private List<Integer> valueTS;
+
     public SiloServerOps() {}
+
+    public SiloServerOps(int replicaNro) {
+        valueTS = new ArrayList<>(Collections.nCopies(replicaNro, 0)); // initialize the timestamp vector with the number of replicas
+    }
 
     public synchronized String ping(String ping) throws BadEntryException{
         if (ping == null || ping.isEmpty()){
@@ -259,4 +266,44 @@ public class SiloServerOps {
         return obsLst;
     }
 
+    public synchronized void stable(List<Observation> obsList, List<Camera> camList, List<Integer> replicaTS){
+
+        for (Camera c: camList){
+            camsMap.put(c.getName(), c);
+        }
+
+        System.out.println(obsList.size() + "size");
+
+        for (Observation o : obsList) {
+            if (obsMap.get(o.getId()) == null) {
+                obsMap.put(o.getId(), o);
+                System.out.println("id: " + o.getId());
+            } else {
+                if (obsMap.get(o.getId()).getTimestamp().isBefore(o.getTimestamp())) {
+                    obsMap.put(o.getId(), o);
+                }
+            }
+            allObservations.add(o);
+            //System.out.println("Na lista 2");
+
+        }
+
+        for (int i = 0; i < valueTS.size(); i++){
+            valueTS.set(i, valueTS.get(i) + replicaTS.get(i));
+            System.out.println("valueTS: " + valueTS.get(i));
+        }
+        /*for (Observation o: obsList){
+            if(obsMap.get(o.getId()) == null){
+                obsMap.put(o.getId(), o);
+                System.out.println("Mais recente");
+            } else {
+                if (obsMap.get(o.getId()).getTimestamp().isBefore(o.getTimestamp())){
+                    obsMap.put(o.getId(), o);
+                }
+            }
+            obsList.add(o);
+            System.out.println("Na lista");
+        }*/
+
+    }
 }

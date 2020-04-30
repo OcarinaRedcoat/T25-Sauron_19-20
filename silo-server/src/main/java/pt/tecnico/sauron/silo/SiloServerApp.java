@@ -21,7 +21,7 @@ public class SiloServerApp{
 
 	private static int UPDATE_TIMER = 10000; // -> 30 seconds is 30 000 miliseconds
 
-	private static int replicaNro = 4;
+	private static int replicaNro = 1;
 
 	public static void main(String[] args) throws IOException, InterruptedException, ZKNamingException {
 		System.out.println(SiloServerApp.class.getSimpleName());

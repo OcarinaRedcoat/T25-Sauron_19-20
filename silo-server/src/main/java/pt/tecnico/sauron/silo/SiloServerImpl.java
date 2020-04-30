@@ -63,7 +63,7 @@ public class SiloServerImpl extends SiloGrpc.SiloImplBase{
 
         String localName = request.getLocal();
 
-        Camera cam_location = Ops.camInfo(localName);
+        Camera cam_location = manager.camInfo(localName);
 
         float locationX = cam_location.getLatitude();
         float locationY = cam_location.getLongitude();
@@ -114,10 +114,10 @@ public class SiloServerImpl extends SiloGrpc.SiloImplBase{
 
 
         try{
-            Observation trackedObs = Ops.track(request.getType(), request.getId());
+            Observation trackedObs = manager.track(request.getType(), request.getId());
 
 
-            Camera cam = Ops.camInfo(trackedObs.getCamera());
+            Camera cam = manager.camInfo(trackedObs.getCamera());
 
             SiloOuterClass.Camera camera = SiloOuterClass.Camera.newBuilder().setName(trackedObs.getCamera()).setLatitude(cam.getLatitude()).setLongitude(cam.getLongitude()).build();
 
@@ -144,13 +144,13 @@ public class SiloServerImpl extends SiloGrpc.SiloImplBase{
 
         try{
 
-            List<Observation> obsResponse = Ops.trackMatch(request.getType(), request.getId());
+            List<Observation> obsResponse = manager.trackMatch(request.getType(), request.getId());
 
 
             List<SiloOuterClass.Observation> obsRes = new ArrayList<>();
             for (Observation o: obsResponse){
 
-                Camera cam = Ops.camInfo(o.getCamera());
+                Camera cam = manager.camInfo(o.getCamera());
 
                 SiloOuterClass.Camera camera = SiloOuterClass.Camera.newBuilder().setName(o.getCamera()).setLatitude(cam.getLatitude()).setLongitude(cam.getLongitude()).build();
 
@@ -174,15 +174,15 @@ public class SiloServerImpl extends SiloGrpc.SiloImplBase{
     public void trace(SiloOuterClass.TraceRequest request, StreamObserver<SiloOuterClass.TraceResponse> responseObserver){
 
         try{
-            List<Observation> obsResponse = Ops.trace(request.getType(), request.getId());
+            List<Observation> obsResponse = manager.trace(request.getType(), request.getId());
 
 
-            SiloOuterClass.TraceResponse builder = null;
+            //SiloOuterClass.TraceResponse builder = null;
 
             List<SiloOuterClass.Observation> obsLst = new ArrayList<>();
             for (Observation o: obsResponse){
 
-                Camera cam = Ops.camInfo(o.getCamera());
+                Camera cam = manager.camInfo(o.getCamera());
 
                 SiloOuterClass.Camera camera = SiloOuterClass.Camera.newBuilder().setName(o.getCamera()).setLatitude(cam.getLatitude()).setLongitude(cam.getLongitude()).build();
 
