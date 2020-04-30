@@ -19,7 +19,7 @@ public class SiloServerApp{
 	private static ZKNaming zkNaming;
 	private static String prefix_path = "/grpc/sauron/silo";
 
-	private static int UPDATE_TIMER = 10000; // -> 30 seconds is 30 000 miliseconds
+	private static int UPDATE_TIMER; // -> 30 seconds is 30 000 miliseconds
 
 	private static int replicaNro;
 
@@ -54,6 +54,8 @@ public class SiloServerApp{
 		final String serverPort = args[4];
 
 		replicaNro = Integer.parseInt(args[5]);
+
+		UPDATE_TIMER = Integer.parseInt(args[6]) * 1000;
 
 		//final BindableService impl = new SiloServerImpl();
 

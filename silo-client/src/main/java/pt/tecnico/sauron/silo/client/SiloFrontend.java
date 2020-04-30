@@ -20,6 +20,8 @@ public class SiloFrontend {
 
     private List<Integer> frontEndTS;
 
+    private int replicaId;
+
     public SiloFrontend() {}
 
 
@@ -33,14 +35,16 @@ public class SiloFrontend {
 
         int numberOfInstances = zkNaming.listRecords(path_prefix).size();
 
+        frontEndTS = new ArrayList<>(Collections.nCopies(numberOfInstances, 0));
+
         System.out.println("------------" + numberOfInstances + "------------------");
 
         Random rand = new Random();
-        int instance = rand.nextInt(numberOfInstances) + 1;
+        this.replicaId = rand.nextInt(numberOfInstances) + 1;
 
 
 
-        String path = path_prefix + "/" + instance;
+        String path = path_prefix + "/" + replicaId;
 
         ZKRecord record = zkNaming.lookup(path);
         String target = record.getURI();
@@ -59,6 +63,10 @@ public class SiloFrontend {
 
         ZKNaming zkNaming = new ZKNaming(zooHost,zooPort);
         // lookup
+
+        this.replicaId = Integer.parseInt(instance);
+
+        frontEndTS = new ArrayList<>(Collections.nCopies(zkNaming.listRecords(path_prefix).size(), 0));
 
         String path = path_prefix + "/" + instance;
 
@@ -128,6 +136,7 @@ public class SiloFrontend {
     public void camJoin(String name, String locationX, String locationY){
 
         stub.camJoin(SiloOuterClass.CamJoinRequest.newBuilder().setLocal(name).setLatitude(locationX).setLongitude(locationY).build());
+        frontEndTS.set(replicaId, frontEndTS.get(replicaId) + 1);
     }
 
     /**
@@ -173,7 +182,7 @@ public class SiloFrontend {
         }
 
         stub.report(SiloOuterClass.ReportLot.newBuilder().addAllReportLot(lot).build());
-
+        frontEndTS.set(replicaId, frontEndTS.get(replicaId) + 1);
     }
 
     /**

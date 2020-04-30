@@ -2,6 +2,7 @@ package pt.tecnico.sauron.silo;
 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
+import io.grpc.StatusException;
 import pt.tecnico.sauron.silo.domain.Camera;
 import pt.tecnico.sauron.silo.domain.Observation;
 import pt.tecnico.sauron.silo.exceptions.BadEntryException;
@@ -32,8 +33,8 @@ public class ReplicaManager {
     private ZKNaming zkNaming;
 
 
-    private Map<String, SiloBlockingStub> stubMap = new HashMap();
-    private Map<String, ManagedChannel> channels = new HashMap();
+    private Map<String, SiloBlockingStub> stubMap = new HashMap<>();
+    private Map<String, ManagedChannel> channels = new HashMap<>();
 
     private List<Integer> replicaTS;
 
@@ -49,6 +50,7 @@ public class ReplicaManager {
 
         zkNaming = new ZKNaming(zooHost, zooPort);
 
+        //FIXME
         tableTS = new ArrayList<>(Collections.nCopies(replicaNro - 1, new ArrayList<>(Collections.nCopies(replicaNro - 1, 0))));
         replicaTS = new ArrayList<>(Collections.nCopies(repNro, 0)); // initialize the timestamp vector with the number of replicas
 
@@ -62,6 +64,9 @@ public class ReplicaManager {
 
             for (ZKRecord r: recordsList){
                 String target = r.getURI();
+
+                if (r.getPath().equals(path + "/" + replicaId)){ continue; }
+
                 if (channels.get(r.getPath()) == null) {
                     channels.put(r.getPath(), ManagedChannelBuilder.forTarget(target).usePlaintext().build());
                 }
@@ -104,6 +109,9 @@ public class ReplicaManager {
             stub.getValue().gossip(gossip);
         }
 
+        camLog.clear();
+        obsLog.clear();
+
     }
 
     public List<Integer> getTimeStampVector() {
@@ -140,6 +148,7 @@ public class ReplicaManager {
     public void report(List<String> camName, List<String> id, List<ObjectType> type) throws BadEntryException {
         try {
             List<Observation> list = Ops.report(camName, id, type);
+
             tsVectorPP(replicaId);
 
             obsLog.addAll(list);
@@ -153,8 +162,9 @@ public class ReplicaManager {
     }
 
     public void gossip(GossipMessage message){
+
         List<Integer> mTS = message.getTsList();
-        System.out.println(mTS);
+        Ops.merge(message.getLog().getCamLogList(), message.getLog().getReportLogList());
 
     }
 

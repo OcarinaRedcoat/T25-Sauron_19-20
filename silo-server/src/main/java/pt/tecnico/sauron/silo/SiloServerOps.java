@@ -308,4 +308,23 @@ public class SiloServerOps {
 
     }
     */
+
+    public void merge(List<SiloOuterClass.Camera> camlog, List<SiloOuterClass.ObservationLog> reportlog){
+        for (SiloOuterClass.Camera c: camlog){
+            Camera newCamera = new Camera(c.getName(), c.getLatitude(), c.getLongitude());
+            camsMap.put(c.getName(), newCamera);
+        }
+        for (SiloOuterClass.ObservationLog o: reportlog){
+            Observation newObs = new Observation(o.getType(), o.getId(), o.getCam(), Instant.parse(o.getTimestamp()));
+            if(obsMap.get(newObs.getId()) == null){
+                obsMap.put(newObs.getId(), newObs);
+            } else {
+                if (obsMap.get(newObs.getId()).getTimestamp().isBefore(newObs.getTimestamp())){
+                    obsMap.put(newObs.getId(), newObs);
+                }
+            }
+            allObservations.add(newObs);
+        }
+
+    }
 }
