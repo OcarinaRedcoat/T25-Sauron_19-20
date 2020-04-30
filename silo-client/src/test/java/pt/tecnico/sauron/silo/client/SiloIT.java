@@ -41,8 +41,6 @@ public class SiloIT extends BaseIT {
 		frontEnd.ctrlClear();
 	}
 
-		
-	// test T1
 
 	@Test
 	public void camJoinOK() {
@@ -50,10 +48,16 @@ public class SiloIT extends BaseIT {
 	}
 
 	@Test
-	public void duplicateCamJoin() {
+	public void camJoinALREADY_EXISTS() {
 		frontEnd.camJoin("Tagus", "10.0", "20.0");
 		assertEquals(ALREADY_EXISTS.getCode(),
 				assertThrows(StatusRuntimeException.class, () -> frontEnd.camJoin("Tagus", "15.0", "30.0")).getStatus().getCode());
+	}
+
+	@Test
+	public void camJoinINVALID_ARGUMENT() {
+		assertEquals(INVALID_ARGUMENT.getCode(),
+				assertThrows(StatusRuntimeException.class, () -> frontEnd.camJoin("Tagus", "String", "Vector de Strings que no java pode ser imensas coisa o que ee soo triste")).getStatus().getCode());
 	}
 
 	@Test
@@ -102,22 +106,36 @@ public class SiloIT extends BaseIT {
 
 	}
 
-	/* ee redudante ter invalid argument  no track pois o report ja trata dessa exception */
+
+	@Test
+	public void trackINVALID_ARGUMENT() {
+		assertEquals(INVALID_ARGUMENT.getCode(), assertThrows(StatusRuntimeException.class, () -> frontEnd.track("car", "AAAARV")).getStatus().getCode());
+	}
 
 	@Test
 	public void trackNOT_FOUND() {
-		frontEnd.camJoin("Tagus", "10.0", "20.0");
-
-		List<String> types = List.of("car", "person");
-		List<String> ids = List.of("HJ23FG", "12345");
-
-		frontEnd.report(types, ids, "Tagus");
-
 		assertEquals(NOT_FOUND.getCode(), assertThrows(StatusRuntimeException.class, () -> frontEnd.track("car", "7479RV")).getStatus().getCode());
 	}
 
-	/*@Test
-	public void trackMatchOK() {
+	@Test
+	public void TrackMatchOK() {
+
+		frontEnd.camJoin("Tagus", "10.0", "20.0");
+
+		List<String> types = List.of("car", "car");
+		List<String> ids = List.of("HJ23FG", "7479RV");
+
+		frontEnd.report(types, ids, "Tagus");
+		String obs = frontEnd.trackMatch(types.get(0), "H*");
+
+		int obs_size = types.get(0).length() + ids.get(0).length() + 1;
+
+		assertEquals(types.get(0) + ',' + ids.get(0), obs.substring(0, obs_size));
+	}
+
+
+	@Test
+	public void multipleTrackMatchOK() {
 
 		frontEnd.camJoin("Tagus", "10.0", "20.0");
 
@@ -128,17 +146,71 @@ public class SiloIT extends BaseIT {
 		String observations = frontEnd.trackMatch(types.get(0), "*");
 
 		int obs_size = types.get(0).length() + ids.get(0).length() + 1;
-		assertEquals(types.get(1) + ',' + ids.get(1), observations.substring(0,obs_size));
-
-		System.out.println(ind);
-		System.out.println(observations.substring(0, ind));
+		List<String> result = new ArrayList<>();
 
 
-	}*/
+		for (String val: observations.split("\\n")) {
+			result.add(val);
+		}
+
+		assertEquals(types.get(1) + ',' + ids.get(1), result.get(0).substring(0, obs_size));
+		assertEquals(types.get(0) + ',' + ids.get(0), result.get(1).substring(0, obs_size));
+	}
 
 
+	@Test
+	public void trackMatchNOT_FOUND() {
+		assertEquals(NOT_FOUND.getCode(), assertThrows(StatusRuntimeException.class, () -> frontEnd.trackMatch("car", "P*")).getStatus().getCode());
+
+	}
 
 
+	@Test
+	public void traceOK() {
+
+		frontEnd.camJoin("Tagus", "10.0", "20.0");
+		frontEnd.camJoin("Alameda", "15.0", "20.0");
+
+		List<String> typesT = List.of("car");
+		List<String> idsT = List.of("AA11BB");
+
+		List<String> typesA = List.of("car");
+		List<String> idsA = List.of("AA11BB");
+
+		frontEnd.report(typesT, idsT, "Tagus");
+		frontEnd.report(typesA, idsA, "Alameda");
+
+		String observations = frontEnd.trace(typesT.get(0), idsT.get(0));
+
+		int obs_size = typesT.get(0).length() + idsT.get(0).length() + 1;
+
+		//com virgula
+		int ISOsize = 29;
+		List<String> result = new ArrayList<>();
+
+
+		for (String val: observations.split("\\n")) {
+			result.add(val);
+		}
+
+		// test Tagus obs
+		assertEquals(typesT.get(0) + ',' + idsT.get(0), result.get(1).substring(0, obs_size));
+		assertEquals("Tagus", result.get(1).substring(obs_size + ISOsize, obs_size + ISOsize + 5)); // 5 corresponde ao size da string Tagus
+
+		// test Alameda obs
+		assertEquals(typesA.get(0) + ',' + idsA.get(0), result.get(0).substring(0, obs_size));
+		assertEquals("Alameda", result.get(0).substring(obs_size + ISOsize, obs_size + ISOsize + 7)); // 7 corresponde ao size da string Alameda
+	}
+
+	@Test
+	public void traceINVALID_ARGUMENT() {
+		assertEquals(INVALID_ARGUMENT.getCode(), assertThrows(StatusRuntimeException.class, () -> frontEnd.trace("car", "1111")).getStatus().getCode());
+	}
+
+	@Test
+	public void traceNOT_FOUND() {
+		assertEquals(NOT_FOUND.getCode(), assertThrows(StatusRuntimeException.class, () -> frontEnd.trace("car", "50HG55")).getStatus().getCode());
+	}
 
 
 
