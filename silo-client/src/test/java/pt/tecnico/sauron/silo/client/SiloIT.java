@@ -3,6 +3,7 @@ package pt.tecnico.sauron.silo.client;
 import io.grpc.StatusRuntimeException;
 import org.junit.jupiter.api.*;
 import pt.tecnico.sauron.silo.grpc.SiloOuterClass;
+import pt.ulisboa.tecnico.sdis.zk.ZKNamingException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +22,7 @@ public class SiloIT extends BaseIT {
 
 	// one-time initialization and clean-up
 	@BeforeAll
-	public static void oneTimeSetUp() {
+	public static void oneTimeSetUp() throws ZKNamingException {
 		frontEnd = new SiloFrontend();
 		frontEnd.createChannel("localhost", "8080");
 	}
