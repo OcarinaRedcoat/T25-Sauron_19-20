@@ -119,6 +119,13 @@ Por fim, vamos expor a forma como acontece a troca de mensagens, atendendo aos p
 
 _(Descrição de opções de implementação, incluindo otimizações e melhorias introduzidas)_
 
+Na nossa implementação não vimos necessário ter uma *executed operation table*, porque no nosso ambiente não existe uma relação causal entre os *updates*, isto é, não há *updates* a depender de outros, garantindo que, através de *gossip messages* eles são sempre estáveis.  
+
+Por decisão de grupo, decidimos acrescentar dois argumentos **opcionais** na linha de comando do servidor: 
+* o número de réplicas que vão estar disponíveis (o *default* é 1);
+* o temporizador (periodicidade) para executar as *gossip messages* (o default é *30s*).
+
+
 <br>
 
 ## **Notas finais**
